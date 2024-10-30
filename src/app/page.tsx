@@ -1,10 +1,15 @@
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 
 import { LatestPost } from "~/app/_components/post";
+import { env } from "~/env";
 import { api, HydrateClient } from "~/trpc/server";
+import { getBaseUrl } from "~/utils";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
+
+  const session = await api.auth.auth();
 
   void api.post.getLatest.prefetch();
 
@@ -39,12 +44,44 @@ export default async function Home() {
               </div>
             </Link>
           </div>
+          {session && (
+            <form
+              action={async () => {
+                "use server";
+                await api.auth.signout();
+                revalidatePath("/");
+              }}
+            >
+              <button
+                type="submit"
+                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+              >
+                Sign out
+              </button>
+            </form>
+          )}
+          {!session && (
+            <Link
+              href={`http://www.last.fm/api/auth/?api_key=${env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${getBaseUrl()}/api/auth`}
+              className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+            >
+              Sign in
+            </Link>
+          )}
+          {session && (
+            <p>
+              Signed in as{" "}
+              {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                session?.user.name
+              }
+            </p>
+          )}
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
           </div>
-
           <LatestPost />
         </div>
       </main>
