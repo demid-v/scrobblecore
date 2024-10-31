@@ -24,7 +24,7 @@ export default async function Home() {
         )}
         {!session && (
           <Link
-            href={`http://www.last.fm/api/auth/?api_key=${env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${getBaseUrl()}/api/auth`}
+            href={`https://www.last.fm/api/auth/?api_key=${env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${getBaseUrl()}/api/auth`}
           >
             Sign in
           </Link>
