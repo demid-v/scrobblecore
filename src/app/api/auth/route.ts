@@ -1,7 +1,7 @@
 import { env } from "~/env";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { getBaseUrl } from "~/utils";
+import { getBaseUrl } from "~/lib/utils";
 
 export const dynamic = "force-dynamic";
 
