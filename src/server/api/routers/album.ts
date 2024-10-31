@@ -29,6 +29,7 @@ export const albumRouter = createTRPCRouter({
                   name: z.string(),
                   url: z.string(),
                   duration: z.number().nullable(),
+                  "@attr": z.object({ rank: z.number() }),
                 }),
               ),
             }),

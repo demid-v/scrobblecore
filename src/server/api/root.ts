@@ -1,5 +1,6 @@
 import { authRouter } from "~/server/api/routers/auth";
 import { albumRouter } from "~/server/api/routers/album";
+import { trackRouter } from "~/server/api/routers/track";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -10,6 +11,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   album: albumRouter,
+  track: trackRouter,
 });
 
 // export type definition of API

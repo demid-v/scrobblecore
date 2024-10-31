@@ -7,6 +7,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 export const authRouter = createTRPCRouter({
   auth: publicProcedure.query(async () => {
     const cookieStore = await cookies();
+
     const sessionKey = cookieStore.get("sessionKey")?.value;
     const userName = cookieStore.get("userName")?.value;
 
@@ -43,6 +44,7 @@ export const authRouter = createTRPCRouter({
 
   signout: publicProcedure.mutation(async () => {
     const cookieStore = await cookies();
+
     cookieStore.delete("sessionKey");
     cookieStore.delete("userName");
 

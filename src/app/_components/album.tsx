@@ -9,6 +9,8 @@ const Album = () => {
     albumName: "Only Diamonds Cut Diamonds",
   });
 
+  const scrobble = api.track.scrobble.useMutation();
+
   return (
     <div>
       {album && (
@@ -23,7 +25,22 @@ const Album = () => {
           <ol>
             {album.tracks.track.map((track) => (
               <li key={track.url}>
-                {track.name} {track.duration}
+                <span>
+                  {track.name} {track.duration}
+                </span>
+                <button
+                  onClick={() => {
+                    scrobble.mutate({
+                      artist: album.artist,
+                      track: track.name,
+                      album: album.name,
+                      timestamp: Math.floor(Date.now() / 1000),
+                      trackNumber: track["@attr"].rank,
+                    });
+                  }}
+                >
+                  Scrobble
+                </button>
               </li>
             ))}
           </ol>
