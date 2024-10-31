@@ -5,9 +5,9 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   auth: publicProcedure.query(async () => {
-    const reqCookies = cookies();
-    const sessionKey = reqCookies.get("sessionKey")?.value;
-    const userName = reqCookies.get("userName")?.value;
+    const cookieStore = await cookies();
+    const sessionKey = cookieStore.get("sessionKey")?.value;
+    const userName = cookieStore.get("userName")?.value;
 
     if (
       typeof sessionKey === "undefined" ||
@@ -34,10 +34,10 @@ export const authRouter = createTRPCRouter({
   }),
 
   signout: publicProcedure.mutation(async () => {
-    const reqCookies = cookies();
-    reqCookies.delete("sessionKey");
-    reqCookies.delete("userName");
+    const cookieStore = await cookies();
+    cookieStore.delete("sessionKey");
+    cookieStore.delete("userName");
 
-    return reqCookies;
+    return cookieStore;
   }),
 });

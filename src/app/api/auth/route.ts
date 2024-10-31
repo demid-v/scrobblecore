@@ -28,14 +28,15 @@ export async function GET(request: Request) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   const session = (await (await fetch(url)).json()).session;
 
+  const cookieStore = await cookies();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  cookies().set("sessionKey", session.key as string, {
+  cookieStore.set("sessionKey", session.key as string, {
     expires: Infinity,
     httpOnly: true,
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  cookies().set("userName", session.name as string, {
+  cookieStore.set("userName", session.name as string, {
     expires: Infinity,
     httpOnly: true,
   });
