@@ -1,6 +1,7 @@
 import { env } from "~/env";
 import crypto from "crypto";
 import { cookies } from "next/headers";
+import { getBaseUrl } from "~/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,5 @@ export async function GET(request: Request) {
     httpOnly: true,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  return Response.redirect(`http://localhost:3000`, 302);
+  return Response.redirect(getBaseUrl(), 302);
 }
