@@ -14,22 +14,14 @@ const Album = () => {
       {album && (
         <>
           <Image
-            src={
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-              album.albumInfo.image[3]["#text"]
-            }
+            src={album.image[3]?.["#text"] ?? ""}
             alt="Album's image"
             width={300}
             height={300}
           />
-          <p>
-            {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              album.albumInfo.name
-            }
-          </p>
+          <p>{album.name}</p>
           <ol>
-            {album.albumInfo.tracks.track.map((track) => (
+            {album.tracks.track.map((track) => (
               <li key={track.url}>
                 {track.name} {track.duration}
               </li>

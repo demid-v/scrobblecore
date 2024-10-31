@@ -15,10 +15,28 @@ export const albumRouter = createTRPCRouter({
       };
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const albumInfo = (await (await fetch(url)).json()).album;
+      const rawAlbum = (await (await fetch(url)).json()) as unknown;
+      const parsedAlbum = z
+        .object({
+          album: z.object({
+            mbid: z.string(),
+            name: z.string(),
+            artist: z.string(),
+            image: z.array(z.object({ size: z.string(), "#text": z.string() })),
+            tracks: z.object({
+              track: z.array(
+                z.object({
+                  name: z.string(),
+                  url: z.string(),
+                  duration: z.number().nullable(),
+                }),
+              ),
+            }),
+          }),
+        })
+        .parse(rawAlbum);
+      const album = parsedAlbum.album;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      return { albumInfo };
+      return album;
     }),
 });

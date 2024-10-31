@@ -2,6 +2,7 @@ import { env } from "~/env";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { getBaseUrl } from "~/lib/utils";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
@@ -25,18 +26,20 @@ export async function GET(request: Request) {
   };
   const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-  const session = (await (await fetch(url)).json()).session;
+  const rawSession = (await (await fetch(url)).json()) as unknown;
+  const parsedSession = z
+    .object({ session: z.object({ key: z.string(), name: z.string() }) })
+    .parse(rawSession);
+  const session = parsedSession.session;
 
   const cookieStore = await cookies();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  cookieStore.set("sessionKey", session.key as string, {
+
+  cookieStore.set("sessionKey", session.key, {
     expires: Infinity,
     httpOnly: true,
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  cookieStore.set("userName", session.name as string, {
+  cookieStore.set("userName", session.name, {
     expires: Infinity,
     httpOnly: true,
   });

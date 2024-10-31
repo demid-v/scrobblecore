@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { z } from "zod";
 import { env } from "~/env";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -26,10 +27,17 @@ export const authRouter = createTRPCRouter({
     };
     const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const user = (await (await fetch(url)).json()).user;
+    const rawUser = (await (await fetch(url)).json()) as unknown;
+    const parsedUser = z
+      .object({
+        user: z.object({
+          name: z.string(),
+          image: z.array(z.object({ size: z.string(), "#text": z.string() })),
+        }),
+      })
+      .parse(rawUser);
+    const user = parsedUser.user;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     return { sessionKey, user };
   }),
 

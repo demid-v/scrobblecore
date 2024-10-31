@@ -33,12 +33,7 @@ const Header = async () => {
           >
             <Button type="submit">Sign out</Button>
           </form>
-          <span>
-            {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              session?.user.name
-            }
-          </span>
+          <span>{session.user.name}</span>
         </span>
       )}
     </header>
