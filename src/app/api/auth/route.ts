@@ -16,17 +16,17 @@ export async function GET(request: Request) {
   const stringToHash = `api_key${env.NEXT_PUBLIC_LASTFM_API_KEY}methodauth.getSessiontoken${authToken}${env.LASTFM_SHARED_SECRET}`;
   const apiSig = crypto.createHash("md5").update(stringToHash).digest("hex");
 
-  const sessionUrlSearchParamsObj = {
+  const searchParams = {
     method: "auth.getSession",
     format: "json",
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
     token: authToken,
     api_sig: apiSig,
   };
-  const sessionUrl = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(sessionUrlSearchParamsObj)}`;
+  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-  const session = (await (await fetch(sessionUrl)).json()).session;
+  const session = (await (await fetch(url)).json()).session;
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   cookies().set("sessionKey", session.key as string, {
