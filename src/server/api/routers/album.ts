@@ -3,41 +3,39 @@ import { env } from "~/env";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const albumRouter = createTRPCRouter({
-  one: publicProcedure
-    .input(z.object({ artistName: z.string(), albumName: z.string() }))
-    .query(async ({ input: { artistName, albumName } }) => {
+  search: publicProcedure
+    .input(z.object({ albumName: z.string() }))
+    .query(async ({ input: { albumName } }) => {
       const searchParams = {
-        method: "album.getinfo",
+        method: "album.search",
         format: "json",
-        artist: artistName,
         album: albumName,
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
-      const parsedAlbum = z
+      console.log(rawAlbum);
+      const parsedResult = z
         .object({
-          album: z.object({
-            mbid: z.string(),
-            name: z.string(),
-            artist: z.string(),
-            image: z.array(z.object({ size: z.string(), "#text": z.string() })),
-            tracks: z.object({
-              track: z.array(
+          results: z.object({
+            albummatches: z.object({
+              album: z.array(
                 z.object({
+                  mbid: z.string(),
                   name: z.string(),
-                  url: z.string(),
-                  duration: z.number().nullable(),
-                  "@attr": z.object({ rank: z.number() }),
+                  artist: z.string(),
+                  image: z.array(
+                    z.object({ size: z.string(), "#text": z.string() }),
+                  ),
                 }),
               ),
             }),
           }),
         })
         .parse(rawAlbum);
-      const album = parsedAlbum.album;
+      const albums = parsedResult.results.albummatches.album;
 
-      return album;
+      return albums;
     }),
 });
