@@ -44,6 +44,7 @@ export const trackRouter = createTRPCRouter({
           (acc, [key, value]) => `${acc}${key}${value}`,
           "",
         )}${env.LASTFM_SHARED_SECRET}`;
+
         const apiSig = crypto
           .createHash("md5")
           .update(stringToHash)

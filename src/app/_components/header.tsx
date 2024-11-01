@@ -9,7 +9,7 @@ const Header = async () => {
   const session = await api.auth.auth();
 
   return (
-    <header className="bg-background fixed flex h-10 w-full items-center justify-between px-9">
+    <header className="fixed flex h-12 w-full items-center justify-between bg-background px-9">
       <Link href="/" className="text-xl">
         Scrobblecore
       </Link>

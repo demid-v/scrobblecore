@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import SearchBar from "./search-bar";
+import Link from "next/link";
 
 const Albums = () => {
   const searchParams = useSearchParams();
@@ -23,19 +24,27 @@ const Albums = () => {
         </Suspense>
         {albums && (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10 pt-10">
-            {albums.map((album) => {
-              const imageSrc = album.image[3]?.["#text"] ?? "";
+            {albums.map(({ mbid, name, artist, image }) => {
+              const imageSrc = image[3]?.["#text"] ?? "";
+
+              const albumParams = {
+                ...(mbid !== "" ? { mbid } : {}),
+                albumName: name,
+                artistName: artist,
+              };
 
               return (
-                <div key={`${album.name}${album.artist}`}>
-                  <Image
-                    src={imageSrc === "" ? "/no-cover.png" : imageSrc}
-                    alt="Album's image"
-                    width={300}
-                    height={300}
-                  />
+                <div key={`${name}${artist}`}>
+                  <Link href={`/album/?${new URLSearchParams(albumParams)}`}>
+                    <Image
+                      src={imageSrc === "" ? "/no-cover.png" : imageSrc}
+                      alt="Album's image"
+                      width={300}
+                      height={300}
+                    />
+                  </Link>
                   <p>
-                    {album.artist} - {album.name}
+                    {artist} - {name}
                   </p>
                 </div>
               );
