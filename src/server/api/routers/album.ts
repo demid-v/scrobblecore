@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { env } from "~/env";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 export const albumRouter = createTRPCRouter({
-  search: publicProcedure
+  search: privateProcedure
     .input(z.object({ albumName: z.string() }))
     .query(async ({ input: { albumName } }) => {
       const searchParams = {
@@ -42,7 +42,7 @@ export const albumRouter = createTRPCRouter({
       return albums;
     }),
 
-  one: publicProcedure
+  one: privateProcedure
     .input(
       z.object({ term: z.literal("mbid"), mbid: z.string() }).or(
         z.object({

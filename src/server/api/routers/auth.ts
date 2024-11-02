@@ -2,21 +2,20 @@ import { cookies } from "next/headers";
 import { z } from "zod";
 import { env } from "~/env";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   auth: publicProcedure.query(async () => {
     const cookieStore = await cookies();
 
-    const sessionKey = cookieStore.get("sessionKey")?.value;
-    const userName = cookieStore.get("userName")?.value;
+    const sessionKey = cookieStore.get("sessionKey")?.value ?? "";
+    const userName = cookieStore.get("userName")?.value ?? "";
 
-    if (
-      typeof sessionKey === "undefined" ||
-      sessionKey === "" ||
-      typeof userName === "undefined" ||
-      userName === ""
-    ) {
+    if (sessionKey === "" || userName === "") {
       return null;
     }
 
@@ -26,6 +25,7 @@ export const authRouter = createTRPCRouter({
       user: userName,
       api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
     };
+
     const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
     const rawUser = (await (await fetch(url)).json()) as unknown;
@@ -42,12 +42,10 @@ export const authRouter = createTRPCRouter({
     return { sessionKey, user };
   }),
 
-  signout: publicProcedure.mutation(async () => {
-    const cookieStore = await cookies();
+  signout: privateProcedure.mutation(async ({ ctx: { cookies } }) => {
+    cookies.delete("sessionKey");
+    cookies.delete("userName");
 
-    cookieStore.delete("sessionKey");
-    cookieStore.delete("userName");
-
-    return cookieStore;
+    return cookies;
   }),
 });

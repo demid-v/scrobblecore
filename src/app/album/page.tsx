@@ -9,7 +9,6 @@ import { Suspense } from "react";
 
 const mbidSchema = z.object({ mbid: z.string() });
 const namesSchema = z.object({ albumName: z.string(), artistName: z.string() });
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const paramsSchema = mbidSchema.or(namesSchema);
 
 type MbidSchema = z.infer<typeof mbidSchema>;
@@ -22,10 +21,7 @@ const Album = () => {
   const searchParams = useSearchParams();
 
   const rawParams = Object.fromEntries(searchParams.entries());
-  const params = z
-    .object({ mbid: z.string() })
-    .or(z.object({ albumName: z.string(), artistName: z.string() }))
-    .parse(rawParams);
+  const params = paramsSchema.parse(rawParams);
 
   const queryParams = isMbid(params)
     ? { term: "mbid" as const, ...params }
@@ -33,7 +29,7 @@ const Album = () => {
 
   const { data: album } = api.album.one.useQuery(queryParams);
 
-  const imageSrc = album?.image[3]?.["#text"] ?? "";
+  const imageSrc = album?.image[3]?.["#text"] ?? "/no-cover.png";
 
   const scrobble = api.track.scrobble.useMutation();
 
@@ -43,7 +39,7 @@ const Album = () => {
         <div className="w-full">
           <Image
             className="mx-auto"
-            src={imageSrc === "" ? "/no-cover.png" : imageSrc}
+            src={imageSrc}
             alt="Album's image"
             width={300}
             height={300}
@@ -61,15 +57,15 @@ const Album = () => {
                 <Button
                   variant={"secondary"}
                   size={"sm"}
-                  onClick={() =>
+                  onClick={() => {
                     scrobble.mutate({
                       track: track.name,
                       artist: album.artist,
                       album: album.name,
                       timestamp: Math.floor(Date.now() / 1000),
                       trackNumber: track["@attr"].rank,
-                    })
-                  }
+                    });
+                  }}
                 >
                   Scrobble
                 </Button>

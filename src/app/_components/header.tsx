@@ -5,6 +5,13 @@ import { env } from "~/env";
 import { getBaseUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
+const params = {
+  api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
+  cb: encodeURIComponent(`${getBaseUrl()}/api/auth`),
+};
+
+const authUrl = `https://www.last.fm/api/auth/?${new URLSearchParams(params)}`;
+
 const Header = async () => {
   const session = await api.auth.auth();
 
@@ -15,11 +22,7 @@ const Header = async () => {
       </Link>
       {!session && (
         <Button className="mr-2" asChild>
-          <a
-            href={`http://www.last.fm/api/auth/?api_key=${env.NEXT_PUBLIC_LASTFM_API_KEY}&cb=${getBaseUrl()}/api/auth`}
-          >
-            Sign in
-          </a>
+          <a href={authUrl}>Sign in</a>
         </Button>
       )}
       {session && (

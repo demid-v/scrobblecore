@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { z } from "zod";
 import { env } from "~/env";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import crypto from "crypto";
 
 export const trackRouter = createTRPCRouter({
-  scrobble: publicProcedure
+  scrobble: privateProcedure
     .input(
       z.object({
         artist: z.string(),
@@ -16,14 +15,12 @@ export const trackRouter = createTRPCRouter({
       }),
     )
     .mutation(
-      async ({ input: { artist, track, album, timestamp, trackNumber } }) => {
-        const cookieStore = await cookies();
-        const sessionKey = cookieStore.get("sessionKey")?.value;
-
-        if (typeof sessionKey === "undefined") {
-          return { error: true };
-        }
-
+      async ({
+        ctx: {
+          session: { sessionKey },
+        },
+        input: { artist, track, album, timestamp, trackNumber },
+      }) => {
         const params = {
           method: "track.scrobble",
           artist,
