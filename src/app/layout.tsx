@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Header from "./_components/header";
+import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Scrobblecore",
@@ -12,15 +13,17 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await api.auth.auth();
+
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <Header />
-          <main className="pt-10">{children}</main>
+          {session !== null && <Header />}
+          <main className="mx-9 pt-12">{children}</main>
         </TRPCReactProvider>
       </body>
     </html>

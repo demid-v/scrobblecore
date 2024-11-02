@@ -1,16 +1,8 @@
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { env } from "~/env";
-import { getBaseUrl } from "~/lib/utils";
+import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
-
-const params = {
-  api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
-  cb: encodeURIComponent(`${getBaseUrl()}/api/auth`),
-};
-
-const authUrl = `https://www.last.fm/api/auth/?${new URLSearchParams(params)}`;
 
 const Header = async () => {
   const session = await api.auth.auth();

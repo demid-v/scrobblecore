@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 export const middleware = (request: NextRequest) => {
   const requestUrl = new URL(request.url);
 
-  if (requestUrl.pathname === "/") return;
+  if (requestUrl.pathname === "/" || requestUrl.pathname === "/api/auth")
+    return;
 
   const cookieStore = request.cookies;
 
