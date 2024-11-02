@@ -11,18 +11,18 @@ const Albums = () => {
   const searchParams = useSearchParams();
   const albumName = searchParams.get("q")?.toString() ?? "";
 
-  const { data: albums, refetch: fetchAlbum } = api.album.search.useQuery(
+  const { data: albums } = api.album.search.useQuery(
     { albumName },
-    { enabled: false },
+    { enabled: albumName !== "" },
   );
 
   return (
     <div className="mx-9">
       <div className="mx-auto max-w-7xl pt-6">
         <Suspense>
-          <SearchBar fetchAlbum={fetchAlbum} />
+          <SearchBar />
         </Suspense>
-        {albums && (
+        {albums && albums.length > 0 && (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10 pt-10">
             {albums.map(({ mbid, name, artist, image }) => {
               const imageSrc = image[3]?.["#text"] ?? "";

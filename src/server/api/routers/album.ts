@@ -18,24 +18,26 @@ export const albumRouter = createTRPCRouter({
 
       const parsedResult = z
         .object({
-          results: z.object({
-            albummatches: z.object({
-              album: z.array(
-                z.object({
-                  mbid: z.string(),
-                  name: z.string(),
-                  artist: z.string(),
-                  image: z.array(
-                    z.object({ size: z.string(), "#text": z.string() }),
-                  ),
-                }),
-              ),
-            }),
-          }),
+          results: z
+            .object({
+              albummatches: z.object({
+                album: z.array(
+                  z.object({
+                    mbid: z.string(),
+                    name: z.string(),
+                    artist: z.string(),
+                    image: z.array(
+                      z.object({ size: z.string(), "#text": z.string() }),
+                    ),
+                  }),
+                ),
+              }),
+            })
+            .optional(),
         })
         .parse(rawAlbum);
 
-      const albums = parsedResult.results.albummatches.album;
+      const albums = parsedResult.results?.albummatches.album ?? [];
 
       return albums;
     }),

@@ -18,7 +18,6 @@ export const trackRouter = createTRPCRouter({
     .mutation(
       async ({ input: { artist, track, album, timestamp, trackNumber } }) => {
         const cookieStore = await cookies();
-
         const sessionKey = cookieStore.get("sessionKey")?.value;
 
         if (typeof sessionKey === "undefined") {

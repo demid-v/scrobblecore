@@ -55,10 +55,12 @@ const Album = () => {
             {album?.tracks?.map((track) => (
               <li
                 key={track["@attr"].rank}
-                className="flex justify-between [&:not(:last-child)]:mb-3"
+                className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
               >
                 <span key={track["@attr"].rank}>{track.name}</span>
                 <Button
+                  variant={"secondary"}
+                  size={"sm"}
                   onClick={() =>
                     scrobble.mutate({
                       track: track.name,
