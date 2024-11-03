@@ -17,6 +17,10 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_PROD_BASE_URL:
+      process.env.VERCEL && process.env.NODE_ENV === "production"
+        ? z.string()
+        : z.string().optional(),
     NEXT_PUBLIC_LASTFM_API_KEY: z.string(),
   },
 
@@ -26,6 +30,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_PROD_BASE_URL: process.env.NEXT_PUBLIC_PROD_BASE_URL,
     NEXT_PUBLIC_LASTFM_API_KEY: process.env.NEXT_PUBLIC_LASTFM_API_KEY,
     LASTFM_SHARED_SECRET: process.env.LASTFM_SHARED_SECRET,
   },
