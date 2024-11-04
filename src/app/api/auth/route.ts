@@ -10,9 +10,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const authToken = requestUrl.searchParams.get("token");
 
-  if (authToken === null) {
-    return Response.error();
-  }
+  if (authToken === null) return Response.error();
 
   const stringToHash = `api_key${env.NEXT_PUBLIC_LASTFM_API_KEY}methodauth.getSessiontoken${authToken}${env.LASTFM_SHARED_SECRET}`;
   const apiSig = crypto.createHash("md5").update(stringToHash).digest("hex");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Input } from "~/components/ui/input";
 
 const SearchBar = () => {
@@ -28,7 +28,7 @@ const SearchBar = () => {
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!searchBar.current) return;
 
     searchBar.current.value = queryParam ?? "";

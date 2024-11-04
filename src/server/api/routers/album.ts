@@ -2,7 +2,7 @@ import { z } from "zod";
 import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
-const albumsScheme = z.object({
+const albumsSchema = z.object({
   results: z
     .object({
       albummatches: z.object({
@@ -24,14 +24,14 @@ const albumsScheme = z.object({
     .optional(),
 });
 
-const albumTrackScheme = z.object({
+const albumTrackSchema = z.object({
   name: z.string(),
   url: z.string().url(),
   duration: z.number().nullable(),
   "@attr": z.object({ rank: z.number() }),
 });
 
-const albumScheme = z.object({
+const albumSchema = z.object({
   album: z.object({
     name: z.string(),
     artist: z.string(),
@@ -43,7 +43,7 @@ const albumScheme = z.object({
     ),
     tracks: z
       .object({
-        track: z.array(albumTrackScheme).or(albumTrackScheme),
+        track: z.array(albumTrackSchema).or(albumTrackSchema),
       })
       .optional(),
   }),
@@ -63,7 +63,7 @@ export const albumRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = albumsScheme.parse(rawAlbum);
+      const parsedResult = albumsSchema.parse(rawAlbum);
       const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
 
       const albums = parsedAlbums.map((parsedAlbum) => {
@@ -93,28 +93,24 @@ export const albumRouter = createTRPCRouter({
 
   one: privateProcedure
     .input(
-      z.object({ term: z.literal("mbid"), mbid: z.string() }).or(
-        z.object({
-          term: z.literal("names"),
-          albumName: z.string(),
-          artistName: z.string(),
-        }),
-      ),
+      z.object({
+        albumName: z.string(),
+        artistName: z.string(),
+      }),
     )
-    .query(async ({ input }) => {
-      const searchParams = {
+    .query(async ({ input: { artistName, albumName } }) => {
+      const params = {
         method: "album.getinfo",
         format: "json",
-        ...(input.term === "mbid"
-          ? { mbid: input.mbid }
-          : { album: input.albumName, artist: input.artistName }),
+        album: albumName,
+        artist: artistName,
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
-      const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+      const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(params)}`;
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
-      const parsedAlbum = albumScheme.parse(rawAlbum);
+      const parsedAlbum = albumSchema.parse(rawAlbum);
 
       const {
         image: images,

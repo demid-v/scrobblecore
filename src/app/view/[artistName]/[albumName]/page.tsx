@@ -1,41 +1,30 @@
 "use client";
 
-import { z } from "zod";
 import { api } from "~/trpc/react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Suspense } from "react";
-
-const mbidSchema = z.object({ mbid: z.string() });
-const namesSchema = z.object({ albumName: z.string(), artistName: z.string() });
-const paramsSchema = mbidSchema.or(namesSchema);
-
-type MbidSchema = z.infer<typeof mbidSchema>;
-type ParamsSchema = z.infer<typeof paramsSchema>;
-
-const isMbid = (params: ParamsSchema): params is MbidSchema =>
-  Object.hasOwn(params, "mbid");
+import { useParams } from "next/navigation";
 
 const Album = () => {
-  const searchParams = useSearchParams();
+  const { artistName, albumName } = useParams<{
+    artistName: string;
+    albumName: string;
+  }>();
 
-  const rawParams = Object.fromEntries(searchParams.entries());
-  const params = paramsSchema.parse(rawParams);
+  const params = {
+    artistName: decodeURIComponent(artistName),
+    albumName: decodeURIComponent(albumName),
+  };
 
-  const queryParams = isMbid(params)
-    ? { term: "mbid" as const, ...params }
-    : { term: "names" as const, ...params };
-
-  const { data: album } = api.album.one.useQuery(queryParams);
-
+  const { data: album } = api.album.one.useQuery(params);
   const scrobble = api.track.scrobble.useMutation();
 
   return (
-    <div className="mx-9 mb-8">
-      <div className="mx-auto max-w-md pt-6">
+    <div className="px-9 pb-8">
+      <div className="mx-auto max-w-7xl pt-6">
         {album && (
-          <div className="w-full">
+          <div className="w-full text-center">
             <Image
               className="mx-auto"
               src={album.image}
@@ -43,10 +32,11 @@ const Album = () => {
               width={300}
               height={300}
             />
-            <p className="pt-6 text-center">
-              {album?.artist} - {album?.name}
+            <p className="mt-6 text-center">
+              {album.artist} - {album.name}
             </p>
             <Button
+              className="mt-6"
               onClick={() => {
                 const tracksParam = album.tracks.map((track) => ({
                   track: track.name,
@@ -61,15 +51,14 @@ const Album = () => {
             >
               Scrobble album
             </Button>
-            <ol className="pt-10">
-              {album?.tracks.map((track) => (
+            <ol className="mx-auto max-w-lg pt-10">
+              {album.tracks.map((track) => (
                 <li
                   key={track["@attr"].rank}
                   className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
                 >
                   <span>{track.name}</span>
                   <Button
-                    variant={"secondary"}
                     size={"sm"}
                     onClick={() => {
                       scrobble.mutate([

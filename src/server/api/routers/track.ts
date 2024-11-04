@@ -33,6 +33,7 @@ export const trackRouter = createTRPCRouter({
         const params = tracksInfo.reduce((params, trackInfo, index) => {
           const { artist, track, album, timestamp } = trackInfo;
 
+          // Adding trackNumber[i] with index notation gives error 13: Invalid method signature supplied.
           params.set(`artist[${index}]`, artist);
           params.set(`track[${index}]`, track);
           params.set(`timestamp[${index}]`, timestamp.toString());

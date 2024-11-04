@@ -23,31 +23,23 @@ const Albums = () => {
       </Suspense>
       {albums && albums.length > 0 && (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10 pt-10">
-          {albums.map(({ mbid, name, artist, image }) => {
-            const key = mbid !== "" ? mbid : `${name}${artist}`;
-
-            const albumParams = {
-              ...(mbid !== ""
-                ? { mbid }
-                : { albumName: name, artistName: artist }),
-            };
-
-            return (
-              <div key={key}>
-                <Link href={`/album/?${new URLSearchParams(albumParams)}`}>
-                  <Image
-                    src={image}
-                    alt="Album's cover"
-                    width={300}
-                    height={300}
-                  />
-                </Link>
-                <p className="mt-2">
-                  {artist} - {name}
-                </p>
-              </div>
-            );
-          })}
+          {albums.map(({ name, artist, image }) => (
+            <div key={`${name}${artist}`}>
+              <Link
+                href={`/view/${encodeURIComponent(artist)}/${encodeURIComponent(name)}`}
+              >
+                <Image
+                  src={image}
+                  alt="Album's cover"
+                  width={300}
+                  height={300}
+                />
+              </Link>
+              <p className="mt-2">
+                {artist} - {name}
+              </p>
+            </div>
+          ))}
         </div>
       )}
     </div>
