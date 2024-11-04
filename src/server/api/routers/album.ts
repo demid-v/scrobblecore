@@ -14,7 +14,7 @@ const albumsScheme = z.object({
             image: z.array(
               z.object({
                 size: z.enum(["small", "medium", "large", "extralarge"]),
-                "#text": z.string(),
+                "#text": z.string().url().or(z.string().max(0)),
               }),
             ),
           }),
@@ -26,7 +26,7 @@ const albumsScheme = z.object({
 
 const albumTrackScheme = z.object({
   name: z.string(),
-  url: z.string(),
+  url: z.string().url(),
   duration: z.number().nullable(),
   "@attr": z.object({ rank: z.number() }),
 });
@@ -38,7 +38,7 @@ const albumScheme = z.object({
     image: z.array(
       z.object({
         size: z.enum(["small", "medium", "large", "extralarge", "mega", ""]),
-        "#text": z.string(),
+        "#text": z.string().url().or(z.string().max(0)),
       }),
     ),
     tracks: z
@@ -66,8 +66,9 @@ export const albumRouter = createTRPCRouter({
       const parsedResult = albumsScheme.parse(rawAlbum);
       const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
 
-      const albums = parsedAlbums.map((album) => {
-        const { image: images, ...albumProps } = album;
+      const albums = parsedAlbums.map((parsedAlbum) => {
+        const { image: images, ...albumProps } = parsedAlbum;
+
         const image = (() => {
           const image = images.find((image) => image.size === "extralarge")?.[
             "#text"
@@ -79,12 +80,12 @@ export const albumRouter = createTRPCRouter({
           return image;
         })();
 
-        const mappedAlbum = {
+        const album = {
           ...albumProps,
           image,
         };
 
-        return mappedAlbum;
+        return album;
       });
 
       return albums;
