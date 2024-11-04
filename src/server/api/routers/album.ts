@@ -2,6 +2,53 @@ import { z } from "zod";
 import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
+const albumsScheme = z.object({
+  results: z
+    .object({
+      albummatches: z.object({
+        album: z.array(
+          z.object({
+            mbid: z.string(),
+            name: z.string(),
+            artist: z.string(),
+            image: z.array(
+              z.object({
+                size: z.enum(["small", "medium", "large", "extralarge"]),
+                "#text": z.string(),
+              }),
+            ),
+          }),
+        ),
+      }),
+    })
+    .optional(),
+});
+
+const albumTrackScheme = z.object({
+  name: z.string(),
+  url: z.string(),
+  duration: z.number().nullable(),
+  "@attr": z.object({ rank: z.number() }),
+});
+
+const albumScheme = z.object({
+  album: z.object({
+    name: z.string(),
+    artist: z.string(),
+    image: z.array(
+      z.object({
+        size: z.enum(["small", "medium", "large", "extralarge", "mega", ""]),
+        "#text": z.string(),
+      }),
+    ),
+    tracks: z
+      .object({
+        track: z.array(albumTrackScheme).or(albumTrackScheme),
+      })
+      .optional(),
+  }),
+});
+
 export const albumRouter = createTRPCRouter({
   search: privateProcedure
     .input(z.object({ albumName: z.string() }))
@@ -16,28 +63,29 @@ export const albumRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = z
-        .object({
-          results: z
-            .object({
-              albummatches: z.object({
-                album: z.array(
-                  z.object({
-                    mbid: z.string(),
-                    name: z.string(),
-                    artist: z.string(),
-                    image: z.array(
-                      z.object({ size: z.string(), "#text": z.string() }),
-                    ),
-                  }),
-                ),
-              }),
-            })
-            .optional(),
-        })
-        .parse(rawAlbum);
+      const parsedResult = albumsScheme.parse(rawAlbum);
+      const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
 
-      const albums = parsedResult.results?.albummatches.album ?? [];
+      const albums = parsedAlbums.map((album) => {
+        const { image: images, ...albumProps } = album;
+        const image = (() => {
+          const image = images.find((image) => image.size === "extralarge")?.[
+            "#text"
+          ];
+
+          if (typeof image === "undefined" || image === "")
+            return "/no-cover.png";
+
+          return image;
+        })();
+
+        const mappedAlbum = {
+          ...albumProps,
+          image,
+        };
+
+        return mappedAlbum;
+      });
 
       return albums;
     }),
@@ -65,34 +113,38 @@ export const albumRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
-      const parsedAlbum = z
-        .object({
-          album: z.object({
-            mbid: z.string(),
-            name: z.string(),
-            artist: z.string(),
-            image: z.array(z.object({ size: z.string(), "#text": z.string() })),
-            tracks: z
-              .object({
-                track: z.array(
-                  z.object({
-                    name: z.string(),
-                    url: z.string(),
-                    duration: z.number().nullable(),
-                    "@attr": z.object({ rank: z.number() }),
-                  }),
-                ),
-              })
-              .optional(),
-          }),
-        })
-        .parse(rawAlbum);
+      const parsedAlbum = albumScheme.parse(rawAlbum);
 
-      const albumProp = parsedAlbum.album;
-      const { tracks, ...albumProps } = albumProp;
+      const {
+        image: images,
+        tracks: tracksObj,
+        ...albumProps
+      } = parsedAlbum.album;
+
+      const image = (() => {
+        const image = images.find((image) => image.size === "extralarge")?.[
+          "#text"
+        ];
+
+        if (typeof image === "undefined" || image === "")
+          return "/no-cover.png";
+
+        return image;
+      })();
+
+      const tracks = (() => {
+        if (typeof tracksObj === "undefined") return [];
+
+        const tracks = tracksObj.track;
+
+        if (Array.isArray(tracks)) return tracks;
+        return [tracks];
+      })();
+
       const album = {
         ...albumProps,
-        ...(typeof tracks !== "undefined" ? { tracks: tracks.track } : {}),
+        image,
+        tracks,
       };
 
       return album;

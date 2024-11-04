@@ -29,50 +29,50 @@ const Album = () => {
 
   const { data: album } = api.album.one.useQuery(queryParams);
 
-  const imageSrc = album?.image[3]?.["#text"] ?? "/no-cover.png";
-
   const scrobble = api.track.scrobble.useMutation();
 
   return (
     <div className="mx-9 mb-8">
-      <div className="mx-auto max-w-6xl pt-6">
-        <div className="w-full">
-          <Image
-            className="mx-auto"
-            src={imageSrc}
-            alt="Album's image"
-            width={300}
-            height={300}
-          />
-          <p className="pt-6 text-center">
-            {album?.artist} - {album?.name}
-          </p>
-          <ol className="pt-10">
-            {album?.tracks?.map((track) => (
-              <li
-                key={track["@attr"].rank}
-                className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
-              >
-                <span key={track["@attr"].rank}>{track.name}</span>
-                <Button
-                  variant={"secondary"}
-                  size={"sm"}
-                  onClick={() => {
-                    scrobble.mutate({
-                      track: track.name,
-                      artist: album.artist,
-                      album: album.name,
-                      timestamp: Math.floor(Date.now() / 1000),
-                      trackNumber: track["@attr"].rank,
-                    });
-                  }}
+      <div className="mx-auto max-w-md pt-6">
+        {album && (
+          <div className="w-full">
+            <Image
+              className="mx-auto"
+              src={album.image}
+              alt="Album's image"
+              width={300}
+              height={300}
+            />
+            <p className="pt-6 text-center">
+              {album?.artist} - {album?.name}
+            </p>
+            <ol className="pt-10">
+              {album?.tracks.map((track) => (
+                <li
+                  key={track["@attr"].rank}
+                  className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
                 >
-                  Scrobble
-                </Button>
-              </li>
-            ))}
-          </ol>
-        </div>
+                  <span key={track["@attr"].rank}>{track.name}</span>
+                  <Button
+                    variant={"secondary"}
+                    size={"sm"}
+                    onClick={() => {
+                      scrobble.mutate({
+                        track: track.name,
+                        artist: album.artist,
+                        album: album.name,
+                        timestamp: Math.floor(Date.now() / 1000),
+                        trackNumber: track["@attr"].rank,
+                      });
+                    }}
+                  >
+                    Scrobble
+                  </Button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
     </div>
   );

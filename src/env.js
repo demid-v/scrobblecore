@@ -19,7 +19,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_PROD_BASE_URL:
       process.env.VERCEL && process.env.NODE_ENV === "production"
-        ? z.string()
+        ? z.string().url()
         : z.string().optional(),
     NEXT_PUBLIC_LASTFM_API_KEY: z.string(),
   },

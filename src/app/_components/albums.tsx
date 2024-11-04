@@ -24,25 +24,25 @@ const Albums = () => {
       {albums && albums.length > 0 && (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10 pt-10">
           {albums.map(({ mbid, name, artist, image }) => {
-            const imageSrc = image[3]?.["#text"] ?? "";
+            const key = mbid !== "" ? mbid : `${name}${artist}`;
 
             const albumParams = {
-              ...(mbid !== "" ? { mbid } : {}),
-              albumName: name,
-              artistName: artist,
+              ...(mbid !== ""
+                ? { mbid }
+                : { albumName: name, artistName: artist }),
             };
 
             return (
-              <div key={`${name}${artist}`}>
+              <div key={key}>
                 <Link href={`/album/?${new URLSearchParams(albumParams)}`}>
                   <Image
-                    src={imageSrc === "" ? "/no-cover.png" : imageSrc}
-                    alt="Album's image"
+                    src={image}
+                    alt="Album's cover"
                     width={300}
                     height={300}
                   />
                 </Link>
-                <p>
+                <p className="mt-2">
                   {artist} - {name}
                 </p>
               </div>
