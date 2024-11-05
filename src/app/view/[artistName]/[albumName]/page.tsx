@@ -21,7 +21,7 @@ const Album = () => {
   const scrobble = api.track.scrobble.useMutation();
 
   return (
-    <div className="px-9 pb-8">
+    <div className="px-9">
       <div className="mx-auto max-w-7xl pt-6">
         {album && (
           <div className="w-full text-center">

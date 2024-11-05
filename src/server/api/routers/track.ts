@@ -3,7 +3,71 @@ import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import crypto from "crypto";
 
+const albumsSchema = z.object({
+  results: z
+    .object({
+      trackmatches: z.object({
+        track: z.array(
+          z.object({
+            name: z.string(),
+            artist: z.string(),
+            image: z.array(
+              z.object({
+                size: z.enum(["small", "medium", "large", "extralarge"]),
+                "#text": z.string().url().or(z.string().max(0)),
+              }),
+            ),
+          }),
+        ),
+      }),
+    })
+    .optional(),
+});
+
 export const trackRouter = createTRPCRouter({
+  search: privateProcedure
+    .input(z.object({ trackName: z.string(), limit: z.number().default(30) }))
+    .query(async ({ input: { trackName, limit } }) => {
+      const searchParams = {
+        method: "track.search",
+        format: "json",
+        track: trackName,
+        limit: limit.toString(),
+        page: "1",
+        api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
+      };
+
+      const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+      const result = (await (await fetch(url)).json()) as unknown;
+
+      const parsedResult = albumsSchema.parse(result);
+      const parsedAlbums = parsedResult.results?.trackmatches.track ?? [];
+
+      const albums = parsedAlbums.map((parsedAlbum) => {
+        const { image: images, ...albumProps } = parsedAlbum;
+
+        const image = (() => {
+          const image = images.find((image) => image.size === "small")?.[
+            "#text"
+          ];
+
+          if (typeof image === "undefined" || image === "")
+            return "/no-cover.png";
+
+          return image;
+        })();
+
+        const album = {
+          ...albumProps,
+          image,
+        };
+
+        return album;
+      });
+
+      return albums;
+    }),
+
   scrobble: privateProcedure
     .input(
       z.array(

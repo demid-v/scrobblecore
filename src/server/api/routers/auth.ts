@@ -8,6 +8,13 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+const userSchema = z.object({
+  user: z.object({
+    name: z.string(),
+    image: z.array(z.object({ size: z.string(), "#text": z.string() })),
+  }),
+});
+
 export const authRouter = createTRPCRouter({
   auth: publicProcedure.query(async () => {
     const cookieStore = await cookies();
@@ -29,14 +36,7 @@ export const authRouter = createTRPCRouter({
     const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
     const rawUser = (await (await fetch(url)).json()) as unknown;
-    const parsedUser = z
-      .object({
-        user: z.object({
-          name: z.string(),
-          image: z.array(z.object({ size: z.string(), "#text": z.string() })),
-        }),
-      })
-      .parse(rawUser);
+    const parsedUser = userSchema.parse(rawUser);
     const user = parsedUser.user;
 
     return { sessionKey, user };

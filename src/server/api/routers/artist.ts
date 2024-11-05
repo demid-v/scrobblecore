@@ -2,17 +2,22 @@ import { z } from "zod";
 import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
-const albumsSchema = z.object({
+const artistsSchema = z.object({
   results: z
     .object({
-      albummatches: z.object({
-        album: z.array(
+      artistmatches: z.object({
+        artist: z.array(
           z.object({
             name: z.string(),
-            artist: z.string(),
             image: z.array(
               z.object({
-                size: z.enum(["small", "medium", "large", "extralarge"]),
+                size: z.enum([
+                  "small",
+                  "medium",
+                  "large",
+                  "extralarge",
+                  "mega",
+                ]),
                 "#text": z.string().url().or(z.string().max(0)),
               }),
             ),
@@ -23,14 +28,14 @@ const albumsSchema = z.object({
     .optional(),
 });
 
-const albumTrackSchema = z.object({
+const artistTrackSchema = z.object({
   name: z.string(),
   url: z.string().url(),
   duration: z.number().nullable(),
   "@attr": z.object({ rank: z.number() }),
 });
 
-const albumSchema = z.object({
+const artistSchema = z.object({
   album: z.object({
     name: z.string(),
     artist: z.string(),
@@ -42,20 +47,20 @@ const albumSchema = z.object({
     ),
     tracks: z
       .object({
-        track: z.array(albumTrackSchema).or(albumTrackSchema),
+        track: z.array(artistTrackSchema).or(artistTrackSchema),
       })
       .optional(),
   }),
 });
 
-export const albumRouter = createTRPCRouter({
+export const artistRouter = createTRPCRouter({
   search: privateProcedure
-    .input(z.object({ albumName: z.string(), limit: z.number().default(50) }))
-    .query(async ({ input: { albumName, limit } }) => {
+    .input(z.object({ artistName: z.string(), limit: z.number().default(50) }))
+    .query(async ({ input: { artistName: artistName, limit } }) => {
       const searchParams = {
-        method: "album.search",
+        method: "artist.search",
         format: "json",
-        album: albumName,
+        artist: artistName,
         limit: limit.toString(),
         page: "1",
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
@@ -64,10 +69,10 @@ export const albumRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
       const result = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = albumsSchema.parse(result);
-      const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
+      const parsedResult = artistsSchema.parse(result);
+      const parsedArtists = parsedResult.results?.artistmatches.artist ?? [];
 
-      const albums = parsedAlbums.map((parsedAlbum) => {
+      const albums = parsedArtists.map((parsedAlbum) => {
         const { image: images, ...albumProps } = parsedAlbum;
 
         const image = (() => {
@@ -111,7 +116,7 @@ export const albumRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(params)}`;
       const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
-      const parsedAlbum = albumSchema.parse(rawAlbum);
+      const parsedAlbum = artistSchema.parse(rawAlbum);
 
       const {
         image: images,

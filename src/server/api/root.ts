@@ -2,6 +2,7 @@ import { authRouter } from "~/server/api/routers/auth";
 import { albumRouter } from "~/server/api/routers/album";
 import { trackRouter } from "~/server/api/routers/track";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { artistRouter } from "./routers/artist";
 
 /**
  * This is the primary router for your server.
@@ -11,6 +12,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   album: albumRouter,
+  artist: artistRouter,
   track: trackRouter,
 });
 

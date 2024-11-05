@@ -20,7 +20,7 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <Header />
-          <main className="mx-9 pt-12">{children}</main>
+          <main className="mx-9 pb-8 pt-12">{children}</main>
         </TRPCReactProvider>
       </body>
     </html>

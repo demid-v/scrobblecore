@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { useLayoutEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { Input } from "~/components/ui/input";
 
 const SearchBar = () => {
@@ -28,7 +28,7 @@ const SearchBar = () => {
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!searchBar.current) return;
 
     searchBar.current.value = queryParam ?? "";
@@ -44,4 +44,10 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+const SearchBarWithSuspense = () => (
+  <Suspense>
+    <SearchBar />
+  </Suspense>
+);
+
+export default SearchBarWithSuspense;
