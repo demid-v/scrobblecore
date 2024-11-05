@@ -74,7 +74,7 @@ export const trackRouter = createTRPCRouter({
         z.object({
           artist: z.string(),
           track: z.string(),
-          album: z.string(),
+          album: z.string().optional(),
           timestamp: z.number(),
         }),
       ),
@@ -101,7 +101,11 @@ export const trackRouter = createTRPCRouter({
           params.set(`artist[${index}]`, artist);
           params.set(`track[${index}]`, track);
           params.set(`timestamp[${index}]`, timestamp.toString());
-          params.set(`album[${index}]`, album);
+
+          if (typeof album !== "undefined") {
+            params.set(`album[${index}]`, album);
+          }
+
           params.set(`chosenByUser[${index}]`, "1");
 
           return params;

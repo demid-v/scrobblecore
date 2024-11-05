@@ -1,7 +1,7 @@
 import SearchBar from "~/app/_components/search-bar";
-import Albums from "~/app/_components/albums";
+import Artists from "~/app/_components/artists";
 
-const AlbumsPage = async ({
+const ArtistsPage = async ({
   searchParams,
 }: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -15,9 +15,9 @@ const AlbumsPage = async ({
   return (
     <div className="mx-auto max-w-7xl pt-6">
       <SearchBar />
-      {!isSearchEmpty && <Albums searchQuery={searchQuery} limit={50} />}
+      {!isSearchEmpty && <Artists searchQuery={searchQuery} limit={50} />}
     </div>
   );
 };
 
-export default AlbumsPage;
+export default ArtistsPage;

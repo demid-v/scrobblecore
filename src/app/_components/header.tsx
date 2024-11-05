@@ -22,6 +22,7 @@ const Header = async () => {
           <form
             action={async () => {
               "use server";
+
               await api.auth.signout();
               revalidatePath("/");
             }}
