@@ -3,7 +3,7 @@ import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import crypto from "crypto";
 
-const albumsSchema = z.object({
+const tracksSchema = z.object({
   results: z
     .object({
       trackmatches: z.object({
@@ -40,10 +40,10 @@ export const trackRouter = createTRPCRouter({
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
       const result = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = albumsSchema.parse(result);
-      const parsedAlbums = parsedResult.results?.trackmatches.track ?? [];
+      const parsedResult = tracksSchema.parse(result);
+      const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
-      const albums = parsedAlbums.map((parsedAlbum) => {
+      const tracks = parsedTracks.map((parsedAlbum) => {
         const { image: images, ...albumProps } = parsedAlbum;
 
         const image = (() => {
@@ -57,15 +57,15 @@ export const trackRouter = createTRPCRouter({
           return image;
         })();
 
-        const album = {
+        const track = {
           ...albumProps,
           image,
         };
 
-        return album;
+        return track;
       });
 
-      return albums;
+      return tracks;
     }),
 
   scrobble: privateProcedure

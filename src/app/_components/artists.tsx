@@ -20,9 +20,7 @@ const Artists = async ({
     <section>
       {isSection && (
         <p className="mt-10 text-xl">
-          <Link
-            href={{ pathname: "/search/artists", query: { q: searchQuery } }}
-          >
+          <Link href={{ pathname: "/artists", query: { q: searchQuery } }}>
             Artists
           </Link>
         </p>
@@ -30,7 +28,7 @@ const Artists = async ({
       <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
         {artists.map(({ name, image }) => (
           <div key={name}>
-            <Link href={`/view/${encodeURIComponent(name)}`}>
+            <Link href={`/artists/${encodeURIComponent(name)}`}>
               <Image
                 src={image}
                 alt="Artist's image"

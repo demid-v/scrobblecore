@@ -82,3 +82,6 @@ export type AlbumSearchBaseResult = QueryObserverBaseResult<
   RouterOutputs["album"]["search"],
   TRPCClientErrorLike<AppRouter>
 >;
+
+export type Albums = RouterOutputs["album"]["search"];
+export type Artists = RouterOutputs["artist"]["search"];

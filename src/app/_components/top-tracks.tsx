@@ -3,22 +3,25 @@ import { api } from "~/trpc/server";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 
-const Tracks = async ({
-  searchQuery,
+const TopTracks = async ({
+  artistName,
   limit,
   isSection = false,
 }: {
-  searchQuery: string;
+  artistName: string;
   limit: number;
   isSection?: boolean;
 }) => {
-  const tracks = await api.track.search({ trackName: searchQuery, limit });
+  const tracks = await api.artist.topTracks({
+    artistName,
+    limit,
+  });
 
   return (
     <section>
       {isSection && (
         <p className="mt-10 text-xl">
-          <Link href={{ pathname: "/tracks", query: { q: searchQuery } }}>
+          <Link href={{ pathname: `/artists/${artistName}/tracks` }}>
             Tracks
           </Link>
         </p>
@@ -26,7 +29,7 @@ const Tracks = async ({
       <ul className="mt-6">
         {tracks.map(({ name, artist, image }) => (
           <li
-            key={`${name}${artist}`}
+            key={`${name}`}
             className="flex items-center justify-between px-2 py-1 hover:bg-slate-100 [&:not(:last-child)]:border-b"
           >
             <div className="flex items-center">
@@ -48,7 +51,7 @@ const Tracks = async ({
                 await api.track.scrobble([
                   {
                     track: name,
-                    artist,
+                    artist: artistName,
                     timestamp: Math.floor(Date.now() / 1000),
                   },
                 ]);
@@ -65,4 +68,4 @@ const Tracks = async ({
   );
 };
 
-export default Tracks;
+export default TopTracks;
