@@ -43,8 +43,8 @@ export const trackRouter = createTRPCRouter({
       const parsedResult = tracksSchema.parse(result);
       const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
-      const tracks = parsedTracks.map((parsedAlbum) => {
-        const { image: images, ...albumProps } = parsedAlbum;
+      const tracks = parsedTracks.map((parsedTrack) => {
+        const { image: images, ...trackProps } = parsedTrack;
 
         const image = (() => {
           const image = images.find((image) => image.size === "small")?.[
@@ -58,7 +58,7 @@ export const trackRouter = createTRPCRouter({
         })();
 
         const track = {
-          ...albumProps,
+          ...trackProps,
           image,
         };
 

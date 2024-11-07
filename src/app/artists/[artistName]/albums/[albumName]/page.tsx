@@ -38,15 +38,15 @@ const Album = () => {
             <Button
               className="mt-6"
               onClick={() => {
-                const tracksParam = album.tracks.map((track) => ({
+                const tracksToScrobble = album.tracks.map((track) => ({
                   track: track.name,
                   artist: album.artist,
                   album: album.name,
                   timestamp: Math.floor(Date.now() / 1000),
-                  trackNumber: track["@attr"].rank,
+                  trackNumber: track.rank,
                 }));
 
-                scrobble.mutate(tracksParam);
+                scrobble.mutate(tracksToScrobble);
               }}
             >
               Scrobble album
@@ -54,7 +54,7 @@ const Album = () => {
             <ol className="mx-auto max-w-lg pt-10">
               {album.tracks.map((track) => (
                 <li
-                  key={track["@attr"].rank}
+                  key={track.rank}
                   className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
                 >
                   <span>{track.name}</span>

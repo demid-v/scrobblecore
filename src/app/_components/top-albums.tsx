@@ -26,10 +26,10 @@ const TopAlbums = async ({
         </p>
       )}
       <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
-        {albums.map(({ name, artist, image }) => (
-          <div key={`${name}${artist}`}>
+        {albums.map(({ name, image }) => (
+          <div key={`${name}${artistName}`}>
             <Link
-              href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
+              href={`/artists/${encodeURIComponent(artistName)}/albums/${encodeURIComponent(name)}`}
             >
               <Image src={image} alt="Album's cover" width={300} height={300} />
             </Link>

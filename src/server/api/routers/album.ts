@@ -133,10 +133,21 @@ export const albumRouter = createTRPCRouter({
       const tracks = (() => {
         if (typeof tracksObj === "undefined") return [];
 
-        const tracks = tracksObj.track;
+        const tracksProp = tracksObj.track;
 
-        if (Array.isArray(tracks)) return tracks;
-        return [tracks];
+        const tracksArray = Array.isArray(tracksProp)
+          ? tracksProp
+          : [tracksProp];
+
+        const tracks = tracksArray.map((track) => {
+          const { ["@attr"]: attr, ...trackProps } = track;
+
+          const tracks = { ...trackProps, rank: attr.rank };
+
+          return tracks;
+        });
+
+        return tracks;
       })();
 
       const album = {
