@@ -28,9 +28,11 @@ export default async function RootLayout({
             <Header />
             <HistorySidebar />
             <div className="h-svh">
-              <SidebarTrigger className="fixed ml-[0.25rem] mt-14" />
+              <SidebarTrigger className="fixed ml-1 mt-12" />
             </div>
-            <main className="mx-9 mt-12 w-full pb-8">{children}</main>
+            <main className="mx-9 mt-12 w-full pb-8">
+              <div className="container mx-auto pt-2">{children}</div>
+            </main>
           </SidebarProvider>
         </TRPCReactProvider>
       </body>

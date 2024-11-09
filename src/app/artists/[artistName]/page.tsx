@@ -18,7 +18,7 @@ const Artist = async ({
   }
 
   return (
-    <div className="mx-auto max-w-7xl pt-6">
+    <div>
       <div className="mt-6 text-3xl font-semibold">{artistName}</div>
       <div className="mt-10">
         <TopAlbums artistName={artistName} limit={10} isSection />

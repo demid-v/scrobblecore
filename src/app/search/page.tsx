@@ -15,7 +15,7 @@ const SearchResults = async ({
     typeof searchQuery === "undefined" || searchQuery === "";
 
   return (
-    <div className="mx-auto max-w-7xl pt-6">
+    <div>
       <SearchBar />
       {!searchIsEmpty && (
         <div className="mt-10">

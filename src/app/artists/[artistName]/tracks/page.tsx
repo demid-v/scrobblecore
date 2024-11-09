@@ -7,11 +7,7 @@ const TracksPage = async ({
 }) => {
   const artistName = decodeURIComponent((await params).artistName);
 
-  return (
-    <div className="mx-auto max-w-7xl pt-6">
-      <TopTracks artistName={artistName} limit={50} />
-    </div>
-  );
+  return <TopTracks artistName={artistName} limit={50} />;
 };
 
 export default TracksPage;

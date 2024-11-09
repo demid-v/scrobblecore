@@ -13,7 +13,7 @@ const ArtistsPage = async ({
     typeof searchQuery === "undefined" || searchQuery === "";
 
   return (
-    <div className="mx-auto max-w-7xl pt-6">
+    <div>
       <SearchBar />
       {!isSearchEmpty && <Artists searchQuery={searchQuery} limit={50} />}
     </div>
