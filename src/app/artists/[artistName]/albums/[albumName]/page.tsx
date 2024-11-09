@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 const Album = () => {
   const { artistName, albumName } = useParams<{
@@ -32,11 +33,14 @@ const Album = () => {
               width={300}
               height={300}
             />
-            <p className="mt-6 text-center">
-              {album.artist} - {album.name}
+            <p className="mt-3 font-bold">
+              <Link href={`/artists/${encodeURIComponent(album.artist)}`}>
+                {album.artist}
+              </Link>
             </p>
+            <p className="mt-1 text-center text-lg">{album.name}</p>
             <Button
-              className="mt-6"
+              className="mt-3"
               onClick={() => {
                 const tracksToScrobble = album.tracks.map((track) => ({
                   track: track.name,
