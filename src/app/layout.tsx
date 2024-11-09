@@ -5,6 +5,9 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import Header from "./_components/header";
+import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import HistorySidebar from "./_components/history-sidebar";
+import { type CSSProperties } from "react";
 
 export const metadata: Metadata = {
   title: "Scrobblecore",
@@ -19,8 +22,14 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <Header />
-          <main className="mx-9 pb-8 pt-12">{children}</main>
+          <SidebarProvider
+            style={{ "--sidebar-width": "24rem" } as CSSProperties}
+          >
+            <Header />
+            <HistorySidebar />
+            <SidebarTrigger className="ml-5 mt-14" />
+            <main className="mx-9 mt-12 w-full pb-8">{children}</main>
+          </SidebarProvider>
         </TRPCReactProvider>
       </body>
     </html>
