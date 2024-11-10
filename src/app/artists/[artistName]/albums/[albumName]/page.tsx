@@ -6,6 +6,8 @@ import { Button } from "~/components/ui/button";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useSetAtom } from "jotai";
+import { scrobblesAtom } from "~/lib/store";
 
 const Album = () => {
   const { artistName, albumName } = useParams<{
@@ -19,7 +21,33 @@ const Album = () => {
   };
 
   const { data: album } = api.album.one.useQuery(params);
-  const scrobble = api.track.scrobble.useMutation();
+
+  const setScrobbles = useSetAtom(scrobblesAtom);
+
+  const scrobble = api.track.scrobble.useMutation({
+    onMutate(tracks) {
+      const trackForAtom = tracks.map((track) => ({
+        id: track.id,
+        name: track.track,
+        artist: track.artist,
+        date: track.timestamp,
+        status: "pending" as const,
+      }));
+
+      void setScrobbles(trackForAtom);
+    },
+    onSuccess(data) {
+      const trackForAtom = data.tracks.map((track) => ({
+        id: track.id,
+        name: track.track,
+        artist: track.artist,
+        date: track.timestamp,
+        status: "successful" as const,
+      }));
+
+      void setScrobbles(trackForAtom);
+    },
+  });
 
   if (typeof album === "undefined") return null;
 
@@ -41,12 +69,14 @@ const Album = () => {
       <Button
         className="mt-3"
         onClick={() => {
-          const tracksToScrobble = album.tracks.map((track) => ({
+          const tracksToScrobble = album.tracks.map((track, index) => ({
+            id: crypto.randomUUID(),
             track: track.name,
             artist: album.artist,
             album: album.name,
-            timestamp: Math.floor(Date.now() / 1000),
-            trackNumber: track.rank,
+            timestamp:
+              Math.floor(Date.now() / 1000) -
+              (track.duration ?? 3 * 60) * index,
           }));
 
           scrobble.mutate(tracksToScrobble);
@@ -64,14 +94,17 @@ const Album = () => {
             <Button
               size={"sm"}
               onClick={() => {
-                scrobble.mutate([
+                const scrobbles = [
                   {
+                    id: crypto.randomUUID(),
                     track: track.name,
                     artist: album.artist,
                     album: album.name,
                     timestamp: Math.floor(Date.now() / 1000),
                   },
-                ]);
+                ];
+
+                scrobble.mutate(scrobbles);
               }}
             >
               Scrobble

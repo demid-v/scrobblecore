@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 26e4749318b071edb92b4256c2d1e268b267aa6e..635ab44fab59fa8a5464a8d06769f83a0e0af02d 100644
+--- a/package.json
++++ b/package.json
+@@ -2,7 +2,6 @@
+   "name": "jotai",
+   "description": "👻 Primitive and flexible state management for React",
+   "private": false,
+-  "type": "commonjs",
+   "version": "2.10.1",
+   "main": "./index.js",
+   "types": "./index.d.ts",

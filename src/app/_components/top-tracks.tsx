@@ -50,6 +50,7 @@ const TopTracks = async ({
 
                 await api.track.scrobble([
                   {
+                    id: crypto.randomUUID(),
                     track: name,
                     artist: artistName,
                     timestamp: Math.floor(Date.now() / 1000),

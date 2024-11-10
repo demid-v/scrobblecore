@@ -72,6 +72,7 @@ export const trackRouter = createTRPCRouter({
     .input(
       z.array(
         z.object({
+          id: z.string(),
           artist: z.string(),
           track: z.string(),
           album: z.string().optional(),
@@ -84,7 +85,7 @@ export const trackRouter = createTRPCRouter({
         ctx: {
           session: { sessionKey },
         },
-        input: tracksInfo,
+        input: tracks,
       }) => {
         const baseParams = {
           method: "track.scrobble",
@@ -94,7 +95,7 @@ export const trackRouter = createTRPCRouter({
 
         const baseParamsMap = new Map(Object.entries(baseParams));
 
-        const params = tracksInfo.reduce((params, trackInfo, index) => {
+        const params = tracks.reduce((params, trackInfo, index) => {
           const { artist, track, album, timestamp } = trackInfo;
 
           // Adding trackNumber[i] with index notation gives error 13: Invalid method signature supplied.
@@ -112,7 +113,11 @@ export const trackRouter = createTRPCRouter({
         }, baseParamsMap);
 
         const sigParamsString = [...params]
-          .sort((a, b) => a[0].localeCompare(b[0], "en"))
+          .sort((a, b) => {
+            if (a[0] < b[0]) return -1;
+            if (a[0] > b[0]) return 1;
+            return 0;
+          })
           .reduce((acc, [key, value]) => `${acc}${key}${value}`, "");
 
         const encodedSigParamsString = Buffer.from(
@@ -136,7 +141,7 @@ export const trackRouter = createTRPCRouter({
           })
         ).text();
 
-        return result;
+        return { result, tracks };
       },
     ),
 });

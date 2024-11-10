@@ -39,7 +39,6 @@ export async function GET(request: Request) {
 
   cookieStore.set("userName", session.name, {
     expires: Infinity,
-    httpOnly: true,
   });
 
   return Response.redirect(getBaseUrl(), 302);
