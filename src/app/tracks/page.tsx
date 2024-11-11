@@ -1,5 +1,5 @@
 import SearchBar from "~/app/_components/search-bar";
-import Tracks from "~/app/_components/tracks";
+import SearchTracks from "../_components/search-tracks";
 
 const TracksPage = async ({
   searchParams,
@@ -15,7 +15,7 @@ const TracksPage = async ({
   return (
     <div>
       <SearchBar />
-      {!isSearchEmpty && <Tracks searchQuery={searchQuery} limit={30} />}
+      {!isSearchEmpty && <SearchTracks searchQuery={searchQuery} limit={30} />}
     </div>
   );
 };

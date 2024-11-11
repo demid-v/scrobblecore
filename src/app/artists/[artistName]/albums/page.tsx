@@ -7,7 +7,7 @@ const AlbumsPage = async ({
 }) => {
   const artistName = decodeURIComponent((await params).artistName);
 
-  return <TopAlbums artistName={artistName} limit={50} />;
+  return <TopAlbums artistName={artistName} limit={60} />;
 };
 
 export default AlbumsPage;

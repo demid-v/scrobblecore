@@ -40,7 +40,7 @@ const History = () => {
               alt="Album's image"
               width={16}
               height={16}
-              className="ml-auto"
+              className="my-auto ml-auto"
             />
           </div>
         </li>

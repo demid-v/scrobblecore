@@ -2,25 +2,22 @@ import Link from "next/link";
 import { api } from "~/trpc/server";
 import Tracks from "./tracks";
 
-const TopTracks = async ({
-  artistName,
+const SearchTracks = async ({
+  searchQuery,
   limit,
   isSection = false,
 }: {
-  artistName: string;
+  searchQuery: string;
   limit: number;
   isSection?: boolean;
 }) => {
-  const tracks = await api.artist.topTracks({
-    artistName,
-    limit,
-  });
+  const tracks = await api.track.search({ trackName: searchQuery, limit });
 
   return (
     <Tracks tracks={tracks}>
       {isSection && (
         <p className="mb-6 mt-10 text-xl">
-          <Link href={{ pathname: `/artists/${artistName}/tracks` }}>
+          <Link href={{ pathname: "/tracks", query: { q: searchQuery } }}>
             Tracks
           </Link>
         </p>
@@ -29,4 +26,4 @@ const TopTracks = async ({
   );
 };
 
-export default TopTracks;
+export default SearchTracks;

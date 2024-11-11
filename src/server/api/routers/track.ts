@@ -38,9 +38,9 @@ export const trackRouter = createTRPCRouter({
       };
 
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const result = (await (await fetch(url)).json()) as unknown;
+      const rawTracks = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = tracksSchema.parse(result);
+      const parsedResult = tracksSchema.parse(rawTracks);
       const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
       const tracks = parsedTracks.map((parsedTrack) => {

@@ -2,12 +2,11 @@
 
 import { api } from "~/trpc/react";
 import Image from "next/image";
-import { Button } from "~/components/ui/button";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useSetAtom } from "jotai";
-import { scrobblesAtom } from "~/lib/store";
+import Tracks from "~/app/_components/tracks";
+import ScrobbleButton from "~/app/_components/scrobble-button";
 
 const Album = () => {
   const { artistName, albumName } = useParams<{
@@ -21,44 +20,6 @@ const Album = () => {
   };
 
   const { data: album } = api.album.one.useQuery(params);
-
-  const setScrobbles = useSetAtom(scrobblesAtom);
-
-  const scrobble = api.track.scrobble.useMutation({
-    onMutate(tracks) {
-      const trackForAtom = tracks.map((track) => ({
-        id: track.id,
-        name: track.track,
-        artist: track.artist,
-        date: track.date,
-        status: "pending" as const,
-      }));
-
-      void setScrobbles(trackForAtom);
-    },
-    onSuccess(data) {
-      const trackForAtom = data.tracks.map((track) => ({
-        id: track.id,
-        name: track.track,
-        artist: track.artist,
-        date: track.date,
-        status: "successful" as const,
-      }));
-
-      void setScrobbles(trackForAtom);
-    },
-    onError(_error, tracks) {
-      const trackForAtom = tracks.map((track) => ({
-        id: track.id,
-        name: track.track,
-        artist: track.artist,
-        date: track.date,
-        status: "failed" as const,
-      }));
-
-      void setScrobbles(trackForAtom);
-    },
-  });
 
   if (typeof album === "undefined") return null;
 
@@ -77,54 +38,10 @@ const Album = () => {
         </Link>
       </p>
       <p className="mt-1 text-center text-lg">{album.name}</p>
-      <Button
-        className="mt-3"
-        onClick={() => {
-          const tracksToScrobble = album.tracks.map((track, index) => ({
-            id: crypto.randomUUID(),
-            track: track.name,
-            artist: album.artist,
-            album: album.name,
-            date: Date.now(),
-            timestamp:
-              Math.floor(Date.now() / 1000) -
-              (track.duration ?? 3 * 60) * (album.tracks.length - 1 - index),
-          }));
-
-          scrobble.mutate(tracksToScrobble);
-        }}
-      >
+      <ScrobbleButton tracks={album.tracks} className="mt-3">
         Scrobble album
-      </Button>
-      <ol className="mx-auto pt-10">
-        {album.tracks.map((track) => (
-          <li
-            key={track.rank}
-            className="flex items-center justify-between px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
-          >
-            <span>{track.name}</span>
-            <Button
-              size={"sm"}
-              onClick={() => {
-                const scrobbles = [
-                  {
-                    id: crypto.randomUUID(),
-                    track: track.name,
-                    artist: album.artist,
-                    album: album.name,
-                    date: Date.now(),
-                    timestamp: Math.floor(Date.now() / 1000),
-                  },
-                ];
-
-                scrobble.mutate(scrobbles);
-              }}
-            >
-              Scrobble
-            </Button>
-          </li>
-        ))}
-      </ol>
+      </ScrobbleButton>
+      <Tracks tracks={album.tracks} className="mt-10" />
     </div>
   );
 };

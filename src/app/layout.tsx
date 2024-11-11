@@ -30,7 +30,7 @@ export default async function RootLayout({
             <div className="h-svh">
               <SidebarTrigger className="fixed ml-1 mt-12" />
             </div>
-            <main className="mx-9 mt-12 w-full pb-8">
+            <main className="mt-12 w-full px-9 pb-8">
               <div className="container mx-auto h-full pt-2">{children}</div>
             </main>
           </SidebarProvider>

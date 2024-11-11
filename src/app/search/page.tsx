@@ -1,7 +1,7 @@
 import SearchBar from "~/app/_components/search-bar";
-import Albums from "~/app/_components/albums";
 import Artists from "~/app/_components/artists";
-import Tracks from "~/app/_components/tracks";
+import SearchAlbums from "../_components/search-albums";
+import SearchTracks from "../_components/search-tracks";
 
 const SearchResults = async ({
   searchParams,
@@ -19,9 +19,9 @@ const SearchResults = async ({
       <SearchBar />
       {!searchIsEmpty && (
         <div className="mt-10">
-          <Albums searchQuery={searchQuery} limit={12} isSection />
+          <SearchAlbums searchQuery={searchQuery} limit={12} isSection />
           <Artists searchQuery={searchQuery} limit={12} isSection />
-          <Tracks searchQuery={searchQuery} limit={10} isSection />
+          <SearchTracks searchQuery={searchQuery} limit={10} isSection />
         </div>
       )}
     </div>

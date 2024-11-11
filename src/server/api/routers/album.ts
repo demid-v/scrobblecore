@@ -25,9 +25,8 @@ const albumsSchema = z.object({
 
 const albumTrackSchema = z.object({
   name: z.string(),
-  url: z.string().url(),
+  artist: z.object({ name: z.string() }),
   duration: z.number().nullable(),
-  "@attr": z.object({ rank: z.number() }),
 });
 
 const albumSchema = z.object({
@@ -139,13 +138,10 @@ export const albumRouter = createTRPCRouter({
           ? tracksProp
           : [tracksProp];
 
-        const tracks = tracksArray.map((track) => {
-          const { ["@attr"]: attr, ...trackProps } = track;
-
-          const tracks = { ...trackProps, rank: attr.rank };
-
-          return tracks;
-        });
+        const tracks = tracksArray.map((track) => ({
+          ...track,
+          artist: track.artist.name,
+        }));
 
         return tracks;
       })();

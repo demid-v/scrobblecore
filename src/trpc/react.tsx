@@ -85,3 +85,11 @@ export type AlbumSearchBaseResult = QueryObserverBaseResult<
 
 export type Albums = RouterOutputs["album"]["search"];
 export type Artists = RouterOutputs["artist"]["search"];
+
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export type SearchTracks = RouterOutputs["track"]["search"];
+export type AlbumTracks = RouterOutputs["album"]["one"]["tracks"];
+export type Tracks =
+  | PartialBy<SearchTracks[number], "image">[]
+  | PartialBy<AlbumTracks[number], "duration">[];

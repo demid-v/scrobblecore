@@ -197,9 +197,9 @@ export const artistRouter = createTRPCRouter({
       };
 
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const result = (await (await fetch(url)).json()) as unknown;
+      const rawTracks = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = topTracksSchema.parse(result);
+      const parsedResult = topTracksSchema.parse(rawTracks);
       const parsedTracks = parsedResult.toptracks.track ?? [];
 
       const tracks = parsedTracks.map((parsedTrack) => {

@@ -1,26 +1,23 @@
-import Link from "next/link";
 import { api } from "~/trpc/server";
 import Albums from "./albums";
+import Link from "next/link";
 
-const TopAlbums = async ({
-  artistName,
+const SearchAlbums = async ({
+  searchQuery,
   limit,
-  isSection = false,
+  isSection,
 }: {
-  artistName: string;
+  searchQuery: string;
   limit: number;
   isSection?: boolean;
 }) => {
-  const albums = await api.artist.topAlbums({
-    artistName,
-    limit,
-  });
+  const albums = await api.album.search({ albumName: searchQuery, limit });
 
   return (
     <Albums albums={albums}>
       {isSection && (
         <p className="mb-6 text-xl">
-          <Link href={{ pathname: `/artists/${artistName}/albums` }}>
+          <Link href={{ pathname: "/albums", query: { q: searchQuery } }}>
             Albums
           </Link>
         </p>
@@ -29,4 +26,4 @@ const TopAlbums = async ({
   );
 };
 
-export default TopAlbums;
+export default SearchAlbums;

@@ -15,7 +15,7 @@ const ArtistsPage = async ({
   return (
     <div>
       <SearchBar />
-      {!isSearchEmpty && <Artists searchQuery={searchQuery} limit={50} />}
+      {!isSearchEmpty && <Artists searchQuery={searchQuery} limit={60} />}
     </div>
   );
 };
