@@ -50,6 +50,7 @@ const Tracks = async ({
                     id: crypto.randomUUID(),
                     track: name,
                     artist,
+                    date: Date.now(),
                     timestamp: Math.floor(Date.now() / 1000),
                   },
                 ]);

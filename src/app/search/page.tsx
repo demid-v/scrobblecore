@@ -19,8 +19,8 @@ const SearchResults = async ({
       <SearchBar />
       {!searchIsEmpty && (
         <div className="mt-10">
-          <Albums searchQuery={searchQuery} limit={10} isSection />
-          <Artists searchQuery={searchQuery} limit={10} isSection />
+          <Albums searchQuery={searchQuery} limit={12} isSection />
+          <Artists searchQuery={searchQuery} limit={12} isSection />
           <Tracks searchQuery={searchQuery} limit={10} isSection />
         </div>
       )}

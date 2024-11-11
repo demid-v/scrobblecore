@@ -31,7 +31,7 @@ export default async function RootLayout({
               <SidebarTrigger className="fixed ml-1 mt-12" />
             </div>
             <main className="mx-9 mt-12 w-full pb-8">
-              <div className="container mx-auto pt-2">{children}</div>
+              <div className="container mx-auto h-full pt-2">{children}</div>
             </main>
           </SidebarProvider>
         </TRPCReactProvider>

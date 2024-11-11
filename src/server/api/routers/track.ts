@@ -76,6 +76,7 @@ export const trackRouter = createTRPCRouter({
           artist: z.string(),
           track: z.string(),
           album: z.string().optional(),
+          date: z.number(),
           timestamp: z.number(),
         }),
       ),

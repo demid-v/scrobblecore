@@ -53,6 +53,7 @@ const TopTracks = async ({
                     id: crypto.randomUUID(),
                     track: name,
                     artist: artistName,
+                    date: Date.now(),
                     timestamp: Math.floor(Date.now() / 1000),
                   },
                 ]);

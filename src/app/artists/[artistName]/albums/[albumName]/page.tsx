@@ -30,7 +30,7 @@ const Album = () => {
         id: track.id,
         name: track.track,
         artist: track.artist,
-        date: track.timestamp,
+        date: track.date,
         status: "pending" as const,
       }));
 
@@ -41,8 +41,19 @@ const Album = () => {
         id: track.id,
         name: track.track,
         artist: track.artist,
-        date: track.timestamp,
+        date: track.date,
         status: "successful" as const,
+      }));
+
+      void setScrobbles(trackForAtom);
+    },
+    onError(_error, tracks) {
+      const trackForAtom = tracks.map((track) => ({
+        id: track.id,
+        name: track.track,
+        artist: track.artist,
+        date: track.date,
+        status: "failed" as const,
       }));
 
       void setScrobbles(trackForAtom);
@@ -74,9 +85,10 @@ const Album = () => {
             track: track.name,
             artist: album.artist,
             album: album.name,
+            date: Date.now(),
             timestamp:
               Math.floor(Date.now() / 1000) -
-              (track.duration ?? 3 * 60) * index,
+              (track.duration ?? 3 * 60) * (album.tracks.length - 1 - index),
           }));
 
           scrobble.mutate(tracksToScrobble);
@@ -100,6 +112,7 @@ const Album = () => {
                     track: track.name,
                     artist: album.artist,
                     album: album.name,
+                    date: Date.now(),
                     timestamp: Math.floor(Date.now() / 1000),
                   },
                 ];
