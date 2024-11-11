@@ -4,7 +4,7 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
 import { Input } from "~/components/ui/input";
 
-const SearchBar = () => {
+const SearchBarInner = () => {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q")?.toString();
 
@@ -36,6 +36,7 @@ const SearchBar = () => {
 
   return (
     <Input
+      className="mb-6"
       ref={searchBar}
       type="text"
       placeholder="Search"
@@ -44,10 +45,10 @@ const SearchBar = () => {
   );
 };
 
-const SearchBarWithSuspense = () => (
+const SearchBar = () => (
   <Suspense>
-    <SearchBar />
+    <SearchBarInner />
   </Suspense>
 );
 
-export default SearchBarWithSuspense;
+export default SearchBar;

@@ -1,5 +1,4 @@
-import SearchBar from "~/app/_components/search-bar";
-import SearchAlbums from "../_components/search-albums";
+import SearchAlbums from "~/app/_components/search-albums";
 
 const AlbumsPage = async ({
   searchParams,
@@ -12,12 +11,9 @@ const AlbumsPage = async ({
   const isSearchEmpty =
     typeof searchQuery === "undefined" || searchQuery === "";
 
-  return (
-    <div>
-      <SearchBar />
-      {!isSearchEmpty && <SearchAlbums searchQuery={searchQuery} limit={60} />}
-    </div>
-  );
+  if (isSearchEmpty) return null;
+
+  return <SearchAlbums searchQuery={searchQuery} limit={60} />;
 };
 
 export default AlbumsPage;

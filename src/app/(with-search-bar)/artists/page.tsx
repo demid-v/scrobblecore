@@ -1,4 +1,3 @@
-import SearchBar from "~/app/_components/search-bar";
 import Artists from "~/app/_components/artists";
 
 const ArtistsPage = async ({
@@ -12,12 +11,9 @@ const ArtistsPage = async ({
   const isSearchEmpty =
     typeof searchQuery === "undefined" || searchQuery === "";
 
-  return (
-    <div>
-      <SearchBar />
-      {!isSearchEmpty && <Artists searchQuery={searchQuery} limit={60} />}
-    </div>
-  );
+  if (isSearchEmpty) return null;
+
+  return <Artists searchQuery={searchQuery} limit={60} />;
 };
 
 export default ArtistsPage;
