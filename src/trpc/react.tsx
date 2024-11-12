@@ -84,12 +84,12 @@ export type AlbumSearchBaseResult = QueryObserverBaseResult<
   TRPCClientErrorLike<AppRouter>
 >;
 
-export type Albums = RouterOutputs["album"]["search"];
+export type Albums = RouterOutputs["album"]["search"]["albums"];
 export type Artists = RouterOutputs["artist"]["search"];
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export type SearchTracks = RouterOutputs["track"]["search"];
+export type SearchTracks = RouterOutputs["track"]["search"]["tracks"];
 export type AlbumTracks = RouterOutputs["album"]["one"]["tracks"];
 export type Tracks =
   | PartialBy<SearchTracks[number], "image">[]

@@ -36,7 +36,9 @@ const Album = () => {
         defaultClassName="mx-auto p-10"
       />
       <p className="mt-3 font-bold">
-        <Link href={`/artists/${encodeURIComponent(album.artist)}`}>
+        <Link
+          href={`/artists/${encodeURIComponent(album.artist ?? artistName)}`}
+        >
           {album.artist}
         </Link>
       </p>

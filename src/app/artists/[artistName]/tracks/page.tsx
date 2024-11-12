@@ -17,7 +17,7 @@ const TracksPage = async ({
 
   return (
     <section>
-      <ScrobbleButton tracks={tracks} className="mb-6">
+      <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
         Scrobble all
       </ScrobbleButton>
       <TopTracks artistName={artistName} limit={limit} />

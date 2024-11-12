@@ -24,6 +24,7 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <SidebarProvider
+            defaultOpen={false}
             style={{ "--sidebar-width": "24rem" } as CSSProperties}
           >
             <Header />

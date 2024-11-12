@@ -4,11 +4,14 @@ import Image from "next/image";
 import type { ImageProps } from "next/image";
 import { useState } from "react";
 
+import { cn } from "~/lib/utils";
+
 const ImageWithFallback = ({
   src,
   alt,
   width,
   height,
+  className,
   defaultSrc,
   defaultClassName,
   ...props
@@ -29,6 +32,7 @@ const ImageWithFallback = ({
           width={width}
           height={height}
           onError={() => setIsFallback(true)}
+          className={className}
           {...props}
         />
       ) : (
@@ -38,7 +42,7 @@ const ImageWithFallback = ({
           unoptimized={true}
           width={width}
           height={height}
-          className={defaultClassName}
+          className={cn(defaultClassName, className)}
           {...props}
         />
       )}

@@ -5,15 +5,21 @@ import { api } from "~/trpc/server";
 import Tracks from "./tracks";
 
 const SearchTracks = async ({
-  searchQuery,
+  search: searchQuery,
   limit,
   isSection = false,
+  page,
 }: {
-  searchQuery: string;
+  search: string;
   limit: number;
   isSection?: boolean;
+  page?: number;
 }) => {
-  const tracks = await api.track.search({ trackName: searchQuery, limit });
+  const { tracks } = await api.track.search({
+    trackName: searchQuery,
+    limit,
+    page,
+  });
 
   return (
     <Tracks tracks={tracks}>

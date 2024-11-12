@@ -9,17 +9,16 @@ const SearchResults = async ({
 }) => {
   const { q } = (await searchParams) ?? {};
 
-  const searchQuery = Array.isArray(q) ? q.at(0) : q;
-  const isSearchEmpty =
-    typeof searchQuery === "undefined" || searchQuery === "";
+  const search = Array.isArray(q) ? q.at(0) : q;
+  const isSearchEmpty = typeof search === "undefined" || search === "";
 
   if (isSearchEmpty) return null;
 
   return (
     <div className="mt-10">
-      <SearchAlbums searchQuery={searchQuery} limit={12} isSection />
-      <Artists searchQuery={searchQuery} limit={12} isSection />
-      <SearchTracks searchQuery={searchQuery} limit={10} isSection />
+      <SearchAlbums search={search} limit={12} isSection />
+      <Artists search={search} limit={12} isSection />
+      <SearchTracks search={search} limit={10} isSection />
     </div>
   );
 };

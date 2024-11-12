@@ -1,4 +1,5 @@
 import ScrobbleButton from "~/app/_components/scrobble-button";
+import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
 import { api } from "~/trpc/server";
 
@@ -7,24 +8,42 @@ const TracksPage = async ({
 }: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) => {
-  const { q } = (await searchParams) ?? {};
+  const { q: searchQuery, page: pageQuery } = (await searchParams) ?? {};
 
-  const searchQuery = Array.isArray(q) ? q.at(0) : q;
-  const isSearchEmpty =
-    typeof searchQuery === "undefined" || searchQuery === "";
+  const search = Array.isArray(searchQuery) ? searchQuery.at(0) : searchQuery;
+  const isSearchEmpty = typeof search === "undefined" || search === "";
 
   if (isSearchEmpty) return null;
 
+  const pageStr = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
+  const page = typeof pageStr !== "undefined" ? Number(pageStr) : 1;
+
   const limit = 50;
-  const tracks = await api.track.search({ trackName: searchQuery, limit });
+  const { tracks, total } = await api.track.search({
+    trackName: search,
+    limit,
+    page,
+  });
 
   return (
-    <section>
-      <ScrobbleButton tracks={tracks} className="mb-6">
+    <>
+      <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
         Scrobble all
       </ScrobbleButton>
-      <SearchTracks searchQuery={searchQuery} limit={limit} />
-    </section>
+      <SearchPagination
+        total={total}
+        limit={limit}
+        page={page}
+        className="mb-6"
+      />
+      <SearchTracks search={search} limit={limit} page={page} />
+      <SearchPagination
+        total={total}
+        limit={limit}
+        page={page}
+        className="mt-6"
+      />
+    </>
   );
 };
 

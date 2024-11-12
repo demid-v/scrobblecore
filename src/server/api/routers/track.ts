@@ -21,20 +21,27 @@ const tracksSchema = z.object({
           }),
         ),
       }),
+      "opensearch:totalResults": z.coerce.number(),
     })
     .optional(),
 });
 
 export const trackRouter = createTRPCRouter({
   search: privateProcedure
-    .input(z.object({ trackName: z.string(), limit: z.number().default(30) }))
-    .query(async ({ input: { trackName, limit } }) => {
+    .input(
+      z.object({
+        trackName: z.string(),
+        limit: z.number().default(30),
+        page: z.number().optional().default(1),
+      }),
+    )
+    .query(async ({ input: { trackName, limit, page } }) => {
       const searchParams = {
         method: "track.search",
         format: "json",
         track: trackName,
         limit: limit.toString(),
-        page: "1",
+        page: page.toString(),
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
@@ -44,14 +51,14 @@ export const trackRouter = createTRPCRouter({
       const parsedResult = tracksSchema.parse(result);
       const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
-      const tracks = parsedTracks.map((parsedTrack) => ({
-        ...parsedTrack,
-        image: parsedTrack.image.find((image) => image.size === "small")?.[
-          "#text"
-        ],
+      const tracks = parsedTracks.map((track) => ({
+        ...track,
+        image: track.image.find((image) => image.size === "small")?.["#text"],
       }));
 
-      return tracks;
+      const total = parsedResult.results?.["opensearch:totalResults"] ?? 0;
+
+      return { tracks, total };
     }),
 
   scrobble: privateProcedure

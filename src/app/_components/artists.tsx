@@ -4,25 +4,32 @@ import ImageWithFallback from "~/components/image-with-fallback";
 import { api } from "~/trpc/server";
 
 const Artists = async ({
-  searchQuery,
+  search,
   limit,
   isSection = false,
+  page,
 }: {
-  searchQuery: string;
+  search: string;
   limit: number;
   isSection?: boolean;
+  page?: number;
 }) => {
-  const artists = await api.artist.search({
-    artistName: searchQuery,
+  const { artists } = await api.artist.search({
+    artistName: search,
     limit,
+    page,
   });
+
+  if (artists.length === 0) {
+    return <div className="text-center text-xl font-medium">No results.</div>;
+  }
 
   return (
     <section>
       {isSection && (
         <p className="mb-6 mt-10 text-xl">
           <Link
-            href={{ pathname: "/artists", query: { q: searchQuery } }}
+            href={{ pathname: "/artists", query: { q: search } }}
             className="hover:underline hover:underline-offset-2"
           >
             Artists

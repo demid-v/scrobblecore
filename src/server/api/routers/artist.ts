@@ -25,6 +25,7 @@ const artistsSchema = z.object({
           }),
         ),
       }),
+      "opensearch:totalResults": z.coerce.number(),
     })
     .optional(),
 });
@@ -77,14 +78,20 @@ const artistInfoSchema = z.object({
 
 export const artistRouter = createTRPCRouter({
   search: privateProcedure
-    .input(z.object({ artistName: z.string(), limit: z.number().default(50) }))
-    .query(async ({ input: { artistName: artistName, limit } }) => {
+    .input(
+      z.object({
+        artistName: z.string(),
+        limit: z.number().default(50),
+        page: z.number().optional().default(1),
+      }),
+    )
+    .query(async ({ input: { artistName: artistName, limit, page } }) => {
       const searchParams = {
         method: "artist.search",
         format: "json",
         artist: artistName,
         limit: limit.toString(),
-        page: "1",
+        page: page.toString(),
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
@@ -94,22 +101,16 @@ export const artistRouter = createTRPCRouter({
       const parsedResult = artistsSchema.parse(result);
       const parsedArtists = parsedResult.results?.artistmatches.artist ?? [];
 
-      const albums = parsedArtists.map((parsedAlbum) => {
-        const { image: images, ...albumProps } = parsedAlbum;
-
-        const image = images.find((image) => image.size === "extralarge")?.[
+      const artists = parsedArtists.map((artist) => ({
+        ...artist,
+        image: artist.image.find((image) => image.size === "extralarge")?.[
           "#text"
-        ];
+        ],
+      }));
 
-        const album = {
-          ...albumProps,
-          image,
-        };
+      const total = parsedResult.results?.["opensearch:totalResults"] ?? 0;
 
-        return album;
-      });
-
-      return albums;
+      return { artists, total };
     }),
 
   info: privateProcedure
@@ -141,7 +142,6 @@ export const artistRouter = createTRPCRouter({
         autocorrect: "1",
         artist: artistName,
         limit: limit.toString(),
-        page: "1",
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
@@ -179,7 +179,6 @@ export const artistRouter = createTRPCRouter({
         autocorrect: "1",
         artist: artistName,
         limit: limit.toString(),
-        page: "1",
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
