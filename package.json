@@ -6,6 +6,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack",
+    "fix-all": "pnpm run format-all && pnpm run type-check && pnpm run lint",
+    "format-all": "pnpm exec prettier . \"!pnpm-lock.yaml\" --write",
     "type-check": "tsc --noEmit",
     "lint": "next lint",
     "start": "next start"
@@ -19,6 +21,7 @@
     "@radix-ui/react-tooltip": "^1.1.3",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.50.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@trpc/client": "^11.0.0-rc.446",
     "@trpc/react-query": "^11.0.0-rc.446",
     "@trpc/server": "^11.0.0-rc.446",
