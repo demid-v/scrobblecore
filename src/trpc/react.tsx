@@ -1,13 +1,13 @@
 "use client";
 
 import {
+  type QueryClient,
   QueryClientProvider,
   type QueryObserverBaseResult,
-  type QueryClient,
 } from "@tanstack/react-query";
 import {
-  loggerLink,
   type TRPCClientErrorLike,
+  loggerLink,
   unstable_httpBatchStreamLink,
 } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
@@ -15,9 +15,10 @@ import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
 import SuperJSON from "superjson";
 
-import { type AppRouter } from "~/server/api/root";
-import { createQueryClient } from "./query-client";
 import { getBaseUrl } from "~/lib/utils";
+import { type AppRouter } from "~/server/api/root";
+
+import { createQueryClient } from "./query-client";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {

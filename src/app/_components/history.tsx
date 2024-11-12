@@ -1,9 +1,10 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { scrobblesAtom } from "~/lib/store";
 import Image from "next/image";
 import Link from "next/link";
+
+import { scrobblesAtom } from "~/lib/store";
 
 const History = () => {
   const scrobbles = useAtomValue(scrobblesAtom).toReversed();

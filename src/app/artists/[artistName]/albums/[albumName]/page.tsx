@@ -1,12 +1,13 @@
 "use client";
 
-import { api } from "~/trpc/react";
 import Image from "next/image";
-import { Suspense } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
-import Tracks from "~/app/_components/tracks";
+import { useParams } from "next/navigation";
+import { Suspense } from "react";
+
 import ScrobbleButton from "~/app/_components/scrobble-button";
+import Tracks from "~/app/_components/tracks";
+import { api } from "~/trpc/react";
 
 const Album = () => {
   const { artistName, albumName } = useParams<{

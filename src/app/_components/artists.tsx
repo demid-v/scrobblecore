@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { api } from "~/trpc/server";
 import Image from "next/image";
+import Link from "next/link";
+
+import { api } from "~/trpc/server";
 
 const Artists = async ({
   searchQuery,

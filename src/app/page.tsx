@@ -1,6 +1,6 @@
-import { api } from "~/trpc/server";
 import { Button } from "~/components/ui/button";
 import { authUrl } from "~/lib/utils";
+import { api } from "~/trpc/server";
 
 const Home = async () => {
   const session = await api.auth.auth();

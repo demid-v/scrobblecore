@@ -1,6 +1,8 @@
-import { api } from "~/trpc/server";
-import Albums from "./albums";
 import Link from "next/link";
+
+import { api } from "~/trpc/server";
+
+import Albums from "./albums";
 
 const SearchAlbums = async ({
   searchQuery,

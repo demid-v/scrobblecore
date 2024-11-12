@@ -2,12 +2,13 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-
-import { TRPCReactProvider } from "~/trpc/react";
-import Header from "./_components/header";
-import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import HistorySidebar from "./_components/history-sidebar";
 import { type CSSProperties } from "react";
+
+import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
+import { TRPCReactProvider } from "~/trpc/react";
+
+import Header from "./_components/header";
+import HistorySidebar from "./_components/history-sidebar";
 
 export const metadata: Metadata = {
   title: "Scrobblecore",

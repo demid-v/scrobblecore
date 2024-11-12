@@ -1,7 +1,8 @@
 "use client";
 
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
+
 import { Input } from "~/components/ui/input";
 
 const SearchBarInner = () => {

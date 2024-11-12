@@ -2,10 +2,11 @@
 
 import { useSetAtom } from "jotai";
 import { type ReactNode } from "react";
+
 import { Button } from "~/components/ui/button";
-import { scrobblesAtom } from "~/lib/store";
-import { type AlbumTracks, api, type Tracks } from "~/trpc/react";
 import { type ButtonProps } from "~/components/ui/button";
+import { scrobblesAtom } from "~/lib/store";
+import { type AlbumTracks, type Tracks, api } from "~/trpc/react";
 
 const isTrackWithDuration = (
   track: Tracks[number],

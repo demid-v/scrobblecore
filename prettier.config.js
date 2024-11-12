@@ -11,8 +11,9 @@ const config = {
     // Must come last. https://dev.to/kachidk/common-prettier-plugins-installation-30hc
     "prettier-plugin-tailwindcss",
   ],
-  importOrder: [],
+  importOrder: ["^~/styles/(.*)$", "<THIRD_PARTY_MODULES>", "^[~/]", "^[./]"],
   importOrderSortSpecifiers: true,
+  importOrderSeparation: true,
 };
 
 export default config;

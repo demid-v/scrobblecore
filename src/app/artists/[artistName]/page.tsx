@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+
 import TopAlbums from "~/app/_components/top-albums";
 import TopTracks from "~/app/_components/top-tracks";
 import { api } from "~/trpc/server";

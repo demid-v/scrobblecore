@@ -1,7 +1,8 @@
-import { authRouter } from "~/server/api/routers/auth";
 import { albumRouter } from "~/server/api/routers/album";
+import { authRouter } from "~/server/api/routers/auth";
 import { trackRouter } from "~/server/api/routers/track";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+
 import { artistRouter } from "./routers/artist";
 
 /**

@@ -1,8 +1,10 @@
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
+
 import { Button } from "~/components/ui/button";
 import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
+
 import Navigation from "./navigation";
 
 const Header = async () => {

@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const middleware = (request: NextRequest) => {
   const requestUrl = new URL(request.url);

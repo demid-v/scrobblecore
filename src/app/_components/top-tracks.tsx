@@ -1,5 +1,7 @@
 import Link from "next/link";
+
 import { api } from "~/trpc/server";
+
 import Tracks from "./tracks";
 
 const TopTracks = async ({

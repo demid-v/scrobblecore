@@ -1,12 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
+
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarGroupLabel,
 } from "~/components/ui/sidebar";
 
 const History = dynamic(() => import("./history"), {

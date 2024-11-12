@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { type SearchTracks, type Tracks as TTracks } from "~/trpc/react";
-import ScrobbleButton from "./scrobble-button";
 import Link from "next/link";
+
+import { type SearchTracks, type Tracks as TTracks } from "~/trpc/react";
+
+import ScrobbleButton from "./scrobble-button";
 
 const isTrackWithImage = (
   track: TTracks[number],
