@@ -97,16 +97,9 @@ export const artistRouter = createTRPCRouter({
       const albums = parsedArtists.map((parsedAlbum) => {
         const { image: images, ...albumProps } = parsedAlbum;
 
-        const image = (() => {
-          const image = images.find((image) => image.size === "extralarge")?.[
-            "#text"
-          ];
-
-          if (typeof image === "undefined" || image === "")
-            return "/no-cover.png";
-
-          return image;
-        })();
+        const image = images.find((image) => image.size === "extralarge")?.[
+          "#text"
+        ];
 
         const album = {
           ...albumProps,
@@ -161,16 +154,9 @@ export const artistRouter = createTRPCRouter({
       const albums = parsedAlbums.map((parsedAlbum) => {
         const { image: images, ...albumProps } = parsedAlbum;
 
-        const image = (() => {
-          const image = images.find((image) => image.size === "extralarge")?.[
-            "#text"
-          ];
-
-          if (typeof image === "undefined" || image === "")
-            return "/no-cover.png";
-
-          return image;
-        })();
+        const image = images.find((image) => image.size === "extralarge")?.[
+          "#text"
+        ];
 
         const album = {
           ...albumProps,
@@ -198,33 +184,18 @@ export const artistRouter = createTRPCRouter({
       };
 
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const rawTracks = (await (await fetch(url)).json()) as unknown;
+      const result = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = topTracksSchema.parse(rawTracks);
+      const parsedResult = topTracksSchema.parse(result);
       const parsedTracks = parsedResult.toptracks.track ?? [];
 
-      const tracks = parsedTracks.map((parsedTrack) => {
-        const { image: images, ...trackProps } = parsedTrack;
-
-        const image = (() => {
-          const image = images.find((image) => image.size === "small")?.[
-            "#text"
-          ];
-
-          if (typeof image === "undefined" || image === "")
-            return "/no-cover.png";
-
-          return image;
-        })();
-
-        const track = {
-          ...trackProps,
-          image,
-          artist: trackProps.artist.name,
-        };
-
-        return track;
-      });
+      const tracks = parsedTracks.map((parsedTrack) => ({
+        ...parsedTrack,
+        image: parsedTrack.image.find((image) => image.size === "small")?.[
+          "#text"
+        ],
+        artist: parsedTrack.artist.name,
+      }));
 
       return tracks;
     }),

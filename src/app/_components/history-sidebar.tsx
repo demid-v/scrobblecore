@@ -7,7 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
 } from "~/components/ui/sidebar";
 
 const History = dynamic(() => import("./history"), {
@@ -16,10 +16,12 @@ const History = dynamic(() => import("./history"), {
 
 const HistorySidebar = () => {
   return (
-    <Sidebar className="mt-12 h-[calc(100svh-3rem)]">
+    <Sidebar className="mt-12 h-[calc(100svh-3rem)]" title="History">
+      <SidebarHeader className="ml-2 text-lg font-medium">
+        History
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>History</SidebarGroupLabel>
           <SidebarGroupContent>
             <History />
           </SidebarGroupContent>

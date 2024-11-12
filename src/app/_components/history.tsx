@@ -16,22 +16,22 @@ const History = () => {
           key={id}
           className="gap-x-2 px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
         >
-          <div className="flex justify-between gap-x-1 overflow-hidden">
-            <div className="overflow-hidden text-ellipsis text-nowrap">
+          <div className="flex items-center justify-between gap-x-1 overflow-hidden">
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap">
               <Link
                 href={`/artists/${encodeURIComponent(artist)}`}
-                className="font-medium"
+                className="text-xs font-medium"
               >
                 {artist}
               </Link>
             </div>
-            <div className="shrink-0 text-xs">
+            <time className="shrink-0 whitespace-nowrap text-xs">
               {new Date(date).toLocaleString()}
-            </div>
+            </time>
           </div>
-          <div className="flex shrink-0 justify-between gap-x-1">
+          <div className="flex justify-between gap-x-1">
             <div
-              className="overflow-hidden text-ellipsis text-nowrap"
+              className="overflow-hidden text-ellipsis whitespace-nowrap"
               title={name}
             >
               {name}

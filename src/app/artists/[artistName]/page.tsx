@@ -20,7 +20,7 @@ const Artist = async ({
 
   return (
     <div>
-      <div className="mt-6 text-3xl font-semibold">{artistName}</div>
+      <div className="text-3xl font-semibold">{artistName}</div>
       <div className="mt-10">
         <TopAlbums artistName={artistName} limit={12} isSection />
         <TopTracks artistName={artistName} limit={10} isSection />

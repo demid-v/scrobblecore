@@ -67,27 +67,12 @@ export const albumRouter = createTRPCRouter({
       const parsedResult = albumsSchema.parse(result);
       const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
 
-      const albums = parsedAlbums.map((parsedAlbum) => {
-        const { image: images, ...albumProps } = parsedAlbum;
-
-        const image = (() => {
-          const image = images.find((image) => image.size === "extralarge")?.[
-            "#text"
-          ];
-
-          if (typeof image === "undefined" || image === "")
-            return "/no-cover.png";
-
-          return image;
-        })();
-
-        const album = {
-          ...albumProps,
-          image,
-        };
-
-        return album;
-      });
+      const albums = parsedAlbums.map((parsedAlbum) => ({
+        ...parsedAlbum,
+        image: parsedAlbum.image.find((image) => image.size === "extralarge")?.[
+          "#text"
+        ],
+      }));
 
       return albums;
     }),
@@ -119,16 +104,9 @@ export const albumRouter = createTRPCRouter({
         ...albumProps
       } = parsedAlbum.album;
 
-      const image = (() => {
-        const image = images.find((image) => image.size === "extralarge")?.[
-          "#text"
-        ];
-
-        if (typeof image === "undefined" || image === "")
-          return "/no-cover.png";
-
-        return image;
-      })();
+      const image = images.find((image) => image.size === "extralarge")?.[
+        "#text"
+      ];
 
       const tracks = (() => {
         if (typeof tracksObj === "undefined") return [];

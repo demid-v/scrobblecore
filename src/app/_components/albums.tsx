@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import ImageWithFallback from "~/components/image-with-fallback";
 import { type Albums as TAlbums } from "~/trpc/react";
 
 const Albums = async ({
@@ -12,17 +12,29 @@ const Albums = async ({
 }) => (
   <section>
     {children}
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+    <div className="mx-auto grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
       {albums.map(({ name, artist, image }) => (
-        <div key={`${name}${artist}`}>
-          <Link
-            href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
-          >
-            <Image src={image} alt="Album's cover" width={300} height={300} />
-          </Link>
-          <p className="mt-2">
-            {artist} - {name}
+        <div key={`${name}${artist}`} className="mx-auto">
+          <div className="mb-2">
+            <Link
+              href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
+            >
+              <ImageWithFallback
+                src={image}
+                alt="Album's cover"
+                width={300}
+                height={300}
+                defaultSrc="/no-cover.png"
+                defaultClassName="p-10"
+              />
+            </Link>
+          </div>
+          <p className="mb-1 text-sm font-bold">
+            <Link href={`/artists/${encodeURIComponent(artist)}`}>
+              {artist}
+            </Link>
           </p>
+          <p>{name}</p>
         </div>
       ))}
     </div>

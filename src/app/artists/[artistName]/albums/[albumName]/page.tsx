@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Suspense } from "react";
 
 import ScrobbleButton from "~/app/_components/scrobble-button";
 import Tracks from "~/app/_components/tracks";
+import ImageWithFallback from "~/components/image-with-fallback";
 import { api } from "~/trpc/react";
 
 const Album = () => {
@@ -26,12 +26,14 @@ const Album = () => {
 
   return (
     <div className="w-full text-center">
-      <Image
-        className="mx-auto"
+      <ImageWithFallback
         src={album.image}
         alt="Album's image"
         width={300}
         height={300}
+        defaultSrc="/no-cover.png"
+        className="mx-auto"
+        defaultClassName="mx-auto p-10"
       />
       <p className="mt-3 font-bold">
         <Link href={`/artists/${encodeURIComponent(album.artist)}`}>

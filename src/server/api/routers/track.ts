@@ -39,32 +39,17 @@ export const trackRouter = createTRPCRouter({
       };
 
       const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const rawTracks = (await (await fetch(url)).json()) as unknown;
+      const result = (await (await fetch(url)).json()) as unknown;
 
-      const parsedResult = tracksSchema.parse(rawTracks);
+      const parsedResult = tracksSchema.parse(result);
       const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
-      const tracks = parsedTracks.map((parsedTrack) => {
-        const { image: images, ...trackProps } = parsedTrack;
-
-        const image = (() => {
-          const image = images.find((image) => image.size === "small")?.[
-            "#text"
-          ];
-
-          if (typeof image === "undefined" || image === "")
-            return "/no-cover.png";
-
-          return image;
-        })();
-
-        const track = {
-          ...trackProps,
-          image,
-        };
-
-        return track;
-      });
+      const tracks = parsedTracks.map((parsedTrack) => ({
+        ...parsedTrack,
+        image: parsedTrack.image.find((image) => image.size === "small")?.[
+          "#text"
+        ],
+      }));
 
       return tracks;
     }),

@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import ImageWithFallback from "~/components/image-with-fallback";
 import { api } from "~/trpc/server";
 
 const Artists = async ({
@@ -33,11 +33,13 @@ const Artists = async ({
         {artists.map(({ name, image }) => (
           <div key={name}>
             <Link href={`/artists/${encodeURIComponent(name)}`}>
-              <Image
+              <ImageWithFallback
                 src={image}
                 alt="Artist's image"
                 width={300}
                 height={300}
+                defaultSrc="/no-artist-image.png"
+                defaultClassName="p-10"
               />
             </Link>
             <p className="mt-2">{name}</p>
