@@ -1,4 +1,6 @@
+import ScrobbleButton from "~/app/_components/scrobble-button";
 import SearchTracks from "~/app/_components/search-tracks";
+import { api } from "~/trpc/server";
 
 const TracksPage = async ({
   searchParams,
@@ -13,7 +15,17 @@ const TracksPage = async ({
 
   if (isSearchEmpty) return null;
 
-  return <SearchTracks searchQuery={searchQuery} limit={30} />;
+  const limit = 50;
+  const tracks = await api.track.search({ trackName: searchQuery, limit });
+
+  return (
+    <section>
+      <ScrobbleButton tracks={tracks} className="mb-6">
+        Scrobble all
+      </ScrobbleButton>
+      <SearchTracks searchQuery={searchQuery} limit={limit} />
+    </section>
+  );
 };
 
 export default TracksPage;

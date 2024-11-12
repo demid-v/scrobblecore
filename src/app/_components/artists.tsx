@@ -20,7 +20,10 @@ const Artists = async ({
     <section>
       {isSection && (
         <p className="mb-6 mt-10 text-xl">
-          <Link href={{ pathname: "/artists", query: { q: searchQuery } }}>
+          <Link
+            href={{ pathname: "/artists", query: { q: searchQuery } }}
+            className="hover:underline hover:underline-offset-2"
+          >
             Artists
           </Link>
         </p>

@@ -17,7 +17,10 @@ const SearchAlbums = async ({
     <Albums albums={albums}>
       {isSection && (
         <p className="mb-6 text-xl">
-          <Link href={{ pathname: "/albums", query: { q: searchQuery } }}>
+          <Link
+            href={{ pathname: "/albums", query: { q: searchQuery } }}
+            className="hover:underline hover:underline-offset-2"
+          >
             Albums
           </Link>
         </p>

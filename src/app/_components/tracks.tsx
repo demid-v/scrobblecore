@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { type SearchTracks, type Tracks as TTracks } from "~/trpc/react";
 import ScrobbleButton from "./scrobble-button";
+import Link from "next/link";
 
 const isTrackWithImage = (
   track: TTracks[number],
@@ -35,9 +36,15 @@ const Tracks = ({
                 className="mr-2"
               />
             )}
-            <span>
-              {track.artist} - {track.name}
-            </span>
+            <div>
+              <Link
+                href={`/artists/${encodeURIComponent(track.artist)}`}
+                className="mr-4 text-sm font-medium"
+              >
+                {track.artist}
+              </Link>
+              {track.name}
+            </div>
           </div>
           <ScrobbleButton tracks={[track]} size="sm">
             Scrobble

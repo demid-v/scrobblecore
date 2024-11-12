@@ -20,7 +20,10 @@ const TopAlbums = async ({
     <Albums albums={albums}>
       {isSection && (
         <p className="mb-6 text-xl">
-          <Link href={{ pathname: `/artists/${artistName}/albums` }}>
+          <Link
+            href={{ pathname: `/artists/${artistName}/albums` }}
+            className="hover:underline hover:underline-offset-2"
+          >
             Albums
           </Link>
         </p>
