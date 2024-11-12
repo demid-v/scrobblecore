@@ -28,9 +28,9 @@ export default async function RootLayout({
             <Header />
             <HistorySidebar />
             <div className="h-svh">
-              <SidebarTrigger className="fixed ml-1 mt-12" />
+              <SidebarTrigger className="fixed ml-2 mt-14" />
             </div>
-            <main className="mt-12 w-full px-9 pb-8">
+            <main className="mt-12 w-full px-11 pb-8">
               <div className="container mx-auto h-full pt-2">{children}</div>
             </main>
           </SidebarProvider>
