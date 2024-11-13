@@ -19,8 +19,6 @@ const Tracks = ({
   React.HTMLAttributes<HTMLElement>,
   HTMLElement
 >) => {
-  console.log("tracks:", tracks);
-
   if (tracks.length === 0) {
     return <div className="text-center text-xl font-medium">No results.</div>;
   }

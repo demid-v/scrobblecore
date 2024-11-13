@@ -14,8 +14,8 @@ const AlbumsPage = async ({
 
   if (isSearchEmpty) return null;
 
-  const pageStr = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof pageStr !== "undefined" ? Number(pageStr) : 1;
+  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
+  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
 
   const limit = 60;
   const { total } = await api.album.search({

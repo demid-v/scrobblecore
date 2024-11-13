@@ -15,10 +15,11 @@ const TracksPage = async ({
 
   if (isSearchEmpty) return null;
 
-  const pageStr = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof pageStr !== "undefined" ? Number(pageStr) : 1;
+  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
+  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
 
   const limit = 50;
+
   const { tracks, total } = await api.track.search({
     trackName: search,
     limit,
@@ -27,15 +28,17 @@ const TracksPage = async ({
 
   return (
     <>
-      <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
-        Scrobble all
-      </ScrobbleButton>
       <SearchPagination
         total={total}
         limit={limit}
         page={page}
         className="mb-6"
       />
+      {tracks.length > 0 && (
+        <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
+          Scrobble all
+        </ScrobbleButton>
+      )}
       <SearchTracks search={search} limit={limit} page={page} />
       <SearchPagination
         total={total}

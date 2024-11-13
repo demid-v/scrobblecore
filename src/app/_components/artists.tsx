@@ -6,13 +6,13 @@ import { api } from "~/trpc/server";
 const Artists = async ({
   search,
   limit,
-  isSection = false,
   page,
+  isSection = false,
 }: {
   search: string;
   limit: number;
-  isSection?: boolean;
   page?: number;
+  isSection?: boolean;
 }) => {
   const { artists } = await api.artist.search({
     artistName: search,

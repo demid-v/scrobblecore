@@ -20,7 +20,7 @@ const History = () => {
             <div className="overflow-hidden text-ellipsis whitespace-nowrap">
               <Link
                 href={`/artists/${encodeURIComponent(artist)}`}
-                className="text-xs font-medium"
+                className="text-xs font-semibold"
               >
                 {artist}
               </Link>

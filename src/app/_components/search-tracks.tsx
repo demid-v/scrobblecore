@@ -5,18 +5,18 @@ import { api } from "~/trpc/server";
 import Tracks from "./tracks";
 
 const SearchTracks = async ({
-  search: searchQuery,
+  search,
   limit,
-  isSection = false,
   page,
+  isSection = false,
 }: {
   search: string;
   limit: number;
-  isSection?: boolean;
   page?: number;
+  isSection?: boolean;
 }) => {
   const { tracks } = await api.track.search({
-    trackName: searchQuery,
+    trackName: search,
     limit,
     page,
   });
@@ -26,7 +26,7 @@ const SearchTracks = async ({
       {isSection && (
         <p className="mb-6 mt-10 text-xl">
           <Link
-            href={{ pathname: "/tracks", query: { q: searchQuery } }}
+            href={{ pathname: "/tracks", query: { q: search } }}
             className="hover:underline hover:underline-offset-2"
           >
             Tracks

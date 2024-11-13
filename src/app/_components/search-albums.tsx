@@ -7,13 +7,13 @@ import Albums from "./albums";
 const SearchAlbums = async ({
   search,
   limit,
-  isSection,
   page,
+  isSection,
 }: {
   search: string;
   limit: number;
-  isSection?: boolean;
   page?: number;
+  isSection?: boolean;
 }) => {
   const { albums } = await api.album.search({ albumName: search, limit, page });
 

@@ -7,15 +7,18 @@ import Albums from "./albums";
 const TopAlbums = async ({
   artistName,
   limit,
+  page,
   isSection = false,
 }: {
   artistName: string;
   limit: number;
+  page?: number;
   isSection?: boolean;
 }) => {
-  const albums = await api.artist.topAlbums({
+  const { albums } = await api.artist.topAlbums({
     artistName,
     limit,
+    page,
   });
 
   return (

@@ -7,15 +7,18 @@ import Tracks from "./tracks";
 const TopTracks = async ({
   artistName,
   limit,
+  page,
   isSection = false,
 }: {
   artistName: string;
   limit: number;
+  page?: number;
   isSection?: boolean;
 }) => {
-  const tracks = await api.artist.topTracks({
+  const { tracks } = await api.artist.topTracks({
     artistName,
     limit,
+    page,
   });
 
   return (

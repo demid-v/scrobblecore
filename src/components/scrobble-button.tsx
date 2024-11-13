@@ -13,14 +13,19 @@ type TracksMapped = (Scrobble & { timestamp: number })[];
 const isAlbumTrack = (track: Tracks[number]): track is AlbumTracks[number] =>
   Object.hasOwn(track, "duration") || Object.hasOwn(track, "album");
 
-const generateTimestamp = (date: number) => (track: Tracks[number]) => {
+const generateTimestamps = (date: number, tracks: Tracks) => {
   const defaultDuration = 3 * 60 * 1000;
 
-  date -= isAlbumTrack(track)
-    ? (track.duration ?? defaultDuration)
-    : defaultDuration;
+  return tracks
+    .toReversed()
+    .map((track) => {
+      date -= isAlbumTrack(track)
+        ? (track.duration ?? defaultDuration)
+        : defaultDuration;
 
-  return Math.floor(date / 1000);
+      return Math.floor(date / 1000);
+    })
+    .toReversed();
 };
 
 const scrobbleSize = 50;
@@ -62,15 +67,15 @@ const ScrobbleButton = ({
 
   const startScrobble = () => {
     const date = Date.now();
-    const getTimestamp = generateTimestamp(date);
+    const timestamps = generateTimestamps(date, tracks);
 
-    tracksMapped.current = tracks.map((track) => ({
+    tracksMapped.current = tracks.map((track, index) => ({
       id: crypto.randomUUID(),
       track: track.name,
       artist: track.artist,
       ...(isAlbumTrack(track) && { album: track.album }),
       date,
-      timestamp: getTimestamp(track),
+      timestamp: timestamps[index] ?? date,
       status: "pending" as const,
     }));
 

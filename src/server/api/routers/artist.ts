@@ -44,6 +44,9 @@ const topAlbumsSchema = z.object({
         ),
       }),
     ),
+    "@attr": z.object({
+      total: z.coerce.number(),
+    }),
   }),
 });
 
@@ -61,6 +64,9 @@ const topTracksSchema = z.object({
         ),
       }),
     ),
+    "@attr": z.object({
+      total: z.coerce.number(),
+    }),
   }),
 });
 
@@ -134,14 +140,21 @@ export const artistRouter = createTRPCRouter({
     }),
 
   topAlbums: privateProcedure
-    .input(z.object({ artistName: z.string(), limit: z.number().default(50) }))
-    .query(async ({ input: { artistName, limit } }) => {
+    .input(
+      z.object({
+        artistName: z.string(),
+        limit: z.number().default(50),
+        page: z.number().default(1),
+      }),
+    )
+    .query(async ({ input: { artistName, limit, page } }) => {
       const searchParams = {
         method: "artist.gettopalbums",
         format: "json",
         autocorrect: "1",
         artist: artistName,
         limit: limit.toString(),
+        page: page.toString(),
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
@@ -167,18 +180,27 @@ export const artistRouter = createTRPCRouter({
         return album;
       });
 
-      return albums;
+      const total = parsedResult.topalbums["@attr"].total;
+
+      return { albums, total };
     }),
 
   topTracks: privateProcedure
-    .input(z.object({ artistName: z.string(), limit: z.number().default(50) }))
-    .query(async ({ input: { artistName, limit } }) => {
+    .input(
+      z.object({
+        artistName: z.string(),
+        limit: z.number().default(50),
+        page: z.number().default(1),
+      }),
+    )
+    .query(async ({ input: { artistName, limit, page } }) => {
       const searchParams = {
         method: "artist.gettoptracks",
         format: "json",
         autocorrect: "1",
         artist: artistName,
         limit: limit.toString(),
+        page: page.toString(),
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
@@ -196,6 +218,8 @@ export const artistRouter = createTRPCRouter({
         artist: parsedTrack.artist.name,
       }));
 
-      return tracks;
+      const total = parsedResult.toptracks["@attr"].total;
+
+      return { tracks, total };
     }),
 });
