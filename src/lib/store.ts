@@ -2,9 +2,9 @@ import { atom } from "jotai";
 import cookies from "js-cookie";
 import SuperJSON from "superjson";
 
-type Scrobble = {
+export type Scrobble = {
   id: string;
-  name: string;
+  track: string;
   artist: string;
   date: number;
   status: "pending" | "successful" | "failed";
@@ -19,15 +19,17 @@ const scrobblesToMap = (newScrobbles: Scrobble[], scrobbles: ScrobblesMap) =>
   );
 
 const getInitialScrobbles = () => {
-  if (typeof localStorage === "undefined") return new Map<string, Scrobble>();
+  const emptyMap = new Map<string, Scrobble>();
+
+  if (typeof localStorage === "undefined") return emptyMap;
 
   const scrobblesItem = localStorage.getItem("scrobbles");
 
-  if (scrobblesItem === null) return new Map<string, Scrobble>();
+  if (scrobblesItem === null) return emptyMap;
 
   const userName = cookies.get("userName") ?? "";
   const users = SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem);
-  const scrobbles = users.get(userName) ?? new Map<string, Scrobble>();
+  const scrobbles = users.get(userName) ?? emptyMap;
 
   return scrobbles;
 };
@@ -43,7 +45,8 @@ export const scrobblesAtom = atom(
     );
     set(baseScrobblesAtom, newScrobblesMap);
 
-    if (typeof localStorage === "undefined") return;
+    const isPending = newScrobbles.at(0)?.status === "pending";
+    if (typeof localStorage === "undefined" || isPending) return;
 
     const userName = cookies.get("userName") ?? "";
     const users = new Map([[userName, newScrobblesMap]]);

@@ -1,5 +1,5 @@
-import ScrobbleButton from "~/app/_components/scrobble-button";
 import TopTracks from "~/app/_components/top-tracks";
+import ScrobbleButton from "~/components/scrobble-button";
 import { api } from "~/trpc/server";
 
 const TracksPage = async ({

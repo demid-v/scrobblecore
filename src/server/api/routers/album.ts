@@ -131,6 +131,7 @@ export const albumRouter = createTRPCRouter({
         const tracks = tracksArray.map((track) => ({
           ...track,
           artist: track.artist.name,
+          album: albumName,
         }));
 
         return tracks;

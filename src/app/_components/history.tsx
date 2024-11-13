@@ -11,7 +11,7 @@ const History = () => {
 
   return (
     <ol>
-      {scrobbles.map(({ id, artist, name, date, status }) => (
+      {scrobbles.map(({ id, artist, track: name, date, status }) => (
         <li
           key={id}
           className="gap-x-2 px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"

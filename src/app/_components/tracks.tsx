@@ -1,9 +1,8 @@
 import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
+import ScrobbleButton from "~/components/scrobble-button";
 import { type SearchTracks, type Tracks as TTracks } from "~/trpc/react";
-
-import ScrobbleButton from "./scrobble-button";
 
 const isTrackWithImage = (
   track: TTracks[number],

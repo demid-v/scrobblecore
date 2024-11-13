@@ -1,6 +1,6 @@
-import ScrobbleButton from "~/app/_components/scrobble-button";
 import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
+import ScrobbleButton from "~/components/scrobble-button";
 import { api } from "~/trpc/server";
 
 const TracksPage = async ({

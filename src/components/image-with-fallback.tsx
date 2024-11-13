@@ -31,7 +31,9 @@ const ImageWithFallback = ({
           unoptimized={true}
           width={width}
           height={height}
-          onError={() => setIsFallback(true)}
+          onError={() => {
+            setIsFallback(true);
+          }}
           className={className}
           {...props}
         />

@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Suspense } from "react";
 
-import ScrobbleButton from "~/app/_components/scrobble-button";
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
+import ScrobbleButton from "~/components/scrobble-button";
 import { api } from "~/trpc/react";
 
 const Album = () => {
