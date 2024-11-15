@@ -18,13 +18,13 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 
   return tracks
     .toReversed()
-    .map((track) => {
-      date -= isAlbumTrack(track)
-        ? (track.duration ?? defaultDuration)
-        : defaultDuration;
-
-      return Math.floor(date / 1000);
-    })
+    .map((track) =>
+      Math.floor(
+        (date -= isAlbumTrack(track)
+          ? (track.duration ?? defaultDuration)
+          : defaultDuration) / 1000,
+      ),
+    )
     .toReversed();
 };
 
@@ -80,7 +80,7 @@ const ScrobbleButton = ({
     }));
 
     const tracksForStore = tracksMapped.current.map((track) => {
-      const { timestamp: _qwe, ...props } = track;
+      const { timestamp: _timestamp, ...props } = track;
       return props;
     });
 

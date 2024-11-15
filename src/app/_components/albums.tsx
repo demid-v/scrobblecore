@@ -34,12 +34,12 @@ const Albums = async ({
                 />
               </Link>
             </div>
-            <p className="mb-1 text-sm font-bold">
+            <p className="mb-1 break-all text-sm font-bold">
               <Link href={`/artists/${encodeURIComponent(artist)}`}>
                 {artist}
               </Link>
             </p>
-            <p>{name}</p>
+            <p className="break-all">{name}</p>
           </div>
         ))}
       </div>

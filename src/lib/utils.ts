@@ -101,3 +101,6 @@ export const paginate = ({
     lastPageIndex,
   ] as const;
 };
+
+export const wait = async (ms?: number) =>
+  await new Promise((resolve) => setTimeout(() => resolve(1), ms));

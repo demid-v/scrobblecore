@@ -30,7 +30,7 @@ const Tracks = ({
         {tracks.map((track, index) => (
           <li
             key={`${index}`}
-            className="flex items-center gap-2 px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
+            className="flex h-10 items-center gap-2 px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
           >
             {isTrackWithImage(track) && (
               <ImageWithFallback

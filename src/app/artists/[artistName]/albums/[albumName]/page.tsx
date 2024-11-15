@@ -1,28 +1,23 @@
-"use client";
-
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Suspense } from "react";
 
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
 import ScrobbleButton from "~/components/scrobble-button";
-import { api } from "~/trpc/react";
+import { api } from "~/trpc/server";
 
-const Album = () => {
-  const { artistName, albumName } = useParams<{
-    artistName: string;
-    albumName: string;
-  }>();
+const AlbumPage = async ({
+  params,
+}: {
+  params: Promise<{ artistName: string; albumName: string }>;
+}) => {
+  const { artistName, albumName } = await params;
 
-  const params = {
+  const queryParams = {
     artistName: decodeURIComponent(artistName),
     albumName: decodeURIComponent(albumName),
   };
 
-  const { data: album } = api.album.one.useQuery(params);
-
-  if (typeof album === "undefined") return null;
+  const album = await api.album.one(queryParams);
 
   return (
     <div className="w-full text-center">
@@ -42,7 +37,7 @@ const Album = () => {
           {album.artist}
         </Link>
       </p>
-      <p className="mt-1 text-center text-lg">{album.name}</p>
+      <p className="mt-1 break-all text-center text-lg">{album.name}</p>
       <ScrobbleButton tracks={album.tracks} className="mt-3">
         Scrobble album
       </ScrobbleButton>
@@ -51,10 +46,4 @@ const Album = () => {
   );
 };
 
-const AlbumWithSuspense = () => (
-  <Suspense>
-    <Album />
-  </Suspense>
-);
-
-export default AlbumWithSuspense;
+export default AlbumPage;
