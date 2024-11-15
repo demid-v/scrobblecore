@@ -17,9 +17,9 @@ const Albums = async ({
   return (
     <section>
       {children}
-      <div className="mx-auto grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
         {albums.map(({ name, artist, image }) => (
-          <div key={`${name}${artist}`} className="mx-auto">
+          <div key={`${name}${artist}`} className="w-full">
             <div className="mb-2">
               <Link
                 href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
@@ -29,17 +29,20 @@ const Albums = async ({
                   alt="Album's cover"
                   width={300}
                   height={300}
+                  className="h-full w-full"
                   defaultSrc="/no-cover.png"
                   defaultClassName="p-10"
                 />
               </Link>
             </div>
-            <p className="mb-1 break-all text-sm font-bold">
+            <p className="mb-1 line-clamp-2 text-sm font-bold">
               <Link href={`/artists/${encodeURIComponent(artist)}`}>
                 {artist}
               </Link>
             </p>
-            <p className="break-all">{name}</p>
+            <p className="line-clamp-2" title={name}>
+              {name}
+            </p>
           </div>
         ))}
       </div>
