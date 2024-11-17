@@ -1,53 +1,79 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
 import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
 import ScrobbleButton from "~/components/scrobble-button";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const TracksPage = async ({
-  searchParams,
-}: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const { q: searchQuery, page: pageQuery } = (await searchParams) ?? {};
+const limit = 50;
 
-  const search = Array.isArray(searchQuery) ? searchQuery.at(0) : searchQuery;
-  const isSearchEmpty = typeof search === "undefined" || search === "";
+const TracksPageInner = () => {
+  const searchParams = useSearchParams();
 
-  if (isSearchEmpty) return null;
+  const search = searchParams.get("q") ?? "";
 
-  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const limit = 50;
+  const { data, isFetching, isSuccess } = api.track.search.useQuery({
+    trackName: search,
+    limit,
+  });
 
-  const { tracks, total } = await api.track.search({
+  const {
+    data: data2,
+    isFetching: isFetching2,
+    isSuccess: isSuccess2,
+  } = api.track.search.useQuery({
     trackName: search,
     limit,
     page,
   });
 
+  if (search === "") return null;
+
   return (
     <>
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mb-6"
-      />
-      {tracks.length > 0 && (
-        <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mb-6"
+        />
+      )}
+      {isFetching2 || !isSuccess2 ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-28" />
+      ) : (
+        <ScrobbleButton tracks={data2.tracks} className="mx-auto mb-6 block">
           Scrobble all
         </ScrobbleButton>
       )}
-      <SearchTracks search={search} limit={limit} page={page} />
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mt-6"
-      />
+      <SearchTracks limit={limit} />
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mt-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mt-6"
+        />
+      )}
     </>
   );
 };
+
+const TracksPage = () => (
+  <Suspense>
+    <TracksPageInner />
+  </Suspense>
+);
 
 export default TracksPage;

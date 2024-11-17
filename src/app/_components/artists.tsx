@@ -1,24 +1,37 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 
-const Artists = async ({
-  search,
+import GridLoading from "./grid-loading";
+
+const Artists = ({
   limit,
-  page,
   isSection = false,
 }: {
-  search: string;
   limit: number;
-  page?: number;
   isSection?: boolean;
 }) => {
-  const { artists } = await api.artist.search({
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const { data, isFetching, isSuccess } = api.artist.search.useQuery({
     artistName: search,
     limit,
     page,
   });
+
+  if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { artists } = data;
 
   if (artists.length === 0) {
     return <div className="text-center text-xl font-medium">No results.</div>;

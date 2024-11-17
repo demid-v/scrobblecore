@@ -16,9 +16,9 @@ const SearchResults = async ({
 
   return (
     <div className="mt-10">
-      <SearchAlbums search={search} limit={12} isSection />
-      <Artists search={search} limit={12} isSection />
-      <SearchTracks search={search} limit={10} isSection />
+      <SearchAlbums limit={12} isSection />
+      <Artists limit={12} isSection />
+      <SearchTracks limit={10} isSection />
     </div>
   );
 };

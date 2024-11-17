@@ -1,45 +1,58 @@
+"use client";
+
+import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
 import SearchPagination from "~/app/_components/search-pagination";
 import TopAlbums from "~/app/_components/top-albums";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const AlbumsPage = async ({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ artistName: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const artistName = decodeURIComponent((await params).artistName);
-  const { page: pageQuery } = (await searchParams) ?? {};
+const limit = 60;
 
-  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
+const AlbumsPageInner = () => {
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const searchParams = useSearchParams();
 
-  const limit = 50;
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { total } = await api.artist.topAlbums({
-    artistName,
+  const { data, isFetching, isSuccess } = api.artist.topAlbums.useQuery({
+    artistName: artistNameParam,
     limit,
-    page,
   });
 
   return (
     <>
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mb-6"
-      />
-      <TopAlbums artistName={artistName} limit={60} page={page} />
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mt-6"
-      />
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mb-6"
+        />
+      )}
+      <TopAlbums limit={limit} />
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mt-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mt-6"
+        />
+      )}
     </>
   );
 };
+
+const AlbumsPage = () => (
+  <Suspense>
+    <AlbumsPageInner />
+  </Suspense>
+);
 
 export default AlbumsPage;

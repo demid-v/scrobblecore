@@ -1,29 +1,37 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { redirect, useParams } from "next/navigation";
 
 import TopAlbums from "~/app/_components/top-albums";
 import TopTracks from "~/app/_components/top-tracks";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const Artist = async ({
-  params,
-}: {
-  params: Promise<{ artistName: string }>;
-}) => {
-  const artistNameParam = decodeURIComponent((await params).artistName);
+const Artist = () => {
+  const artistNameParam = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
 
-  const artist = await api.artist.info({ artistName: artistNameParam });
-  const { name: artistName } = artist;
+  const {
+    data: artist,
+    isFetching,
+    isSuccess,
+  } = api.artist.info.useQuery({ artistName: artistNameParam });
 
-  if (artistNameParam !== artistName) {
-    redirect(`/artists/${artistName}`);
+  if (isSuccess && artistNameParam !== artist.name) {
+    redirect(`/artists/${artist.name}`);
   }
 
   return (
     <div>
-      <div className="text-3xl font-semibold">{artistName}</div>
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mb-10 h-9 w-48" />
+      ) : (
+        <div className="text-3xl font-semibold">{artist.name}</div>
+      )}
       <div className="mt-10">
-        <TopAlbums artistName={artistName} limit={12} isSection />
-        <TopTracks artistName={artistName} limit={10} isSection />
+        <TopAlbums limit={12} isSection />
+        <TopTracks limit={10} isSection />
       </div>
     </div>
   );

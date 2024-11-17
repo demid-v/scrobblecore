@@ -1,25 +1,38 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 
+import ListLoading from "./list-loading";
 import Tracks from "./tracks";
 
-const SearchTracks = async ({
-  search,
+const SearchTracksInner = ({
   limit,
-  page,
   isSection = false,
 }: {
-  search: string;
   limit: number;
-  page?: number;
   isSection?: boolean;
 }) => {
-  const { tracks } = await api.track.search({
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const { data, isFetching, isSuccess } = api.track.search.useQuery({
     trackName: search,
     limit,
     page,
   });
+
+  if (isFetching) return <ListLoading count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { tracks } = data;
 
   return (
     <Tracks tracks={tracks}>
@@ -36,5 +49,11 @@ const SearchTracks = async ({
     </Tracks>
   );
 };
+
+const SearchTracks = (props: { limit: number; isSection?: boolean }) => (
+  <Suspense>
+    <SearchTracksInner {...props} />
+  </Suspense>
+);
 
 export default SearchTracks;

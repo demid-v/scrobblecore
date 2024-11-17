@@ -1,23 +1,29 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
+import ListLoading from "~/app/_components/list-loading";
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
 import ScrobbleButton from "~/components/scrobble-button";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const AlbumPage = async ({
-  params,
-}: {
-  params: Promise<{ artistName: string; albumName: string }>;
-}) => {
-  const { artistName, albumName } = await params;
+const AlbumPage = () => {
+  const params = useParams<{ artistName: string; albumName: string }>();
 
-  const queryParams = {
-    artistName: decodeURIComponent(artistName),
-    albumName: decodeURIComponent(albumName),
-  };
+  const artistName = decodeURIComponent(params.artistName);
+  const albumName = decodeURIComponent(params.albumName);
 
-  const album = await api.album.one(queryParams);
+  const {
+    data: album,
+    isFetching,
+    isSuccess,
+  } = api.album.one.useQuery({ artistName, albumName });
+
+  if (isFetching) return <AlbumLoading />;
+  if (!isSuccess) return null;
 
   return (
     <div className="w-full text-center">
@@ -45,5 +51,15 @@ const AlbumPage = async ({
     </div>
   );
 };
+
+const AlbumLoading = () => (
+  <div>
+    <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
+    <Skeleton className="mx-auto mb-3 h-5 w-28" />
+    <Skeleton className="mx-auto mb-3 h-6 w-48" />
+    <Skeleton className="mx-auto mb-10 h-9 w-32" />
+    <ListLoading count={12} />
+  </div>
+);
 
 export default AlbumPage;

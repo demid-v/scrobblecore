@@ -1,49 +1,68 @@
+"use client";
+
+import { useParams, useSearchParams } from "next/navigation";
+
 import SearchPagination from "~/app/_components/search-pagination";
 import TopTracks from "~/app/_components/top-tracks";
 import ScrobbleButton from "~/components/scrobble-button";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const TracksPage = async ({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ artistName: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const artistName = decodeURIComponent((await params).artistName);
-  const { page: pageQuery } = (await searchParams) ?? {};
+const limit = 50;
 
-  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
+const TracksPage = () => {
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const searchParams = useSearchParams();
 
-  const limit = 50;
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { tracks, total } = await api.artist.topTracks({
-    artistName,
+  const { data, isFetching, isSuccess } = api.artist.topTracks.useQuery({
+    artistName: artistNameParam,
+    limit,
+  });
+
+  const {
+    data: data2,
+    isFetching: isFetching2,
+    isSuccess: isSuccess2,
+  } = api.artist.topTracks.useQuery({
+    artistName: artistNameParam,
     limit,
     page,
   });
 
   return (
     <section>
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mb-6"
-      />
-      {tracks.length > 0 && (
-        <ScrobbleButton tracks={tracks} className="mx-auto mb-6 block">
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mb-6"
+        />
+      )}
+      {isFetching2 || !isSuccess2 ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-28" />
+      ) : (
+        <ScrobbleButton tracks={data2.tracks} className="mx-auto mb-6 block">
           Scrobble all
         </ScrobbleButton>
       )}
-      <TopTracks artistName={artistName} limit={limit} page={page} />
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mt-6"
-      />
+      <TopTracks limit={limit} />
+
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mt-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mt-6"
+        />
+      )}
     </section>
   );
 };

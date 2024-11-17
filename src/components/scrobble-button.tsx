@@ -14,15 +14,15 @@ const isAlbumTrack = (track: Tracks[number]): track is AlbumTracks[number] =>
   Object.hasOwn(track, "duration") || Object.hasOwn(track, "album");
 
 const generateTimestamps = (date: number, tracks: Tracks) => {
-  const defaultDuration = 3 * 60 * 1000;
+  const defaultDuration = 3 * 60;
 
   return tracks
     .toReversed()
     .map((track) =>
       Math.floor(
         (date -= isAlbumTrack(track)
-          ? (track.duration ?? defaultDuration)
-          : defaultDuration) / 1000,
+          ? (track.duration ?? defaultDuration) * 1000
+          : defaultDuration * 1000) / 1000,
       ),
     )
     .toReversed();

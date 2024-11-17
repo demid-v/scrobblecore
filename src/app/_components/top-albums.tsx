@@ -1,25 +1,38 @@
-import Link from "next/link";
+"use client";
 
-import { api } from "~/trpc/server";
+import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+import { api } from "~/trpc/react";
 
 import Albums from "./albums";
+import GridLoading from "./grid-loading";
 
-const TopAlbums = async ({
-  artistName,
+const TopAlbumsInner = ({
   limit,
-  page,
   isSection = false,
 }: {
-  artistName: string;
   limit: number;
-  page?: number;
   isSection?: boolean;
 }) => {
-  const { albums } = await api.artist.topAlbums({
+  const artistName = useParams<{ artistName: string }>().artistName;
+
+  const searchParams = useSearchParams();
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const { data, isFetching, isSuccess } = api.artist.topAlbums.useQuery({
     artistName,
     limit,
     page,
   });
+
+  if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { albums } = data;
 
   return (
     <Albums albums={albums}>
@@ -36,5 +49,11 @@ const TopAlbums = async ({
     </Albums>
   );
 };
+
+const TopAlbums = (props: { limit: number; isSection?: boolean }) => (
+  <Suspense>
+    <TopAlbumsInner {...props} />
+  </Suspense>
+);
 
 export default TopAlbums;

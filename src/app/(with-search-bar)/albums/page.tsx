@@ -1,46 +1,61 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
 import SearchAlbums from "~/app/_components/search-albums";
 import SearchPagination from "~/app/_components/search-pagination";
-import { api } from "~/trpc/server";
+import { Skeleton } from "~/components/ui/skeleton";
+import { api } from "~/trpc/react";
 
-const AlbumsPage = async ({
-  searchParams,
-}: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const { q: searchQuery, page: pageQuery } = (await searchParams) ?? {};
+const limit = 60;
 
-  const search = Array.isArray(searchQuery) ? searchQuery.at(0) : searchQuery;
-  const isSearchEmpty = typeof search === "undefined" || search === "";
+const AlbumsPageInner = () => {
+  const searchParams = useSearchParams();
 
-  if (isSearchEmpty) return null;
+  const search = searchParams.get("q") ?? "";
 
-  const flatPage = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = typeof flatPage !== "undefined" ? Number(flatPage) : 1;
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const limit = 60;
-  const { total } = await api.album.search({
+  const { data, isFetching, isSuccess } = api.album.search.useQuery({
     albumName: search,
     limit,
-    page,
   });
+
+  if (search === "") return null;
 
   return (
     <>
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mb-6"
-      />
-      <SearchAlbums search={search} limit={limit} page={page} />
-      <SearchPagination
-        total={total}
-        limit={limit}
-        page={page}
-        className="mt-6"
-      />
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mb-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mb-6"
+        />
+      )}
+      <SearchAlbums limit={limit} />
+      {isFetching || !isSuccess ? (
+        <Skeleton className="mx-auto mt-6 h-9 w-96" />
+      ) : (
+        <SearchPagination
+          total={data.total}
+          limit={limit}
+          page={page}
+          className="mt-6"
+        />
+      )}
     </>
   );
 };
+
+const AlbumsPage = () => (
+  <Suspense>
+    <AlbumsPageInner />
+  </Suspense>
+);
 
 export default AlbumsPage;
