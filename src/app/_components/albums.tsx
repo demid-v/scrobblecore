@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
-import { type Albums as TAlbums } from "~/trpc/react";
+import { type Albums as TAlbums } from "~/lib/queries/album";
 
 const Albums = ({
   children,

@@ -1,10 +1,11 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { api } from "~/trpc/react";
+import { getAlbums } from "~/lib/queries/album";
 
 import Albums from "./albums";
 import GridLoading from "./grid-loading";
@@ -19,14 +20,14 @@ const SearchAlbumsInner = ({
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
+  const albumName = search;
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.album.search.useQuery({
-    albumName: search,
-    limit,
-    page,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["albums", { albumName, limit, page }],
+    queryFn: () => getAlbums({ albumName, limit, page }),
   });
 
   if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;

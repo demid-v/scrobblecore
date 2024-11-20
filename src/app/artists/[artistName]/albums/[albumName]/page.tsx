@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -8,7 +9,7 @@ import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
 import ScrobbleButton from "~/components/scrobble-button";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/trpc/react";
+import { getAlbum } from "~/lib/queries/album";
 
 const AlbumPage = () => {
   const params = useParams<{ artistName: string; albumName: string }>();
@@ -20,7 +21,10 @@ const AlbumPage = () => {
     data: album,
     isFetching,
     isSuccess,
-  } = api.album.one.useQuery({ artistName, albumName });
+  } = useQuery({
+    queryKey: ["albums", "album", { artistName, albumName }],
+    queryFn: () => getAlbum({ artistName, albumName }),
+  });
 
   if (isFetching) return <AlbumLoading />;
   if (!isSuccess) return null;

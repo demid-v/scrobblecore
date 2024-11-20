@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  type QueryClient,
-  QueryClientProvider,
-  type QueryObserverBaseResult,
-} from "@tanstack/react-query";
-import {
-  type TRPCClientErrorLike,
-  loggerLink,
-  unstable_httpBatchStreamLink,
-} from "@trpc/client";
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
@@ -78,19 +70,3 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 }
-
-export type AlbumSearchBaseResult = QueryObserverBaseResult<
-  RouterOutputs["album"]["search"],
-  TRPCClientErrorLike<AppRouter>
->;
-
-export type Albums = RouterOutputs["album"]["search"]["albums"];
-export type Artists = RouterOutputs["artist"]["search"];
-
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-export type SearchTracks = RouterOutputs["track"]["search"]["tracks"];
-export type AlbumTracks = RouterOutputs["album"]["one"]["tracks"];
-export type Tracks =
-  | PartialBy<SearchTracks[number], "image">[]
-  | PartialBy<AlbumTracks[number], "duration">[];

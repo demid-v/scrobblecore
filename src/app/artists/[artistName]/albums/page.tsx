@@ -1,25 +1,29 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 import SearchPagination from "~/app/_components/search-pagination";
 import TopAlbums from "~/app/_components/top-albums";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/trpc/react";
+import { getTopAlbums } from "~/lib/queries/artist";
 
 const limit = 60;
 
 const AlbumsPageInner = () => {
-  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
+
   const searchParams = useSearchParams();
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.artist.topAlbums.useQuery({
-    artistName: artistNameParam,
-    limit,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["artists", "topAlbums", { artistName, limit, page }],
+    queryFn: () => getTopAlbums({ artistName, limit, page }),
   });
 
   return (

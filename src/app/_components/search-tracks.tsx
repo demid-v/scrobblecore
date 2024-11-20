@@ -1,10 +1,11 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { api } from "~/trpc/react";
+import { getTracks } from "~/lib/queries/track";
 
 import ListLoading from "./list-loading";
 import Tracks from "./tracks";
@@ -19,14 +20,14 @@ const SearchTracksInner = ({
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
+  const trackName = search;
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.track.search.useQuery({
-    trackName: search,
-    limit,
-    page,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["tracks", { trackName, limit, page }],
+    queryFn: () => getTracks({ trackName, limit, page }),
   });
 
   if (isFetching) return <ListLoading count={limit} hasHeader={isSection} />;

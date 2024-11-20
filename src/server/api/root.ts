@@ -1,5 +1,3 @@
-import { albumRouter } from "./routers/album";
-import { artistRouter } from "./routers/artist";
 import { authRouter } from "./routers/auth";
 import { trackRouter } from "./routers/track";
 import { createCallerFactory, createTRPCRouter } from "./trpc";
@@ -11,8 +9,6 @@ import { createCallerFactory, createTRPCRouter } from "./trpc";
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
-  album: albumRouter,
-  artist: artistRouter,
   track: trackRouter,
 });
 

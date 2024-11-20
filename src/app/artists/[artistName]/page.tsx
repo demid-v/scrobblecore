@@ -1,22 +1,28 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { redirect, useParams } from "next/navigation";
 
 import TopAlbums from "~/app/_components/top-albums";
 import TopTracks from "~/app/_components/top-tracks";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/trpc/react";
+import { getArtist } from "~/lib/queries/artist";
 
 const Artist = () => {
   const artistNameParam = decodeURIComponent(
     useParams<{ artistName: string }>().artistName,
   );
 
+  const artistName = artistNameParam;
+
   const {
     data: artist,
     isFetching,
     isSuccess,
-  } = api.artist.info.useQuery({ artistName: artistNameParam });
+  } = useQuery({
+    queryKey: ["artists", "artist", { artistName }],
+    queryFn: () => getArtist({ artistName }),
+  });
 
   if (isSuccess && artistNameParam !== artist.name) {
     redirect(`/artists/${artist.name}`);

@@ -42,7 +42,7 @@ export const authRouter = createTRPCRouter({
     return { sessionKey, user };
   }),
 
-  signout: privateProcedure.mutation(async ({ ctx: { cookies } }) => {
+  signout: privateProcedure.mutation(({ ctx: { cookies } }) => {
     cookies.delete("sessionKey");
     cookies.delete("userName");
 

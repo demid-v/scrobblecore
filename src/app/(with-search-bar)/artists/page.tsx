@@ -1,12 +1,13 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 import Artists from "~/app/_components/artists";
 import SearchPagination from "~/app/_components/search-pagination";
 import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/trpc/react";
+import { getArtists } from "~/lib/queries/artist";
 
 const limit = 60;
 
@@ -14,13 +15,14 @@ const ArtistsPageInner = () => {
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
+  const artistName = search;
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.artist.search.useQuery({
-    artistName: search,
-    limit,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["artists", { artistName, limit }],
+    queryFn: () => getArtists({ artistName, limit }),
   });
 
   if (search === "") return null;

@@ -5,8 +5,10 @@ import { type ReactNode, useRef } from "react";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
+import { type AlbumTracks } from "~/lib/queries/album";
+import { type Tracks } from "~/lib/queries/track";
 import { type Scrobble, scrobblesAtom } from "~/lib/store";
-import { type AlbumTracks, type Tracks, api } from "~/trpc/react";
+import { api } from "~/trpc/react";
 
 type TracksMapped = (Scrobble & { timestamp: number })[];
 
@@ -14,18 +16,23 @@ const isAlbumTrack = (track: Tracks[number]): track is AlbumTracks[number] =>
   Object.hasOwn(track, "duration") || Object.hasOwn(track, "album");
 
 const generateTimestamps = (date: number, tracks: Tracks) => {
+  let timestamp = date;
   const defaultDuration = 3 * 60;
 
-  return tracks
+  const shiftedTimestamps = tracks
     .toReversed()
     .map((track) =>
       Math.floor(
-        (date -= isAlbumTrack(track)
+        (timestamp -= isAlbumTrack(track)
           ? (track.duration ?? defaultDuration) * 1000
           : defaultDuration * 1000) / 1000,
       ),
     )
     .toReversed();
+
+  const timestamps = [...shiftedTimestamps.slice(1), date / 1000];
+
+  return timestamps;
 };
 
 const scrobbleSize = 50;

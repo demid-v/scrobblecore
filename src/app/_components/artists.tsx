@@ -1,10 +1,11 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
-import { api } from "~/trpc/react";
+import { getArtists } from "~/lib/queries/artist";
 
 import GridLoading from "./grid-loading";
 
@@ -18,14 +19,14 @@ const Artists = ({
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
+  const artistName = search;
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.artist.search.useQuery({
-    artistName: search,
-    limit,
-    page,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["artists", { artistName, limit, page }],
+    queryFn: () => getArtists({ artistName, limit, page }),
   });
 
   if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;

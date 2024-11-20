@@ -1,9 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 
-import { api } from "~/trpc/react";
+import { getTopTracks } from "~/lib/queries/artist";
 
 import ListLoading from "./list-loading";
 import Tracks from "./tracks";
@@ -15,17 +16,18 @@ const TopTracks = ({
   limit: number;
   isSection?: boolean;
 }) => {
-  const artistName = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
 
   const searchParams = useSearchParams();
 
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = api.artist.topTracks.useQuery({
-    artistName,
-    limit,
-    page,
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["artists", "artist", "topTracks", { artistName, limit, page }],
+    queryFn: () => getTopTracks({ artistName, limit, page }),
   });
 
   if (isFetching) return <ListLoading count={limit} hasHeader={isSection} />;
