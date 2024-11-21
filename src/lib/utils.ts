@@ -27,13 +27,13 @@ const range = (start: number, end: number) =>
 export const paginate = ({
   total,
   limit,
-  siblingCount = 1,
   page,
+  siblingCount = 1,
 }: {
   total: number;
   limit: number;
-  siblingCount?: number;
   page: number;
+  siblingCount?: number;
 }) => {
   const totalPageCount = Math.ceil(total / limit);
 
