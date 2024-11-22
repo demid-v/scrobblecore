@@ -31,8 +31,8 @@ const TracksPageInner = () => {
     isFetching: isFetching2,
     isSuccess: isSuccess2,
   } = useQuery({
-    queryKey: ["tracks", { trackName, limit, page }],
-    queryFn: () => getTracks({ trackName, limit, page }),
+    queryKey: ["tracks", { trackName, limit }],
+    queryFn: () => getTracks({ trackName, limit }),
   });
 
   if (search === "") return null;

@@ -1,5 +1,5 @@
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -32,7 +32,7 @@ const HeaderInner = async () => {
               "use server";
 
               await api.auth.signout();
-              revalidatePath("/");
+              redirect("/");
             }}
           >
             <Button type="submit">Sign out</Button>
@@ -53,6 +53,7 @@ const Header = () => (
             Scrobblecore
           </Link>
           <div className="flex">
+            <Skeleton className="mx-4 h-5 w-12" />
             <Skeleton className="mx-4 h-5 w-12" />
             <Skeleton className="mx-4 h-5 w-12" />
             <Skeleton className="mx-4 h-5 w-12" />

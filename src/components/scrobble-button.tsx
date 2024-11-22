@@ -37,14 +37,7 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 
 const scrobbleSize = 50;
 
-const ScrobbleButton = ({
-  tracks,
-  children,
-  ...props
-}: {
-  tracks: Tracks;
-  children?: ReactNode;
-} & ButtonProps) => {
+export const useScrobble = () => {
   const tracksMapped = useRef<TracksMapped>([]);
 
   const setScrobbles = useSetAtom(scrobblesAtom);
@@ -72,7 +65,7 @@ const ScrobbleButton = ({
     },
   });
 
-  const startScrobble = () => {
+  const startScrobble = (tracks: Tracks) => {
     const date = Date.now();
     const timestamps = generateTimestamps(date, tracks);
 
@@ -103,10 +96,23 @@ const ScrobbleButton = ({
     scrobble(tracksToScrobble);
   };
 
+  return startScrobble;
+};
+
+const ScrobbleButton = ({
+  tracks,
+  children,
+  ...props
+}: {
+  tracks: Tracks;
+  children?: ReactNode;
+} & ButtonProps) => {
+  const startScrobble = useScrobble();
+
   return (
     <Button
       onClick={() => {
-        startScrobble();
+        startScrobble(tracks);
       }}
       {...props}
     >

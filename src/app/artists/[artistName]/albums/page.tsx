@@ -22,8 +22,8 @@ const AlbumsPageInner = () => {
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
   const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["artists", "topAlbums", { artistName, limit, page }],
-    queryFn: () => getTopAlbums({ artistName, limit, page }),
+    queryKey: ["artists", "topAlbums", { artistName, limit }],
+    queryFn: () => getTopAlbums({ artistName, limit }),
   });
 
   return (
