@@ -29,7 +29,7 @@ const formSchema = z.object({
 
 type formSchema = z.infer<typeof formSchema>;
 
-export function TrackForm() {
+const TrackForm = () => {
   const form = useForm<formSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,7 +42,11 @@ export function TrackForm() {
   const startScrobble = useScrobble();
 
   const onSubmit = (data: formSchema) => {
-    const track = { name: data.track, artist: data.artist, album: data.album };
+    const track = {
+      name: data.track,
+      artist: data.artist,
+      album: data.album,
+    };
     startScrobble([track]);
   };
 
@@ -95,15 +99,13 @@ export function TrackForm() {
       </form>
     </Form>
   );
-}
-
-const TrackPage = () => {
-  return (
-    <div className="mx-auto w-2/3">
-      <h1 className="mb-8 text-4xl font-bold">Scrobble tracks</h1>
-      <TrackForm />
-    </div>
-  );
 };
+
+const TrackPage = () => (
+  <div className="mx-auto w-2/3">
+    <h1 className="mb-8 text-4xl font-bold">Scrobble tracks</h1>
+    <TrackForm />
+  </div>
+);
 
 export default TrackPage;
