@@ -16,7 +16,7 @@ const History = dynamic(() => import("./history"), {
 
 const HistorySidebar = () => {
   return (
-    <Sidebar className="mt-12 h-[calc(100svh-3rem)]" title="History">
+    <Sidebar className="mt-12 h-[calc(100svh-3rem)]" sheetTitle="History">
       <SidebarHeader className="ml-2 text-lg font-medium">
         History
       </SidebarHeader>

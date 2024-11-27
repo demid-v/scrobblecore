@@ -24,10 +24,11 @@ const getInitialScrobbles = () => {
   if (typeof localStorage === "undefined") return emptyMap;
 
   const scrobblesItem = localStorage.getItem("scrobbles");
-
   if (scrobblesItem === null) return emptyMap;
 
-  const userName = cookies.get("userName") ?? "";
+  const userName = cookies.get("userName");
+  if (typeof userName === "undefined") return emptyMap;
+
   const users = SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem);
   const scrobbles = users.get(userName) ?? emptyMap;
 
@@ -39,18 +40,31 @@ const baseScrobblesAtom = atom(getInitialScrobbles());
 export const scrobblesAtom = atom(
   (get) => [...get(baseScrobblesAtom).values()],
   (get, set, newScrobbles: Scrobble[]) => {
+    const userName = cookies.get("userName");
+
+    if (typeof userName === "undefined") {
+      throw new Error("Broken cookies.");
+    }
+
     const newScrobblesMap = scrobblesToMap(
       newScrobbles,
       get(baseScrobblesAtom),
     );
+
     set(baseScrobblesAtom, newScrobblesMap);
 
     const isPending = newScrobbles.at(0)?.status === "pending";
     if (typeof localStorage === "undefined" || isPending) return;
 
-    const userName = cookies.get("userName") ?? "";
-    const users = new Map([[userName, newScrobblesMap]]);
-    const scrobbles = SuperJSON.stringify(users);
+    const scrobblesItem = localStorage.getItem("scrobbles");
+
+    const users =
+      scrobblesItem === null
+        ? new Map<string, ScrobblesMap>()
+        : SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem);
+
+    const newUsers = new Map([...users, [userName, newScrobblesMap]]);
+    const scrobbles = SuperJSON.stringify(newUsers);
 
     localStorage.setItem("scrobbles", scrobbles);
   },
