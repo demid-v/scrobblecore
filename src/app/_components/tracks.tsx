@@ -2,11 +2,7 @@ import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import ScrobbleButton from "~/components/scrobble-button";
-import { type SearchTracks, type Tracks as TTracks } from "~/lib/queries/track";
-
-const isTrackWithImage = (
-  track: TTracks[number],
-): track is SearchTracks[number] => Object.hasOwn(track, "image");
+import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
   children,
@@ -14,7 +10,7 @@ const Tracks = ({
   ...props
 }: {
   children?: React.ReactNode;
-  tracks: TTracks;
+  tracks: TypeTracks;
 } & React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,
   HTMLElement
@@ -32,7 +28,7 @@ const Tracks = ({
             key={`${index}`}
             className="flex h-10 items-center gap-2 px-2 py-0.5 hover:bg-slate-100 [&:not(:last-child)]:border-b"
           >
-            {isTrackWithImage(track) && (
+            {track.type === "track" && (
               <ImageWithFallback
                 src={track.image}
                 alt="Album's cover"
@@ -57,7 +53,11 @@ const Tracks = ({
                 {track.name}
               </div>
             </div>
-            <ScrobbleButton tracks={[track]} size="sm" className="ml-auto">
+            <ScrobbleButton
+              tracks={[track] as TypeTracks}
+              size="sm"
+              className="ml-auto"
+            >
               Scrobble
             </ScrobbleButton>
           </li>

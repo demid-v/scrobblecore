@@ -22,9 +22,7 @@ export const authRouter = createTRPCRouter({
     const sessionKey = cookieStore.get("sessionKey")?.value ?? "";
     const userName = cookieStore.get("userName")?.value ?? "";
 
-    if (sessionKey === "" || userName === "") {
-      return null;
-    }
+    if (sessionKey === "" || userName === "") return null;
 
     const searchParams = {
       method: "user.getinfo",

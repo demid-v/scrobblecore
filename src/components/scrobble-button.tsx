@@ -5,15 +5,9 @@ import { type ReactNode, useRef } from "react";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
-import { type AlbumTracks } from "~/lib/queries/album";
 import { type Tracks } from "~/lib/queries/track";
 import { type Scrobble, scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
-
-type TracksMapped = (Scrobble & { timestamp: number })[];
-
-const isAlbumTrack = (track: Tracks[number]): track is AlbumTracks[number] =>
-  Object.hasOwn(track, "duration") || Object.hasOwn(track, "album");
 
 const generateTimestamps = (date: number, tracks: Tracks) => {
   let timestamp = date;
@@ -23,9 +17,10 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
     .toReversed()
     .map((track) =>
       Math.floor(
-        (timestamp -= isAlbumTrack(track)
-          ? (track.duration ?? defaultDuration) * 1000
-          : defaultDuration * 1000) / 1000,
+        (timestamp -=
+          track.type === "album"
+            ? (track.duration ?? defaultDuration) * 1000
+            : defaultDuration * 1000) / 1000,
       ),
     )
     .toReversed();
@@ -38,7 +33,7 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 const scrobbleSize = 50;
 
 export const useScrobble = () => {
-  const tracksMapped = useRef<TracksMapped>([]);
+  const tracksMapped = useRef<(Scrobble & { timestamp: number })[]>([]);
 
   const setScrobbles = useSetAtom(scrobblesAtom);
 
@@ -73,7 +68,7 @@ export const useScrobble = () => {
       id: crypto.randomUUID(),
       track: track.name,
       artist: track.artist,
-      ...(isAlbumTrack(track) && { album: track.album }),
+      ...(track.type === "album" && { album: track.album }),
       date,
       timestamp: timestamps[index] ?? date,
       status: "pending" as const,

@@ -208,6 +208,7 @@ const getTopTracks = async ({
 
   const tracks = parsedTracks.map((parsedTrack) => ({
     ...parsedTrack,
+    type: "track" as const,
     image: parsedTrack.image.find((image) => image.size === "small")?.["#text"],
     artist: parsedTrack.artist.name,
   }));

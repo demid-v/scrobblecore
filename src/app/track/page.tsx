@@ -43,6 +43,7 @@ const TrackForm = () => {
 
   const onSubmit = (data: formSchema) => {
     const track = {
+      type: "album" as const,
       name: data.track,
       artist: data.artist,
       album: data.album,

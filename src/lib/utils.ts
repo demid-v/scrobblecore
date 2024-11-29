@@ -104,3 +104,5 @@ export const paginate = ({
 
 export const wait = async (ms?: number) =>
   await new Promise((resolve) => setTimeout(() => resolve(1), ms));
+
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

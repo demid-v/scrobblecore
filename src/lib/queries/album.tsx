@@ -121,6 +121,7 @@ const getAlbum = async ({
 
     const tracks = tracksArray.map((track) => ({
       ...track,
+      type: "album" as const,
       artist: track.artist.name,
       album: albumName,
     }));

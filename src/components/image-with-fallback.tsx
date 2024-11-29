@@ -28,12 +28,12 @@ const ImageWithFallback = ({
         <Image
           src={src}
           alt={alt}
-          unoptimized={true}
           width={width}
           height={height}
           onError={() => {
             setIsFallback(true);
           }}
+          unoptimized
           className={className}
           {...props}
         />
@@ -41,9 +41,9 @@ const ImageWithFallback = ({
         <Image
           src={defaultSrc}
           alt={alt}
-          unoptimized={true}
           width={width}
           height={height}
+          unoptimized
           className={cn(defaultClassName, className)}
           {...props}
         />

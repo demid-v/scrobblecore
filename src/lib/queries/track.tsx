@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { env } from "~/env";
 
+import { type PartialBy } from "../utils";
 import { type AlbumTracks } from "./album";
 
 const tracksSchema = z.object({
@@ -52,6 +53,7 @@ const getTracks = async ({
 
   const tracks = parsedTracks.map((track) => ({
     ...track,
+    type: "track" as const,
     image: track.image.find((image) => image.size === "small")?.["#text"],
   }));
 
@@ -60,11 +62,9 @@ const getTracks = async ({
   return { tracks, total };
 };
 
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
 export type SearchTracks = Awaited<ReturnType<typeof getTracks>>["tracks"];
 export type Tracks =
-  | PartialBy<SearchTracks[number], "image">[]
-  | PartialBy<AlbumTracks[number], "duration">[];
+  | SearchTracks
+  | PartialBy<AlbumTracks[number], "album" | "duration">[];
 
 export { getTracks };
