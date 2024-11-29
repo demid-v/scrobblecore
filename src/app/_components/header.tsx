@@ -8,6 +8,7 @@ import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
 import Navigation from "./navigation";
+import SignOutButton from "./sign-out-button";
 
 const HeaderInner = async () => {
   const session = await api.auth.auth();
@@ -35,7 +36,7 @@ const HeaderInner = async () => {
               redirect("/");
             }}
           >
-            <Button type="submit">Sign out</Button>
+            <SignOutButton />
           </form>
           <span>{session.user.name}</span>
         </span>

@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { RESET, atomWithReset } from "jotai/utils";
 import cookies from "js-cookie";
 import SuperJSON from "superjson";
 
@@ -35,11 +36,16 @@ const getInitialScrobbles = () => {
   return scrobbles;
 };
 
-const baseScrobblesAtom = atom(getInitialScrobbles());
+const baseScrobblesAtom = atomWithReset(getInitialScrobbles());
 
 export const scrobblesAtom = atom(
   (get) => [...get(baseScrobblesAtom).values()],
-  (get, set, newScrobbles: Scrobble[]) => {
+  (get, set, newScrobbles: Scrobble[] | typeof RESET) => {
+    if (newScrobbles === RESET) {
+      set(baseScrobblesAtom, new Map<string, Scrobble>());
+      return;
+    }
+
     const userName = cookies.get("userName");
 
     if (typeof userName === "undefined") {
