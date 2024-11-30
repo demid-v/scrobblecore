@@ -4,11 +4,11 @@ import ImageWithFallback from "~/components/image-with-fallback";
 import { type Albums as TAlbums } from "~/lib/queries/album";
 
 const Albums = ({
-  children,
   albums,
+  children,
 }: {
-  children?: React.ReactNode;
   albums: TAlbums;
+  children?: React.ReactNode;
 }) => {
   if (albums.length === 0) {
     return <div className="text-center text-xl font-medium">No results.</div>;

@@ -5,12 +5,12 @@ import ScrobbleButton from "~/components/scrobble-button";
 import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
-  children,
   tracks,
+  children,
   ...props
 }: {
-  children?: React.ReactNode;
   tracks: TypeTracks;
+  children?: React.ReactNode;
 } & React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,
   HTMLElement

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 import { env } from "~/env";
+import { type PartialBy } from "~/lib/utils";
 
-import { type PartialBy } from "../utils";
 import { type AlbumTracks } from "./album";
 
 const tracksSchema = z.object({

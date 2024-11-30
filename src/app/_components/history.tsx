@@ -6,6 +6,12 @@ import Link from "next/link";
 
 import { scrobblesAtom } from "~/lib/store";
 
+const scrobbleStateRecord = {
+  pending: "Pending",
+  successful: "Scrobbled",
+  failed: "Failed to scrobble",
+};
+
 const History = () => {
   const scrobbles = useAtomValue(scrobblesAtom).toReversed();
 
@@ -38,9 +44,10 @@ const History = () => {
             </div>
             <Image
               src={`/${status}.png`}
-              alt="Album's image"
+              alt={scrobbleStateRecord[status]}
               width={16}
               height={16}
+              title={scrobbleStateRecord[status]}
               className="my-auto ml-auto"
             />
           </div>
