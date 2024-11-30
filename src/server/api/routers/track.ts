@@ -73,7 +73,7 @@ export const trackRouter = createTRPCRouter({
         const urlSearchParams = new URLSearchParams([...params]);
 
         const result = await (
-          await fetch("http://ws.audioscrobbler.com/2.0/", {
+          await fetch("https://ws.audioscrobbler.com/2.0/", {
             method: "POST",
             body: urlSearchParams,
           })

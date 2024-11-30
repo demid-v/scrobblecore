@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
+import NoCover from "~/components/no-cover";
 import { type Albums as TAlbums } from "~/lib/queries/album";
 
 const Albums = ({
@@ -29,9 +30,8 @@ const Albums = ({
                   alt="Album's cover"
                   width={300}
                   height={300}
+                  defaultImage={<NoCover className="h-full w-full p-10" />}
                   className="h-full w-full"
-                  defaultSrc="/no-cover.png"
-                  defaultClassName="p-10"
                 />
               </Link>
             </div>

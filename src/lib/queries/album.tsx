@@ -68,7 +68,7 @@ const getAlbums = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
   const result = (await (await fetch(url)).json()) as unknown;
 
   const parsedResult = albumsSchema.parse(result);
@@ -99,7 +99,7 @@ const getAlbum = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(params)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(params)}`;
   const rawAlbum = (await (await fetch(url)).json()) as unknown;
 
   const parsedAlbum = albumSchema.parse(rawAlbum);

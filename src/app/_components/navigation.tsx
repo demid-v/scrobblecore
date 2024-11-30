@@ -33,15 +33,6 @@ const Navigation = ({ className }: { className?: string }) => (
     </NavigationMenuList>
     <NavigationMenuList>
       <NavigationMenuItem>
-        <Link href="/track" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Track
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-    </NavigationMenuList>
-    <NavigationMenuList>
-      <NavigationMenuItem>
         <Link href="/tracks" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Tracks
@@ -54,6 +45,15 @@ const Navigation = ({ className }: { className?: string }) => (
         <Link href="/artists" legacyBehavior passHref>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
             Artists
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+    </NavigationMenuList>
+    <NavigationMenuList>
+      <NavigationMenuItem>
+        <Link href="/track" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            Track
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>

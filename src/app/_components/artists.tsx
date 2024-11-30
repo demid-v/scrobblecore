@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
+import NoArtistImage from "~/components/no-artist-image";
 import { getArtists } from "~/lib/queries/artist";
 
 import GridLoading from "./grid-loading";
@@ -52,18 +53,20 @@ const Artists = ({
       )}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
         {artists.map(({ name, image }) => (
-          <div key={name}>
-            <Link href={`/artists/${encodeURIComponent(name)}`}>
-              <ImageWithFallback
-                src={image}
-                alt="Artist's image"
-                width={300}
-                height={300}
-                defaultSrc="/no-artist-image.png"
-                defaultClassName="p-10"
-              />
-            </Link>
-            <p className="mt-2">{name}</p>
+          <div key={name} className="w-full">
+            <div className="mb-2">
+              <Link href={`/artists/${encodeURIComponent(name)}`}>
+                <ImageWithFallback
+                  src={image}
+                  alt="Artist's image"
+                  width={300}
+                  height={300}
+                  defaultImage={<NoArtistImage className="h-min w-full p-10" />}
+                  className="h-full w-full"
+                />
+              </Link>
+            </div>
+            <p>{name}</p>
           </div>
         ))}
       </div>

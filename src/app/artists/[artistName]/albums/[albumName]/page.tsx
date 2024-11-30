@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import ListLoading from "~/app/_components/list-loading";
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
+import NoCover from "~/components/no-cover";
 import ScrobbleButton from "~/components/scrobble-button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { getAlbum } from "~/lib/queries/album";
@@ -36,9 +37,8 @@ const AlbumPage = () => {
         alt="Album's image"
         width={300}
         height={300}
-        defaultSrc="/no-cover.png"
+        defaultImage={<NoCover className="mx-auto h-full w-full p-10" />}
         className="mx-auto"
-        defaultClassName="mx-auto p-10"
       />
       <p className="mt-3 font-bold">
         <Link

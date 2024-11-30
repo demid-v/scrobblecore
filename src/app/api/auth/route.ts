@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     token: authToken,
     api_sig: apiSig,
   };
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
   const rawSession = (await (await fetch(url)).json()) as unknown;
   const parsedSession = z

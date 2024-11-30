@@ -99,7 +99,7 @@ const getArtists = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
   const result = (await (await fetch(url)).json()) as unknown;
 
   const parsedResult = artistsSchema.parse(result);
@@ -124,7 +124,7 @@ const getArtist = async ({ artistName }: { artistName: string }) => {
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
   const result = (await (await fetch(url)).json()) as unknown;
 
   const parsedResult = artistInfoSchema.parse(result);
@@ -154,7 +154,7 @@ const getTopAlbums = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
   const result = (await (await fetch(url)).json()) as unknown;
 
   const parsedResult = topAlbumsSchema.parse(result);
@@ -200,7 +200,7 @@ const getTopTracks = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
   const result = (await (await fetch(url)).json()) as unknown;
 
   const parsedResult = topTracksSchema.parse(result);

@@ -2,53 +2,34 @@
 
 import Image from "next/image";
 import type { ImageProps } from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 
-import { cn } from "~/lib/utils";
+import { type PartialBy } from "~/lib/utils";
 
 const ImageWithFallback = ({
-  src,
+  src = "",
   alt,
-  width,
-  height,
   className,
-  defaultSrc,
-  defaultClassName,
+  defaultImage,
   ...props
-}: Omit<ImageProps, "src"> & {
-  src: ImageProps["src"] | undefined;
-  defaultSrc: string;
-  defaultClassName?: string;
+}: PartialBy<ImageProps, "src"> & {
+  defaultImage: React.ReactNode;
 }) => {
   const [isFallback, setIsFallback] = useState(false);
 
+  if (src === "" || isFallback) return defaultImage;
+
   return (
-    <>
-      {src && !isFallback ? (
-        <Image
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          onError={() => {
-            setIsFallback(true);
-          }}
-          unoptimized
-          className={className}
-          {...props}
-        />
-      ) : (
-        <Image
-          src={defaultSrc}
-          alt={alt}
-          width={width}
-          height={height}
-          unoptimized
-          className={cn(defaultClassName, className)}
-          {...props}
-        />
-      )}
-    </>
+    <Image
+      src={src}
+      alt={alt}
+      onError={() => {
+        setIsFallback(true);
+      }}
+      unoptimized
+      className={className}
+      {...props}
+    />
   );
 };
 

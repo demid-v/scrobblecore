@@ -9,6 +9,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import Header from "./_components/header";
 import HistorySidebar from "./_components/history-sidebar";
+import ThemeProvider from "./_components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Scrobblecore",
@@ -20,23 +21,34 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <body>
-        <TRPCReactProvider>
-          <SidebarProvider
-            defaultOpen={false}
-            style={{ "--sidebar-width": "24rem" } as CSSProperties}
-          >
-            <Header />
-            <HistorySidebar />
-            <div className="h-svh">
-              <SidebarTrigger className="fixed ml-2 mt-14" />
-            </div>
-            <main className="mt-12 w-full min-w-0 px-11 pb-8">
-              <div className="container mx-auto h-full pt-2">{children}</div>
-            </main>
-          </SidebarProvider>
-        </TRPCReactProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCReactProvider>
+            <SidebarProvider
+              defaultOpen={false}
+              style={{ "--sidebar-width": "24rem" } as CSSProperties}
+            >
+              <Header />
+              <HistorySidebar />
+              <div className="h-svh">
+                <SidebarTrigger className="fixed ml-2 mt-14" />
+              </div>
+              <main className="mt-12 w-full min-w-0 px-11 pb-8">
+                <div className="container mx-auto h-full pt-2">{children}</div>
+              </main>
+            </SidebarProvider>
+          </TRPCReactProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -31,7 +31,7 @@ export const authRouter = createTRPCRouter({
       api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
     };
 
-    const url = `http://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+    const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
 
     const rawUser = (await (await fetch(url)).json()) as unknown;
     const parsedUser = userSchema.parse(rawUser);

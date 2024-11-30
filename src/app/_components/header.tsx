@@ -9,6 +9,7 @@ import { api } from "~/trpc/server";
 
 import Navigation from "./navigation";
 import SignOutButton from "./sign-out-button";
+import ThemeToggle from "./theme-toggle";
 
 const HeaderInner = async () => {
   const session = await api.auth.auth();
@@ -21,26 +22,29 @@ const HeaderInner = async () => {
         </Link>
         {session && <Navigation />}
       </div>
-      {!session && (
-        <Button className="mr-2" asChild>
-          <a href={authUrl}>Sign in</a>
-        </Button>
-      )}
-      {session && (
-        <span className="flex items-center gap-4">
-          <form
-            action={async () => {
-              "use server";
+      <div className="flex items-center gap-4">
+        <ThemeToggle />
+        {!session && (
+          <Button className="mr-2" asChild>
+            <a href={authUrl}>Sign in</a>
+          </Button>
+        )}
+        {session && (
+          <>
+            <form
+              action={async () => {
+                "use server";
 
-              await api.auth.signout();
-              redirect("/");
-            }}
-          >
-            <SignOutButton />
-          </form>
-          <span>{session.user.name}</span>
-        </span>
-      )}
+                await api.auth.signout();
+                redirect("/");
+              }}
+            >
+              <SignOutButton />
+            </form>
+            <span>{session.user.name}</span>
+          </>
+        )}
+      </div>
     </header>
   );
 };
