@@ -33,7 +33,9 @@ const Artist = () => {
       {isFetching || !isSuccess ? (
         <Skeleton className="mb-10 h-9 w-48" />
       ) : (
-        <div className="text-3xl font-semibold">{artist.name}</div>
+        <>
+          <div className="text-3xl font-semibold">{artist.name}</div>
+        </>
       )}
       <div className="mt-10">
         <TopAlbums limit={12} isSection />

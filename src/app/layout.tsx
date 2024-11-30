@@ -12,7 +12,7 @@ import HistorySidebar from "./_components/history-sidebar";
 import ThemeProvider from "./_components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Scrobblecore",
+  title: { template: "%s | Scrobblecore", default: "Scrobblecore" },
   description: "A better scrobbler.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
