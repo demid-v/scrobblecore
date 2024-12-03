@@ -11,12 +11,18 @@ import {
 const userSchema = z.object({
   user: z.object({
     name: z.string(),
-    image: z.array(z.object({ size: z.string(), "#text": z.string() })),
+    image: z.array(
+      z.object({
+        size: z.enum(["small", "medium", "large", "extralarge"]),
+        "#text": z.string(),
+      }),
+    ),
+    url: z.string(),
   }),
 });
 
 export const authRouter = createTRPCRouter({
-  auth: publicProcedure.query(async () => {
+  user: publicProcedure.query(async () => {
     const cookieStore = await cookies();
 
     const sessionKey = cookieStore.get("sessionKey")?.value ?? "";
@@ -32,12 +38,19 @@ export const authRouter = createTRPCRouter({
     };
 
     const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
+    const result = (await (await fetch(url)).json()) as unknown;
 
-    const rawUser = (await (await fetch(url)).json()) as unknown;
-    const parsedUser = userSchema.parse(rawUser);
-    const user = parsedUser.user;
+    const parsedResult = userSchema.parse(result);
+    const parsedUser = parsedResult.user;
 
-    return { sessionKey, user };
+    const user = {
+      ...parsedUser,
+      image:
+        parsedUser.image.find((image) => image.size === "small")?.["#text"] ??
+        "",
+    };
+
+    return user;
   }),
 
   signout: privateProcedure.mutation(({ ctx: { cookies } }) => {

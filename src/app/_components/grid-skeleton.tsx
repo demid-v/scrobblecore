@@ -1,6 +1,6 @@
 import { Skeleton } from "~/components/ui/skeleton";
 
-const GridLoading = ({
+const GridSkeleton = ({
   count = 60,
   hasHeader = false,
   ...props
@@ -22,4 +22,4 @@ const GridLoading = ({
   </div>
 );
 
-export default GridLoading;
+export default GridSkeleton;

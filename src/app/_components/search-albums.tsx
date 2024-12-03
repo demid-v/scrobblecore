@@ -8,7 +8,7 @@ import { Suspense } from "react";
 import { getAlbums } from "~/lib/queries/album";
 
 import Albums from "./albums";
-import GridLoading from "./grid-loading";
+import GridSkeleton from "./grid-skeleton";
 
 const SearchAlbumsInner = ({
   limit,
@@ -30,7 +30,7 @@ const SearchAlbumsInner = ({
     queryFn: () => getAlbums({ albumName, limit, page }),
   });
 
-  if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;
+  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
   if (!isSuccess) return null;
 
   const { albums } = data;

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import ListLoading from "~/app/_components/list-loading";
+import ListSkeleton from "~/app/_components/list-skeleton";
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
@@ -27,7 +27,7 @@ const AlbumPage = () => {
     queryFn: () => getAlbum({ artistName, albumName }),
   });
 
-  if (isFetching) return <AlbumLoading />;
+  if (isFetching) return <AlbumSkeleton />;
   if (!isSuccess) return null;
 
   return (
@@ -56,13 +56,13 @@ const AlbumPage = () => {
   );
 };
 
-const AlbumLoading = () => (
+const AlbumSkeleton = () => (
   <div>
     <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
     <Skeleton className="mx-auto mb-3 h-5 w-28" />
     <Skeleton className="mx-auto mb-3 h-6 w-48" />
     <Skeleton className="mx-auto mb-10 h-9 w-32" />
-    <ListLoading count={12} />
+    <ListSkeleton count={11} />
   </div>
 );
 

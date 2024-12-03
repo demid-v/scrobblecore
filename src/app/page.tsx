@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -16,13 +17,13 @@ const Home = () => (
 );
 
 const SignInButton = async () => {
-  const session = await api.auth.auth();
+  const user = await api.auth.user();
 
-  if (session !== null) return null;
+  if (user !== null) return null;
 
   return (
     <Button className="mt-10" asChild>
-      <a href={authUrl}>Sign in Last.fm</a>
+      <Link href={authUrl}>Sign in Last.fm</Link>
     </Button>
   );
 };

@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 import { getTracks } from "~/lib/queries/track";
 
-import ListLoading from "./list-loading";
+import ListSkeleton from "./list-skeleton";
 import Tracks from "./tracks";
 
 const SearchTracksInner = ({
@@ -30,7 +30,7 @@ const SearchTracksInner = ({
     queryFn: () => getTracks({ trackName, limit, page }),
   });
 
-  if (isFetching) return <ListLoading count={limit} hasHeader={isSection} />;
+  if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;
   if (!isSuccess) return null;
 
   const { tracks } = data;

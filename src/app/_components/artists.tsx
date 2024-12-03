@@ -8,7 +8,7 @@ import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
 import { getArtists } from "~/lib/queries/artist";
 
-import GridLoading from "./grid-loading";
+import GridSkeleton from "./grid-skeleton";
 
 const Artists = ({
   limit,
@@ -30,7 +30,7 @@ const Artists = ({
     queryFn: () => getArtists({ artistName, limit, page }),
   });
 
-  if (isFetching) return <GridLoading count={limit} hasHeader={isSection} />;
+  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
   if (!isSuccess) return null;
 
   const { artists } = data;

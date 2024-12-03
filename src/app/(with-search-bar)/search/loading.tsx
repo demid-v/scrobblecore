@@ -1,12 +1,12 @@
-import GridLoading from "~/app/_components/grid-loading";
-import ListLoading from "~/app/_components/list-loading";
+import GridSkeleton from "~/app/_components/grid-skeleton";
+import ListSkeleton from "~/app/_components/list-skeleton";
 
-const Loading = () => (
+const Skeleton = () => (
   <>
-    <GridLoading count={12} hasHeader />
-    <GridLoading count={12} hasHeader />
-    <ListLoading count={10} hasHeader />
+    <GridSkeleton count={12} hasHeader />
+    <GridSkeleton count={12} hasHeader />
+    <ListSkeleton count={10} hasHeader />
   </>
 );
 
-export default Loading;
+export default Skeleton;

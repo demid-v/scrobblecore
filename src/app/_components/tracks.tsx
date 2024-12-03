@@ -25,8 +25,11 @@ const Tracks = ({
       {children}
       <ul>
         {tracks.map((track, index) => (
-          <li key={`${index}`} className="group [&:not(:last-child)]:border-b">
-            <div className="flex h-10 items-center gap-2 rounded-sm px-2 py-0.5 group-hover:bg-popover-foreground/10 [&:not(:last-child)]:border-b">
+          <li
+            key={`${index}`}
+            className="group h-10 [&:not(:last-child)]:border-b"
+          >
+            <div className="flex h-full items-center gap-2 rounded-sm px-2 py-0.5 group-hover:bg-popover-foreground/10">
               {track.type === "track" && (
                 <ImageWithFallback
                   src={track.image}

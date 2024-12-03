@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from "next/navigation";
 
 import { getTopTracks } from "~/lib/queries/artist";
 
-import ListLoading from "./list-loading";
+import ListSkeleton from "./list-skeleton";
 import Tracks from "./tracks";
 
 const TopTracks = ({
@@ -30,7 +30,7 @@ const TopTracks = ({
     queryFn: () => getTopTracks({ artistName, limit, page }),
   });
 
-  if (isFetching) return <ListLoading count={limit} hasHeader={isSection} />;
+  if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;
   if (!isSuccess) return null;
 
   const { tracks } = data;
