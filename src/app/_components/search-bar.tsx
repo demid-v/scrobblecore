@@ -48,11 +48,6 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  const clearSearch = () => {
-    form.setValue("search", "");
-    setSearch({ search: "" });
-  };
-
   useEffect(() => {
     form.setValue("search", queryParam ?? "");
   }, [queryParam, form]);
@@ -72,7 +67,9 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={clearSearch}
+                    onClick={() => {
+                      router.push(pathname);
+                    }}
                   >
                     <Cross1Icon />
                   </Button>

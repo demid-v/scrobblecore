@@ -5,8 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 
 import SearchPagination from "~/app/_components/search-pagination";
 import TopTracks from "~/app/_components/top-tracks";
-import ScrobbleButton from "~/components/scrobble-button";
-import { Skeleton } from "~/components/ui/skeleton";
+import { ScrobbleButtonWithSkeleton } from "~/components/scrobble-button";
 import { getTopTracks } from "~/lib/queries/artist";
 
 const limit = 50;
@@ -37,27 +36,19 @@ const TracksPage = () => {
 
   return (
     <>
-      <div className="sticky top-14 mx-auto flex w-fit items-center gap-3">
-        {paginationQuery.isFetching || !paginationQuery.isSuccess ? (
-          <Skeleton className="mb-6 h-10 w-[480px]" />
-        ) : (
-          <SearchPagination
-            total={paginationQuery.data.total}
-            limit={limit}
-            page={page}
-            className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
-          />
-        )}
-        {itemsQuery.isFetching || !itemsQuery.isSuccess ? (
-          <Skeleton className="mx-auto mb-6 h-9 w-28" />
-        ) : (
-          <ScrobbleButton
-            tracks={itemsQuery.data.tracks}
-            className="mb-6 shadow-lg"
-          >
-            Scrobble all
-          </ScrobbleButton>
-        )}
+      <div className="sticky top-14 z-10 mx-auto flex w-fit items-center gap-3">
+        <SearchPagination
+          query={paginationQuery}
+          limit={limit}
+          page={page}
+          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
+        />
+        <ScrobbleButtonWithSkeleton
+          query={itemsQuery}
+          className="mb-6 shadow-lg"
+        >
+          Scrobble all
+        </ScrobbleButtonWithSkeleton>
       </div>
       <TopTracks limit={limit} />
     </>

@@ -1,3 +1,4 @@
+import { type UseQueryResult } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -138,8 +139,9 @@ const getAlbum = async ({
   return album;
 };
 
-export type AlbumsResult = Awaited<ReturnType<typeof getAlbums>>;
-export type Albums = AlbumsResult["albums"];
+export type GetAlbums = Awaited<ReturnType<typeof getAlbums>>;
+export type AlbumsResult = UseQueryResult<GetAlbums>;
+export type Albums = GetAlbums["albums"];
 export type AlbumTracks = Awaited<ReturnType<typeof getAlbum>>["tracks"];
 
 export { getAlbums, getAlbum };

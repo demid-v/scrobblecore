@@ -1,3 +1,4 @@
+import { type UseQueryResult } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -62,7 +63,9 @@ const getTracks = async ({
   return { tracks, total };
 };
 
-export type SearchTracks = Awaited<ReturnType<typeof getTracks>>["tracks"];
+export type GetTracks = Awaited<ReturnType<typeof getTracks>>;
+export type TracksResult = UseQueryResult<GetTracks>;
+export type SearchTracks = GetTracks["tracks"];
 export type Tracks =
   | SearchTracks
   | PartialBy<AlbumTracks[number], "album" | "duration">[];

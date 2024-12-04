@@ -5,9 +5,11 @@ import { type ReactNode, useRef } from "react";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
-import { type Tracks } from "~/lib/queries/track";
+import { type Tracks, type TracksResult } from "~/lib/queries/track";
 import { type Scrobble, scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
+
+import { Skeleton } from "./ui/skeleton";
 
 const generateTimestamps = (date: number, tracks: Tracks) => {
   let timestamp = date;
@@ -32,7 +34,7 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 
 const scrobbleSize = 50;
 
-export const useScrobble = () => {
+const useScrobble = () => {
   const tracksMapped = useRef<(Scrobble & { timestamp: number })[]>([]);
 
   const setScrobbles = useSetAtom(scrobblesAtom);
@@ -95,12 +97,12 @@ export const useScrobble = () => {
 };
 
 const ScrobbleButton = ({
-  tracks,
   children,
+  tracks,
   ...props
 }: {
-  tracks: Tracks;
   children?: ReactNode;
+  tracks: Tracks;
 } & ButtonProps) => {
   const startScrobble = useScrobble();
 
@@ -116,4 +118,26 @@ const ScrobbleButton = ({
   );
 };
 
+const ScrobbleButtonWithSkeleton = ({
+  children,
+  query,
+  ...props
+}: {
+  children?: ReactNode;
+  query: TracksResult;
+} & ButtonProps) => {
+  if (query.isFetching) {
+    return <Skeleton className="mx-auto mb-6 h-9 w-[110.89px] shrink-0" />;
+  }
+
+  if (!query.isSuccess) return null;
+
+  return (
+    <ScrobbleButton tracks={query.data.tracks} {...props}>
+      {children}
+    </ScrobbleButton>
+  );
+};
+
 export default ScrobbleButton;
+export { useScrobble, ScrobbleButtonWithSkeleton };

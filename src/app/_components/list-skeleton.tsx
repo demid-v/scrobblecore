@@ -18,7 +18,7 @@ const ListSkeleton = ({
           <Skeleton className="h-5 w-28" />
           <Skeleton className="h-6 w-48" />
         </div>
-        <Skeleton className="h-8 w-20" />
+        <Skeleton className="h-8 w-[74.77px]" />
       </div>
     ))}
   </div>

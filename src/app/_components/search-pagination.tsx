@@ -11,23 +11,27 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
-import { paginate } from "~/lib/utils";
+import { Skeleton } from "~/components/ui/skeleton";
+import { type QueriesResults, paginate } from "~/lib/utils";
 
 const SearchPagination = ({
   page = 1,
   limit,
-  total,
+  query,
   ...props
-}: React.ComponentProps<"nav"> & {
+}: {
   page: number;
   limit: number;
-  total: number;
-}) => {
+  query: QueriesResults;
+} & React.ComponentProps<"nav">) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  if (query.isFetching) return <Skeleton className="mb-6 h-10 w-[480px]" />;
+  if (!query.isSuccess || query.data.total === 0) return null;
+
   const paginationRange = paginate({
-    total,
+    total: query.data.total,
     limit,
     page,
   });

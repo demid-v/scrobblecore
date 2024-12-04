@@ -1,3 +1,4 @@
+import { type UseQueryResult } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -217,5 +218,8 @@ const getTopTracks = async ({
 
   return { tracks, total };
 };
+
+export type GetArtists = Awaited<ReturnType<typeof getArtists>>;
+export type ArtistsResult = UseQueryResult<GetArtists>;
 
 export { getArtists, getArtist, getTopAlbums, getTopTracks };

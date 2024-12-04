@@ -3,6 +3,10 @@ import { twMerge } from "tailwind-merge";
 
 import { env } from "~/env";
 
+import { type AlbumsResult } from "./queries/album";
+import { type ArtistsResult } from "./queries/artist";
+import { type TracksResult } from "./queries/track";
+
 export const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
   if (process.env.VERCEL) {
@@ -106,3 +110,5 @@ export const wait = async (ms?: number) =>
   await new Promise((resolve) => setTimeout(() => resolve(1), ms));
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export type QueriesResults = AlbumsResult | TracksResult | ArtistsResult;

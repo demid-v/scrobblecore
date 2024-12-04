@@ -6,7 +6,6 @@ import { Suspense } from "react";
 
 import Artists from "~/app/_components/artists";
 import SearchPagination from "~/app/_components/search-pagination";
-import { Skeleton } from "~/components/ui/skeleton";
 import { getArtists } from "~/lib/queries/artist";
 
 const limit = 60;
@@ -20,7 +19,7 @@ const ArtistsPageInner = () => {
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = useQuery({
+  const query = useQuery({
     queryKey: ["artists", { artistName, limit }],
     queryFn: () => getArtists({ artistName, limit }),
   });
@@ -29,17 +28,13 @@ const ArtistsPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-14 mx-auto w-fit">
-        {isFetching || !isSuccess ? (
-          <Skeleton className="mb-6 h-10 w-[480px]" />
-        ) : (
-          <SearchPagination
-            total={data.total}
-            limit={limit}
-            page={page}
-            className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
-          />
-        )}
+      <div className="sticky top-14 z-10 mx-auto w-fit">
+        <SearchPagination
+          query={query}
+          limit={limit}
+          page={page}
+          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
+        />
       </div>
       <Suspense>
         <Artists limit={limit} />
