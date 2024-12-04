@@ -37,21 +37,24 @@ const TracksPage = () => {
 
   return (
     <>
-      <div className="sticky top-14 mx-auto mb-6 flex w-fit items-center gap-3">
+      <div className="sticky top-14 mx-auto flex w-fit items-center gap-3">
         {paginationQuery.isFetching || !paginationQuery.isSuccess ? (
-          <Skeleton className="h-10 w-[480px]" />
+          <Skeleton className="mb-6 h-10 w-[480px]" />
         ) : (
           <SearchPagination
             total={paginationQuery.data.total}
             limit={limit}
             page={page}
-            className="rounded-sm bg-background px-2 py-0.5 shadow-lg"
+            className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
           />
         )}
         {itemsQuery.isFetching || !itemsQuery.isSuccess ? (
-          <Skeleton className="mx-auto h-9 w-28" />
+          <Skeleton className="mx-auto mb-6 h-9 w-28" />
         ) : (
-          <ScrobbleButton tracks={itemsQuery.data.tracks} className="shadow-lg">
+          <ScrobbleButton
+            tracks={itemsQuery.data.tracks}
+            className="mb-6 shadow-lg"
+          >
             Scrobble all
           </ScrobbleButton>
         )}

@@ -16,9 +16,8 @@ const TopTracks = ({
   limit: number;
   isSection?: boolean;
 }) => {
-  const artistName = decodeURIComponent(
-    useParams<{ artistName: string }>().artistName,
-  );
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(artistNameParam);
 
   const searchParams = useSearchParams();
 
@@ -40,7 +39,7 @@ const TopTracks = ({
       {isSection && (
         <p className="mb-6 mt-10 text-xl">
           <Link
-            href={{ pathname: `/artists/${artistName}/tracks` }}
+            href={{ pathname: `/artists/${artistNameParam}/tracks` }}
             className="hover:underline hover:underline-offset-2"
           >
             Tracks

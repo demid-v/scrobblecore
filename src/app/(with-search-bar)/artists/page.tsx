@@ -29,15 +29,15 @@ const ArtistsPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-14 mx-auto mb-6 w-fit">
+      <div className="sticky top-14 mx-auto w-fit">
         {isFetching || !isSuccess ? (
-          <Skeleton className="h-10 w-[480px]" />
+          <Skeleton className="mb-6 h-10 w-[480px]" />
         ) : (
           <SearchPagination
             total={data.total}
             limit={limit}
             page={page}
-            className="rounded-sm bg-background px-2 py-0.5 shadow-lg"
+            className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
           />
         )}
       </div>

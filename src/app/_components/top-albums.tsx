@@ -17,9 +17,8 @@ const TopAlbumsInner = ({
   limit: number;
   isSection?: boolean;
 }) => {
-  const artistName = decodeURIComponent(
-    useParams<{ artistName: string }>().artistName,
-  );
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(artistNameParam);
 
   const searchParams = useSearchParams();
 
@@ -41,7 +40,7 @@ const TopAlbumsInner = ({
       {isSection && (
         <p className="mb-6 text-xl">
           <Link
-            href={{ pathname: `/artists/${artistName}/albums` }}
+            href={{ pathname: `/artists/${artistNameParam}/albums` }}
             className="hover:underline hover:underline-offset-2"
           >
             Albums
