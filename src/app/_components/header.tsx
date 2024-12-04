@@ -9,6 +9,7 @@ import { authUrl, cn } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
 import Navigation from "./navigation";
+import SearchBar from "./search-bar";
 import SignOutButton from "./sign-out-button";
 import ThemeToggle from "./theme-toggle";
 
@@ -16,15 +17,16 @@ const HeaderInner = async () => {
   const user = await api.auth.user();
 
   return (
-    <header className="fixed z-10 flex h-12 w-full items-center justify-between bg-background px-11">
-      <div className="flex items-center gap-9">
+    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-4 bg-background px-11">
+      <div className="flex grow items-center gap-9">
         <Link href="/" className="text-xl font-semibold">
           Scrobblecore
         </Link>
         {user && <Navigation />}
+        <SearchBar className="max-w-lg grow" />
       </div>
-      <div className="flex items-center gap-4">
-        <ThemeToggle />
+      <div className="flex items-center justify-end gap-4">
+        <ThemeToggle className="shrink-0" />
         {!user && (
           <Button className="mr-2" asChild>
             <Link href={authUrl}>Sign in</Link>
@@ -42,7 +44,7 @@ const HeaderInner = async () => {
             >
               <SignOutButton />
             </form>
-            <Link href={user.url} target="_blank">
+            <Link href={user.url} target="_blank" className="shrink-0">
               <Image
                 src={user.image !== "" ? user.image : "/no-user-image.svg"}
                 alt="User's image"

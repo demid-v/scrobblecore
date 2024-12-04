@@ -1,27 +1,46 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+  useSelectedLayoutSegment,
+} from "next/navigation";
+import React, { Suspense, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { Button } from "~/components/ui/button";
+import { Form, FormControl, FormField, FormItem } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
-const SearchBarInner = () => {
+const formSchema = z.object({
+  search: z.string().trim(),
+});
+
+type formSchema = z.infer<typeof formSchema>;
+
+const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q")?.toString();
+
+  const form = useForm<formSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      search: "",
+    },
+  });
 
   const pathname = usePathname();
   const router = useRouter();
 
-  const searchBar = useRef<HTMLInputElement>(null);
-
-  const setSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter") return;
-
-    const value = event.currentTarget.value;
+  const setSearch = ({ search }: formSchema) => {
     const newSearchParams = new URLSearchParams(searchParams);
 
-    if (value !== "") {
-      newSearchParams.set("q", value);
+    if (search !== "") {
+      newSearchParams.set("q", search);
     } else {
       newSearchParams.delete("q");
     }
@@ -29,27 +48,54 @@ const SearchBarInner = () => {
     router.push(`${pathname}?${newSearchParams.toString()}`);
   };
 
-  useEffect(() => {
-    if (!searchBar.current) return;
+  const clearSearch = () => {
+    form.setValue("search", "");
+    setSearch({ search: "" });
+  };
 
-    searchBar.current.value = queryParam ?? "";
-  }, [queryParam]);
+  useEffect(() => {
+    form.setValue("search", queryParam ?? "");
+  }, [queryParam, form]);
 
   return (
-    <Input
-      className="mb-6"
-      ref={searchBar}
-      type="text"
-      placeholder="Search"
-      onKeyDown={setSearch}
-    />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(setSearch)} {...props}>
+        <FormField
+          control={form.control}
+          name="search"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="relative flex items-center gap-1">
+                  <Input type="text" placeholder="Search" {...field} />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearSearch}
+                  >
+                    <Cross1Icon />
+                  </Button>
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   );
 };
 
-const SearchBar = () => (
-  <Suspense>
-    <SearchBarInner />
-  </Suspense>
-);
+const SearchBar = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+
+  if (selectedLayoutSegment !== "(with-search-bar)") return null;
+
+  return (
+    <Suspense>
+      <SearchBarInner {...props} />
+    </Suspense>
+  );
+};
 
 export default SearchBar;
