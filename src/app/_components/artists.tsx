@@ -36,7 +36,7 @@ const Artists = ({
   const { artists } = data;
 
   if (artists.length === 0) {
-    return <div className="text-center text-xl font-medium">No results.</div>;
+    return <div className="text-center text-xl font-medium">No artists.</div>;
   }
 
   return (

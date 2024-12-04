@@ -8,20 +8,16 @@ import { type Tracks as TypeTracks } from "~/lib/queries/track";
 const Tracks = ({
   tracks,
   children,
-  ...props
 }: {
   tracks: TypeTracks;
   children?: React.ReactNode;
-} & React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLElement>,
-  HTMLElement
->) => {
+}) => {
   if (tracks.length === 0) {
-    return <div className="text-center text-xl font-medium">No results.</div>;
+    return <div className="text-center text-xl font-medium">No tracks.</div>;
   }
 
   return (
-    <section {...props}>
+    <section>
       {children}
       <ul>
         {tracks.map((track, index) => (

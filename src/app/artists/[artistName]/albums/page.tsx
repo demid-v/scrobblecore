@@ -28,27 +28,19 @@ const AlbumsPageInner = () => {
 
   return (
     <>
-      {isFetching || !isSuccess ? (
-        <Skeleton className="mx-auto mb-6 h-9 w-96" />
-      ) : (
-        <SearchPagination
-          total={data.total}
-          limit={limit}
-          page={page}
-          className="mb-6"
-        />
-      )}
+      <div className="sticky top-14 mx-auto mb-6 w-fit">
+        {isFetching || !isSuccess ? (
+          <Skeleton className="h-10 w-[480px]" />
+        ) : (
+          <SearchPagination
+            total={data.total}
+            limit={limit}
+            page={page}
+            className="rounded-sm bg-background px-2 py-0.5 shadow-lg"
+          />
+        )}
+      </div>
       <TopAlbums limit={limit} />
-      {isFetching || !isSuccess ? (
-        <Skeleton className="mx-auto mt-6 h-9 w-96" />
-      ) : (
-        <SearchPagination
-          total={data.total}
-          limit={limit}
-          page={page}
-          className="mt-6"
-        />
-      )}
     </>
   );
 };

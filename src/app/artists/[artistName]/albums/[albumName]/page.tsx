@@ -38,20 +38,20 @@ const AlbumPage = () => {
         width={300}
         height={300}
         defaultImage={<NoCover className="mx-auto h-full w-full p-10" />}
-        className="mx-auto"
+        className="mx-auto mb-3"
       />
-      <p className="mt-3 font-bold">
+      <p className="mb-1 font-bold">
         <Link
           href={`/artists/${encodeURIComponent(album.artist ?? artistName)}`}
         >
           {album.artist}
         </Link>
       </p>
-      <p className="mt-1 break-all text-center text-lg">{album.name}</p>
-      <ScrobbleButton tracks={album.tracks} className="mt-3">
+      <p className="mb-3 break-all text-center text-lg">{album.name}</p>
+      <ScrobbleButton tracks={album.tracks} className="mb-10">
         Scrobble album
       </ScrobbleButton>
-      <Tracks tracks={album.tracks} className="mt-10" />
+      <Tracks tracks={album.tracks} />
     </div>
   );
 };

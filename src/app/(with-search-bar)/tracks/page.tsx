@@ -21,52 +21,44 @@ const TracksPageInner = () => {
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
-  const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["tracks", { trackName, limit }],
-    queryFn: () => getTracks({ trackName, limit }),
+  const paginationParams = { trackName, limit };
+
+  const paginationQuery = useQuery({
+    queryKey: ["tracks", paginationParams],
+    queryFn: () => getTracks(paginationParams),
   });
 
-  const {
-    data: data2,
-    isFetching: isFetching2,
-    isSuccess: isSuccess2,
-  } = useQuery({
-    queryKey: ["tracks", { trackName, limit }],
-    queryFn: () => getTracks({ trackName, limit }),
+  const itemsParams = { ...paginationParams, page };
+
+  const itemsQuery = useQuery({
+    queryKey: ["tracks", itemsParams],
+    queryFn: () => getTracks(itemsParams),
   });
 
   if (search === "") return null;
 
   return (
     <>
-      {isFetching || !isSuccess ? (
-        <Skeleton className="mx-auto mb-6 h-9 w-96" />
-      ) : (
-        <SearchPagination
-          total={data.total}
-          limit={limit}
-          page={page}
-          className="mb-6"
-        />
-      )}
-      {isFetching2 || !isSuccess2 ? (
-        <Skeleton className="mx-auto mb-6 h-9 w-28" />
-      ) : (
-        <ScrobbleButton tracks={data2.tracks} className="mx-auto mb-6 block">
-          Scrobble all
-        </ScrobbleButton>
-      )}
+      <div className="sticky top-14 mx-auto mb-6 flex w-fit items-center gap-3">
+        {paginationQuery.isFetching || !paginationQuery.isSuccess ? (
+          <Skeleton className="h-10 w-[480px]" />
+        ) : (
+          <SearchPagination
+            total={paginationQuery.data.total}
+            limit={limit}
+            page={page}
+            className="rounded-sm bg-background px-2 py-0.5 shadow-lg"
+          />
+        )}
+        {itemsQuery.isFetching || !itemsQuery.isSuccess ? (
+          <Skeleton className="mx-auto h-9 w-28" />
+        ) : (
+          <ScrobbleButton tracks={itemsQuery.data.tracks} className="shadow-lg">
+            Scrobble all
+          </ScrobbleButton>
+        )}
+      </div>
       <SearchTracks limit={limit} />
-      {isFetching || !isSuccess ? (
-        <Skeleton className="mx-auto mt-6 h-9 w-96" />
-      ) : (
-        <SearchPagination
-          total={data.total}
-          limit={limit}
-          page={page}
-          className="mt-6"
-        />
-      )}
     </>
   );
 };
