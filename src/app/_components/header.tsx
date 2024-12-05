@@ -5,10 +5,11 @@ import { Suspense } from "react";
 
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
-import { authUrl, cn } from "~/lib/utils";
+import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
 import Navigation from "./navigation";
+import NoUserImage from "./no-user-image";
 import SearchBar from "./search-bar";
 import SignOutButton from "./sign-out-button";
 import ThemeToggle from "./theme-toggle";
@@ -45,13 +46,16 @@ const HeaderInner = async () => {
               <SignOutButton />
             </form>
             <Link href={user.url} target="_blank" className="shrink-0">
-              <Image
-                src={user.image !== "" ? user.image : "/no-user-image.svg"}
-                alt="User's image"
-                width={34}
-                height={34}
-                className={cn("rounded-full", user.image === "" && "h-6")}
-              />
+              {user.image !== "" && (
+                <Image
+                  src={user.image}
+                  alt="User's image"
+                  width={34}
+                  height={34}
+                  className="rounded-full"
+                />
+              )}
+              {user.image === "" && <NoUserImage />}
             </Link>
           </>
         )}
