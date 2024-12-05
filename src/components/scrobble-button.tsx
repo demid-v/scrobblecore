@@ -12,22 +12,22 @@ import { api } from "~/trpc/react";
 import { Skeleton } from "./ui/skeleton";
 
 const generateTimestamps = (date: number, tracks: Tracks) => {
-  let timestamp = date;
+  let timestamp = Math.floor(date / 1000);
+  const lastTimestamp = timestamp;
   const defaultDuration = 3 * 60;
 
   const shiftedTimestamps = tracks
     .toReversed()
-    .map((track) =>
-      Math.floor(
+    .map(
+      (track) =>
         (timestamp -=
           track.type === "album"
-            ? (track.duration ?? defaultDuration) * 1000
-            : defaultDuration * 1000) / 1000,
-      ),
+            ? (track.duration ?? defaultDuration)
+            : defaultDuration),
     )
     .toReversed();
 
-  const timestamps = [...shiftedTimestamps.slice(1), date / 1000];
+  const timestamps = [...shiftedTimestamps.slice(1), lastTimestamp];
 
   return timestamps;
 };
@@ -35,62 +35,61 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 const scrobbleSize = 50;
 
 const useScrobble = () => {
-  const tracksMapped = useRef<(Scrobble & { timestamp: number })[]>([]);
+  const tracksToScrobble = useRef<
+    (Omit<Scrobble, "status"> & { timestamp: number })[]
+  >([]);
 
   const setScrobbles = useSetAtom(scrobblesAtom);
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
     onSettled() {
-      if (tracksMapped.current.length === 0) return;
-      scrobble(tracksMapped.current.splice(0, scrobbleSize));
+      if (tracksToScrobble.current.length === 0) return;
+      scrobble(tracksToScrobble.current.splice(0, scrobbleSize));
     },
     onSuccess(data) {
-      const trackForAtom = data.tracks.map((track) => {
+      const tracksForAtom = data.tracks.map((track) => {
         const { timestamp: _timestamp, album: _album, ...props } = track;
         return { ...props, status: "successful" as const };
       });
 
-      void setScrobbles(trackForAtom);
+      void setScrobbles(tracksForAtom);
     },
     onError(_error, tracks) {
-      const trackForAtom = tracks.map((track) => {
+      const tracksForAtom = tracks.map((track) => {
         const { timestamp: _timestamp, album: _album, ...props } = track;
         return { ...props, status: "failed" as const };
       });
 
-      void setScrobbles(trackForAtom);
+      void setScrobbles(tracksForAtom);
     },
   });
 
   const startScrobble = (tracks: Tracks) => {
     const date = Date.now();
-    const timestamps = generateTimestamps(date, tracks);
 
-    tracksMapped.current = tracks.map((track, index) => ({
+    const tracksMappedBase = tracks.map((track) => ({
       id: crypto.randomUUID(),
       track: track.name,
       artist: track.artist,
-      ...(track.type === "album" && { album: track.album }),
       date,
-      timestamp: timestamps[index] ?? date,
+      ...(track.type === "album" && { album: track.album }),
+    }));
+
+    const tracksForStore = tracksMappedBase.map((track) => ({
+      ...track,
       status: "pending" as const,
     }));
 
-    const tracksForStore = tracksMapped.current.map((track) => {
-      const { timestamp: _timestamp, ...props } = track;
-      return props;
-    });
-
     setScrobbles(tracksForStore);
 
-    const tracksToScrobble = tracksMapped.current
-      .splice(0, scrobbleSize)
-      .map((track) => {
-        const { status: _status, ...props } = track;
-        return props;
-      });
+    const timestamps = generateTimestamps(date, tracks);
 
-    scrobble(tracksToScrobble);
+    tracksToScrobble.current = tracksMappedBase.map((track, index) => ({
+      ...track,
+      timestamp: timestamps[index] ?? date,
+    }));
+
+    scrobble(tracksToScrobble.current.splice(0, scrobbleSize));
   };
 
   return startScrobble;
@@ -118,7 +117,7 @@ const ScrobbleButton = ({
   );
 };
 
-const ScrobbleButtonWithSkeleton = ({
+const ScrobbleAllButton = ({
   children,
   query,
   ...props
@@ -140,4 +139,4 @@ const ScrobbleButtonWithSkeleton = ({
 };
 
 export default ScrobbleButton;
-export { useScrobble, ScrobbleButtonWithSkeleton };
+export { useScrobble, ScrobbleAllButton };

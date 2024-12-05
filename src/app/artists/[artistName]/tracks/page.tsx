@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 
 import SearchPagination from "~/app/_components/search-pagination";
 import TopTracks from "~/app/_components/top-tracks";
-import { ScrobbleButtonWithSkeleton } from "~/components/scrobble-button";
+import { ScrobbleAllButton } from "~/components/scrobble-button";
 import { getTopTracks } from "~/lib/queries/artist";
 
 const limit = 50;
@@ -43,12 +43,9 @@ const TracksPage = () => {
           page={page}
           className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
         />
-        <ScrobbleButtonWithSkeleton
-          query={itemsQuery}
-          className="mb-6 shadow-lg"
-        >
+        <ScrobbleAllButton query={itemsQuery} className="mb-6 shadow-lg">
           Scrobble all
-        </ScrobbleButtonWithSkeleton>
+        </ScrobbleAllButton>
       </div>
       <TopTracks limit={limit} />
     </>
