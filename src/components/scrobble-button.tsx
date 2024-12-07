@@ -1,12 +1,12 @@
 "use client";
 
 import { useSetAtom } from "jotai";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode } from "react";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
 import { type Tracks, type TracksResult } from "~/lib/queries/track";
-import { type Scrobble, scrobblesAtom } from "~/lib/store";
+import { scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
 
 import { Skeleton } from "./ui/skeleton";
@@ -35,20 +35,12 @@ const generateTimestamps = (date: number, tracks: Tracks) => {
 const scrobbleSize = 50;
 
 const useScrobble = () => {
-  const tracksToScrobble = useRef<
-    (Omit<Scrobble, "status"> & { timestamp: number })[]
-  >([]);
-
   const setScrobbles = useSetAtom(scrobblesAtom);
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
-    onSettled() {
-      if (tracksToScrobble.current.length === 0) return;
-      scrobble(tracksToScrobble.current.splice(0, scrobbleSize));
-    },
     onSuccess(data) {
       const tracksForAtom = data.tracks.map((track) => {
-        const { timestamp: _timestamp, album: _album, ...props } = track;
+        const { timestamp: _timestamp, ...props } = track;
         return { ...props, status: "successful" as const };
       });
 
@@ -56,7 +48,7 @@ const useScrobble = () => {
     },
     onError(_error, tracks) {
       const tracksForAtom = tracks.map((track) => {
-        const { timestamp: _timestamp, album: _album, ...props } = track;
+        const { timestamp: _timestamp, ...props } = track;
         return { ...props, status: "failed" as const };
       });
 
@@ -65,6 +57,8 @@ const useScrobble = () => {
   });
 
   const startScrobble = (tracks: Tracks) => {
+    //#region Put tracks in store
+
     const date = Date.now();
 
     const tracksMappedBase = tracks.map((track) => ({
@@ -82,14 +76,26 @@ const useScrobble = () => {
 
     setScrobbles(tracksForStore);
 
+    //#endregion
+
+    //#region Scrobble tracks
+
     const timestamps = generateTimestamps(date, tracks);
 
-    tracksToScrobble.current = tracksMappedBase.map((track, index) => ({
+    const tracksToScrobble = tracksMappedBase.map((track, index) => ({
       ...track,
-      timestamp: timestamps[index] ?? date,
+      timestamp: timestamps[index] ?? date / 1000,
     }));
 
-    scrobble(tracksToScrobble.current.splice(0, scrobbleSize));
+    for (
+      let index = 0;
+      index < tracksToScrobble.length;
+      index += scrobbleSize
+    ) {
+      scrobble(tracksToScrobble.slice(index, scrobbleSize + index));
+    }
+
+    //#endregion
   };
 
   return startScrobble;

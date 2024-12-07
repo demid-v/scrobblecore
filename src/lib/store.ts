@@ -7,6 +7,7 @@ export type Scrobble = {
   id: string;
   track: string;
   artist: string;
+  album?: string | undefined;
   date: number;
   status: "pending" | "successful" | "failed";
 };
@@ -52,6 +53,8 @@ export const scrobblesAtom = atom(
       throw new Error("Broken cookies.");
     }
 
+    //#region Set scrobbles
+
     const newScrobblesMap = convertScrobblesToMap(newScrobbles);
 
     const scrobblesToStore = new Map([
@@ -61,15 +64,18 @@ export const scrobblesAtom = atom(
 
     set(baseScrobblesAtom, scrobblesToStore);
 
-    const isPending = newScrobbles.at(0)?.status === "pending";
-    if (typeof localStorage === "undefined" || isPending) return;
+    //#endregion
+
+    //#region Persist scrobbles
+
+    if (typeof localStorage === "undefined") return;
 
     const scrobblesItem = localStorage.getItem("scrobbles");
 
     const usersScrobbles =
-      scrobblesItem === null
-        ? new Map<string, ScrobblesMap>()
-        : SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem);
+      scrobblesItem !== null
+        ? SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem)
+        : new Map<string, ScrobblesMap>();
 
     const scrobbles =
       usersScrobbles.get(userName) ?? new Map<string, Scrobble>();
@@ -78,5 +84,7 @@ export const scrobblesAtom = atom(
     usersScrobbles.set(userName, newScrobblesToPersist);
 
     localStorage.setItem("scrobbles", SuperJSON.stringify(usersScrobbles));
+
+    //#endregion
   },
 );
