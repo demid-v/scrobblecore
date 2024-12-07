@@ -1,3 +1,4 @@
+import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
 
 const ListSkeleton = ({
@@ -10,15 +11,15 @@ const ListSkeleton = ({
   <div>
     {hasHeader && <Skeleton className="mb-6 mt-10 h-7 w-16" />}
     {new Array(count).fill(0).map((_item, index) => (
-      <div
-        key={index}
-        className="flex h-10 items-center justify-between px-2 py-0.5 [&:not(:last-child)]:border-b"
-      >
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-5 w-28" />
-          <Skeleton className="h-6 w-48" />
+      <div key={index}>
+        <div className="flex items-center justify-between gap-2 px-2 py-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-6 w-48" />
+          </div>
+          <Skeleton className="h-8 w-[74.77px] shrink-0" />
         </div>
-        <Skeleton className="h-8 w-[74.77px]" />
+        {index !== count - 1 && <Separator />}
       </div>
     ))}
   </div>

@@ -4,9 +4,10 @@ import { useAtomValue } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
 
-import { scrobblesAtom } from "~/lib/store";
+import { Separator } from "~/components/ui/separator";
+import { type Scrobble, scrobblesAtom } from "~/lib/store";
 
-const scrobbleStateRecord = {
+const scrobbleStateRecord: Record<Scrobble["status"], string> = {
   pending: "Pending",
   successful: "Scrobbled",
   failed: "Failed to scrobble",
@@ -17,9 +18,9 @@ const History = () => {
 
   return (
     <ol>
-      {scrobbles.map(({ id, artist, track: name, date, status }) => (
-        <li key={id} className="group/history [&:not(:last-child)]:border-b">
-          <div className="gap-x-2 rounded-sm px-2 py-0.5 group-hover/history:bg-popover-foreground/10 [&:not(:last-child)]:border-b">
+      {scrobbles.map(({ id, artist, track: name, date, status }, index) => (
+        <li key={id}>
+          <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">
             <div className="flex items-center justify-between gap-x-1 overflow-hidden">
               <div className="overflow-hidden text-ellipsis whitespace-nowrap">
                 <Link
@@ -50,6 +51,7 @@ const History = () => {
               />
             </div>
           </div>
+          {index !== scrobbles.length - 1 && <Separator />}
         </li>
       ))}
     </ol>

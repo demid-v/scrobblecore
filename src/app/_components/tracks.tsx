@@ -3,6 +3,7 @@ import Link from "next/link";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
 import ScrobbleButton from "~/components/scrobble-button";
+import { Separator } from "~/components/ui/separator";
 import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
@@ -21,11 +22,8 @@ const Tracks = ({
       {children}
       <ul>
         {tracks.map((track, index) => (
-          <li
-            key={`${index}`}
-            className="group h-10 [&:not(:last-child)]:border-b"
-          >
-            <div className="flex h-full items-center gap-2 rounded-sm px-2 py-0.5 group-hover:bg-popover-foreground/10">
+          <li key={`${index}`}>
+            <div className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-popover-foreground/10">
               {track.type === "track" && (
                 <ImageWithFallback
                   src={track.image}
@@ -60,6 +58,7 @@ const Tracks = ({
                 Scrobble
               </ScrobbleButton>
             </div>
+            {index !== tracks.length - 1 && <Separator />}
           </li>
         ))}
       </ul>
