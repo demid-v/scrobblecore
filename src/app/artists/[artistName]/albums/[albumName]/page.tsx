@@ -38,6 +38,7 @@ const AlbumPage = () => {
         width={300}
         height={300}
         defaultImage={<NoCover className="mx-auto h-full w-full p-10" />}
+        priority
         className="mx-auto mb-3"
       />
       <p className="mb-1 font-bold">

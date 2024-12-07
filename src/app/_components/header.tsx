@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import ImageWithFallback from "~/components/image-with-fallback";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { authUrl } from "~/lib/utils";
@@ -46,16 +46,15 @@ const HeaderInner = async () => {
               <SignOutButton />
             </form>
             <Link href={user.url} target="_blank" className="shrink-0">
-              {user.image !== "" && (
-                <Image
-                  src={user.image}
-                  alt="User's image"
-                  width={34}
-                  height={34}
-                  className="rounded-full"
-                />
-              )}
-              {user.image === "" && <NoUserImage />}
+              <ImageWithFallback
+                src={user.image}
+                alt="User's image"
+                width={34}
+                height={34}
+                defaultImage={<NoUserImage />}
+                priority
+                className="rounded-full"
+              />
             </Link>
           </>
         )}
