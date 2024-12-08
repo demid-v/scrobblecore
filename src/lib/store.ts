@@ -3,7 +3,7 @@ import { RESET, atomWithReset } from "jotai/utils";
 import cookies from "js-cookie";
 import SuperJSON from "superjson";
 
-export type Scrobble = {
+type Scrobble = {
   id: string;
   track: string;
   artist: string;
@@ -39,8 +39,16 @@ const getInitialScrobbles = () => {
 
 const baseScrobblesAtom = atomWithReset(getInitialScrobbles());
 
-export const scrobblesAtom = atom(
-  (get) => [...get(baseScrobblesAtom).values()],
+const scrobblesAtom = atom(
+  (get) => {
+    const scrobblesFilter = get(scrobblesFilterAtom);
+    const allScrobbles = [...get(baseScrobblesAtom).values()];
+
+    if (scrobblesFilter === "all") return allScrobbles;
+    return allScrobbles.filter(
+      (scrobble) => scrobble.status === scrobblesFilter,
+    );
+  },
   (get, set, newScrobbles: Scrobble[] | typeof RESET) => {
     if (newScrobbles === RESET) {
       set(baseScrobblesAtom, new Map<string, Scrobble>());
@@ -53,8 +61,6 @@ export const scrobblesAtom = atom(
       throw new Error("Broken cookies.");
     }
 
-    //#region Set scrobbles
-
     const newScrobblesMap = convertScrobblesToMap(newScrobbles);
 
     const scrobblesToStore = new Map([
@@ -63,8 +69,6 @@ export const scrobblesAtom = atom(
     ]);
 
     set(baseScrobblesAtom, scrobblesToStore);
-
-    //#endregion
 
     //#region Persist scrobbles
 
@@ -81,6 +85,7 @@ export const scrobblesAtom = atom(
       usersScrobbles.get(userName) ?? new Map<string, Scrobble>();
 
     const newScrobblesToPersist = new Map([...scrobbles, ...newScrobblesMap]);
+
     usersScrobbles.set(userName, newScrobblesToPersist);
 
     localStorage.setItem("scrobbles", SuperJSON.stringify(usersScrobbles));
@@ -88,3 +93,9 @@ export const scrobblesAtom = atom(
     //#endregion
   },
 );
+
+type ScrobblesFilter = "all" | Scrobble["status"];
+const scrobblesFilterAtom = atom<ScrobblesFilter>("all");
+
+export { scrobblesAtom, scrobblesFilterAtom };
+export type { Scrobble, ScrobblesFilter };
