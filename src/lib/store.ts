@@ -2,15 +2,17 @@ import { atom } from "jotai";
 import { RESET, atomWithReset } from "jotai/utils";
 import cookies from "js-cookie";
 import SuperJSON from "superjson";
+import { type Simplify } from "type-fest";
 
-type Scrobble = {
-  id: string;
-  track: string;
-  artist: string;
-  album?: string | undefined;
-  date: number;
-  status: "pending" | "successful" | "failed";
-};
+import { type TrackToScrobble } from "./queries/track";
+
+type Scrobble = Simplify<
+  Pick<TrackToScrobble, "name" | "artist" | "album"> & {
+    id: string;
+    date: number;
+    status: "pending" | "successful" | "failed";
+  }
+>;
 
 type ScrobblesMap = Map<string, Scrobble>;
 
@@ -95,6 +97,7 @@ const scrobblesAtom = atom(
 );
 
 type ScrobblesFilter = "all" | Scrobble["status"];
+
 const scrobblesFilterAtom = atom<ScrobblesFilter>("all");
 
 export { scrobblesAtom, scrobblesFilterAtom };

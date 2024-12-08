@@ -139,9 +139,10 @@ const getAlbum = async ({
   return album;
 };
 
-export type GetAlbums = Awaited<ReturnType<typeof getAlbums>>;
-export type AlbumsResult = UseQueryResult<GetAlbums>;
-export type Albums = GetAlbums["albums"];
-export type AlbumTracks = Awaited<ReturnType<typeof getAlbum>>["tracks"];
+type GetAlbums = Awaited<ReturnType<typeof getAlbums>>;
+type AlbumsResult = UseQueryResult<GetAlbums>;
+type Albums = GetAlbums["albums"];
+type AlbumTracks = Awaited<ReturnType<typeof getAlbum>>["tracks"];
 
 export { getAlbums, getAlbum };
+export type { GetAlbums, AlbumsResult, Albums, AlbumTracks };

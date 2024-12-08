@@ -1,8 +1,8 @@
 import { type UseQueryResult } from "@tanstack/react-query";
+import { type SetOptional } from "type-fest";
 import { z } from "zod";
 
 import { env } from "~/env";
-import { type PartialBy } from "~/lib/utils";
 
 import { type AlbumTracks } from "./album";
 
@@ -63,11 +63,15 @@ const getTracks = async ({
   return { tracks, total };
 };
 
-export type GetTracks = Awaited<ReturnType<typeof getTracks>>;
-export type TracksResult = UseQueryResult<GetTracks>;
-export type SearchTracks = GetTracks["tracks"];
-export type Tracks =
-  | SearchTracks
-  | PartialBy<AlbumTracks[number], "album" | "duration">[];
+type GetTracks = Awaited<ReturnType<typeof getTracks>>;
+type TracksResult = UseQueryResult<GetTracks>;
+type SearchTracks = GetTracks["tracks"];
+type Tracks = SearchTracks | AlbumTracks;
+
+type TrackToScrobble = SetOptional<
+  Pick<AlbumTracks[number], "name" | "artist" | "album" | "duration">,
+  "album" | "duration"
+>;
 
 export { getTracks };
+export type { GetTracks, TracksResult, SearchTracks, Tracks, TrackToScrobble };

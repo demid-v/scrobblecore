@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type TrackToScrobble } from "~/lib/queries/track";
 
 const formSchema = z.object({
   track: z.string().trim().min(1, {
@@ -42,12 +43,12 @@ const TrackForm = () => {
   const startScrobble = useScrobble();
 
   const onSubmit = (data: formSchema) => {
-    const track = {
-      type: "album" as const,
+    const track: TrackToScrobble = {
       name: data.track,
       artist: data.artist,
       album: data.album,
     };
+
     startScrobble([track]);
   };
 

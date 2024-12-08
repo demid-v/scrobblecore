@@ -7,7 +7,9 @@ import { type AlbumsResult } from "./queries/album";
 import { type ArtistsResult } from "./queries/artist";
 import { type TracksResult } from "./queries/track";
 
-export const getBaseUrl = () => {
+const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+
+const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
   if (process.env.VERCEL) {
     if (env.NODE_ENV === "production") return env.NEXT_PUBLIC_PROD_BASE_URL!;
@@ -16,19 +18,17 @@ export const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };
 
-export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
-
 const params = {
   api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   cb: `${getBaseUrl()}/api/auth`,
 };
 
-export const authUrl = `https://www.last.fm/api/auth/?${new URLSearchParams(params)}`;
+const authUrl = `https://www.last.fm/api/auth/?${new URLSearchParams(params)}`;
 
 const range = (start: number, end: number) =>
   Array.from({ length: end - start + 1 }, (_, index) => index + start);
 
-export const paginate = ({
+const paginate = ({
   total,
   limit,
   page,
@@ -106,9 +106,10 @@ export const paginate = ({
   ] as const;
 };
 
-export const wait = async (ms?: number) =>
-  await new Promise((resolve) => setTimeout(() => resolve(1), ms));
+const wait = (ms?: number) =>
+  new Promise((resolve) => setTimeout(() => resolve(1), ms));
 
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type QueryResult = AlbumsResult | TracksResult | ArtistsResult;
 
-export type QueriesResults = AlbumsResult | TracksResult | ArtistsResult;
+export { cn, getBaseUrl, authUrl, paginate, wait };
+export { type QueryResult };

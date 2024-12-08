@@ -5,26 +5,24 @@ import { type ReactNode } from "react";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
-import { type Tracks, type TracksResult } from "~/lib/queries/track";
+import {
+  type TrackToScrobble,
+  type Tracks,
+  type TracksResult,
+} from "~/lib/queries/track";
 import { scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
 
 import { Skeleton } from "./ui/skeleton";
 
-const generateTimestamps = (date: number, tracks: Tracks) => {
+const generateTimestamps = (date: number, tracks: TrackToScrobble[]) => {
   let timestamp = Math.floor(date / 1000);
   const lastTimestamp = timestamp;
   const defaultDuration = 3 * 60;
 
   const shiftedTimestamps = tracks
     .toReversed()
-    .map(
-      (track) =>
-        (timestamp -=
-          track.type === "album"
-            ? (track.duration ?? defaultDuration)
-            : defaultDuration),
-    )
+    .map((track) => (timestamp -= track.duration ?? defaultDuration))
     .toReversed();
 
   const timestamps = [...shiftedTimestamps.slice(1), lastTimestamp];
@@ -56,17 +54,16 @@ const useScrobble = () => {
     },
   });
 
-  const startScrobble = (tracks: Tracks) => {
+  const startScrobble = (tracks: TrackToScrobble[]) => {
     //#region Put tracks in store
 
     const date = Date.now();
 
     const tracksMappedBase = tracks.map((track) => ({
+      ...track,
       id: crypto.randomUUID(),
-      track: track.name,
-      artist: track.artist,
       date,
-      ...(track.type === "album" && { album: track.album }),
+      ...{ album: track.album },
     }));
 
     const tracksForStore = tracksMappedBase.map((track) => ({

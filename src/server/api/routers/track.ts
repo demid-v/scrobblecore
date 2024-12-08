@@ -11,7 +11,7 @@ export const trackRouter = createTRPCRouter({
         z.object({
           id: z.string(),
           artist: z.string(),
-          track: z.string(),
+          name: z.string(),
           album: z.string().optional(),
           date: z.number(),
           timestamp: z.number(),
@@ -34,11 +34,11 @@ export const trackRouter = createTRPCRouter({
         const baseParamsMap = new Map(Object.entries(baseParams));
 
         const params = tracks.reduce((params, trackInfo, index) => {
-          const { artist, track, album, timestamp } = trackInfo;
+          const { artist, name, album, timestamp } = trackInfo;
 
           // Adding trackNumber[i] with index notation gives error 13: Invalid method signature supplied.
           params.set(`artist[${index}]`, artist);
-          params.set(`track[${index}]`, track);
+          params.set(`track[${index}]`, name);
           params.set(`timestamp[${index}]`, timestamp.toString());
 
           if (typeof album !== "undefined") {

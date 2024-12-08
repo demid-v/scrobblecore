@@ -12,7 +12,7 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
-import { type QueriesResults, paginate } from "~/lib/utils";
+import { type QueryResult, paginate } from "~/lib/utils";
 
 const SearchPagination = ({
   page = 1,
@@ -22,7 +22,7 @@ const SearchPagination = ({
 }: {
   page: number;
   limit: number;
-  query: QueriesResults;
+  query: QueryResult;
 } & React.ComponentProps<"nav">) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();

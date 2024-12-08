@@ -134,8 +134,6 @@ const getArtist = async ({ artistName }: { artistName: string }) => {
   return artist;
 };
 
-export type Artists = Awaited<ReturnType<typeof getArtists>>;
-
 const getTopAlbums = async ({
   artistName,
   limit = 50,
@@ -219,7 +217,8 @@ const getTopTracks = async ({
   return { tracks, total };
 };
 
-export type GetArtists = Awaited<ReturnType<typeof getArtists>>;
-export type ArtistsResult = UseQueryResult<GetArtists>;
+type GetArtists = Awaited<ReturnType<typeof getArtists>>;
+type ArtistsResult = UseQueryResult<GetArtists>;
 
 export { getArtists, getArtist, getTopAlbums, getTopTracks };
+export type { GetArtists, ArtistsResult };

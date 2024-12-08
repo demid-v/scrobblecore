@@ -3,8 +3,7 @@
 import Image from "next/image";
 import type { ImageProps } from "next/image";
 import React, { useState } from "react";
-
-import { type PartialBy } from "~/lib/utils";
+import { type SetOptional } from "type-fest";
 
 const ImageWithFallback = ({
   src = "",
@@ -12,7 +11,7 @@ const ImageWithFallback = ({
   className,
   defaultImage,
   ...props
-}: PartialBy<ImageProps, "src"> & {
+}: SetOptional<ImageProps, "src"> & {
   defaultImage: React.ReactNode;
 }) => {
   const [isFallback, setIsFallback] = useState(false);
