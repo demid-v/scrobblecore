@@ -1,5 +1,5 @@
 import { type UseQueryResult } from "@tanstack/react-query";
-import { type SetOptional } from "type-fest";
+import { type SetOptional, type Simplify } from "type-fest";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -68,9 +68,11 @@ type TracksResult = UseQueryResult<GetTracks>;
 type SearchTracks = GetTracks["tracks"];
 type Tracks = SearchTracks | AlbumTracks;
 
-type TrackToScrobble = SetOptional<
-  Pick<AlbumTracks[number], "name" | "artist" | "album" | "duration">,
-  "album" | "duration"
+type TrackToScrobble = Simplify<
+  SetOptional<
+    Pick<AlbumTracks[number], "name" | "artist" | "album" | "duration">,
+    "album" | "duration"
+  > & { id?: string | undefined; date?: number | undefined }
 >;
 
 export { getTracks };

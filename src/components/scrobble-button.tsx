@@ -2,6 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { type ReactNode } from "react";
+import { type SetRequired, type Simplify } from "type-fest";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
@@ -10,13 +11,16 @@ import {
   type Tracks,
   type TracksResult,
 } from "~/lib/queries/track";
-import { scrobblesAtom } from "~/lib/store";
+import { type Scrobble, scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
 
 import { Skeleton } from "./ui/skeleton";
 
 const generateTimestamps = (date: number, tracks: TrackToScrobble[]) => {
   let timestamp = Math.floor(date / 1000);
+
+  if (tracks.length < 2) return [timestamp];
+
   const lastTimestamp = timestamp;
   const defaultDuration = 3 * 60;
 
@@ -37,34 +41,39 @@ const useScrobble = () => {
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
     onSuccess(data) {
-      const tracksForAtom = data.tracks.map((track) => {
+      const scrobbles = data.tracks.map((track) => {
         const { timestamp: _timestamp, ...props } = track;
-        return { ...props, status: "successful" as const };
+        const scrobble: Scrobble = { ...props, status: "successful" };
+
+        return scrobble;
       });
 
-      void setScrobbles(tracksForAtom);
+      void setScrobbles(scrobbles);
     },
     onError(_error, tracks) {
-      const tracksForAtom = tracks.map((track) => {
+      const scrobbles = tracks.map((track) => {
         const { timestamp: _timestamp, ...props } = track;
-        return { ...props, status: "failed" as const };
+        const scrobble: Scrobble = { ...props, status: "failed" };
+
+        return scrobble;
       });
 
-      void setScrobbles(tracksForAtom);
+      void setScrobbles(scrobbles);
     },
   });
 
-  const startScrobble = (tracks: TrackToScrobble[]) => {
+  const startScrobble = (tracks: TrackToScrobble[], isRetry?: boolean) => {
     //#region Put tracks in store
 
-    const date = Date.now();
+    const date = isRetry ? (tracks.at(0)?.date ?? Date.now()) : Date.now();
 
     const tracksMappedBase = tracks.map((track) => ({
       ...track,
-      id: crypto.randomUUID(),
+      ...(!isRetry && {
+        id: crypto.randomUUID(),
+      }),
       date,
-      ...{ album: track.album },
-    }));
+    })) as Simplify<SetRequired<TrackToScrobble, "id"> & { date: number }>[];
 
     const tracksForStore = tracksMappedBase.map((track) => ({
       ...track,

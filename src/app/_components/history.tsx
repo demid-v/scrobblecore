@@ -58,9 +58,11 @@ const History = () => {
                   variant="ghost"
                   size="sm"
                   className="h-auto px-1.5"
-                  title="Scrobble again"
+                  title={
+                    scrobble.status === "failed" ? "Retry" : "Scrobble again"
+                  }
                   onClick={() => {
-                    startScrobble([scrobble]);
+                    startScrobble([scrobble], scrobble.status === "failed");
                   }}
                 >
                   <Redo2 />
