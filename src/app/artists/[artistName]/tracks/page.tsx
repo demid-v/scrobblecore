@@ -41,9 +41,9 @@ const TracksPage = () => {
           query={paginationQuery}
           limit={limit}
           page={page}
-          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg"
+          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
-        <ScrobbleAllButton query={itemsQuery} className="mb-6 shadow-lg">
+        <ScrobbleAllButton query={itemsQuery} className="mb-6">
           Scrobble all
         </ScrobbleAllButton>
       </div>

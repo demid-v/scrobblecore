@@ -26,17 +26,17 @@ const History = () => {
         <li key={scrobble.id}>
           <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">
             <div className="flex items-center justify-between gap-x-1.5">
-              <div className="flex min-w-0 items-center gap-x-1 text-ellipsis whitespace-nowrap">
+              <div className="flex min-w-0 items-center gap-x-1 whitespace-nowrap">
                 <Link
                   href={`/artists/${encodeURIComponent(scrobble.artist)}`}
-                  className="overflow-hidden text-xs font-semibold"
+                  className="overflow-hidden text-ellipsis text-xs font-semibold"
                 >
                   {scrobble.artist}
                 </Link>
                 {scrobble.album && (
                   <Link
                     href={`/artists/${encodeURIComponent(scrobble.artist)}/albums/${encodeURIComponent(scrobble.album)}`}
-                    className="overflow-hidden text-xs"
+                    className="overflow-hidden text-ellipsis text-xs"
                   >
                     {scrobble.album}
                   </Link>
