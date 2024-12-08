@@ -19,9 +19,11 @@ const ArtistsPageInner = () => {
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { artistName, limit };
+
   const query = useQuery({
-    queryKey: ["artists", { artistName, limit }],
-    queryFn: () => getArtists({ artistName, limit }),
+    queryKey: ["artists", queryParams],
+    queryFn: () => getArtists(queryParams),
   });
 
   if (search === "") return null;

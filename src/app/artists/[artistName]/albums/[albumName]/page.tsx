@@ -18,13 +18,15 @@ const AlbumPage = () => {
   const artistName = decodeURIComponent(params.artistName);
   const albumName = decodeURIComponent(params.albumName);
 
+  const queryParams = { artistName, albumName };
+
   const {
     data: album,
     isFetching,
     isSuccess,
   } = useQuery({
-    queryKey: ["albums", "album", { artistName, albumName }],
-    queryFn: () => getAlbum({ artistName, albumName }),
+    queryKey: ["album", "albums", queryParams],
+    queryFn: () => getAlbum(queryParams),
   });
 
   if (isFetching) return <AlbumSkeleton />;

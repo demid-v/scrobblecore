@@ -25,9 +25,11 @@ const SearchTracksInner = ({
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { trackName, limit, page };
+
   const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["tracks", { trackName, limit, page }],
-    queryFn: () => getTracks({ trackName, limit, page }),
+    queryKey: ["tracks", queryParams],
+    queryFn: () => getTracks(queryParams),
   });
 
   if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;

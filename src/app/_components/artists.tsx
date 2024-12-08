@@ -25,9 +25,11 @@ const Artists = ({
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { artistName, limit, page };
+
   const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["artists", { artistName, limit, page }],
-    queryFn: () => getArtists({ artistName, limit, page }),
+    queryKey: ["artists", queryParams],
+    queryFn: () => getArtists(queryParams),
   });
 
   if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;

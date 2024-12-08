@@ -20,9 +20,11 @@ const AlbumsPageInner = () => {
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { artistName, limit };
+
   const query = useQuery({
-    queryKey: ["artists", "topAlbums", { artistName, limit }],
-    queryFn: () => getTopAlbums({ artistName, limit }),
+    queryKey: ["topAlbums", "albums", queryParams],
+    queryFn: () => getTopAlbums(queryParams),
   });
 
   return (

@@ -23,14 +23,14 @@ const TracksPage = () => {
   const paginationParams = { artistName, limit };
 
   const paginationQuery = useQuery({
-    queryKey: ["tracks", paginationParams],
+    queryKey: ["topTracks", "tracks", paginationParams],
     queryFn: () => getTopTracks(paginationParams),
   });
 
   const itemsParams = { ...paginationParams, page };
 
   const itemsQuery = useQuery({
-    queryKey: ["tracks", itemsParams],
+    queryKey: ["topTracks", "tracks", itemsParams],
     queryFn: () => getTopTracks(itemsParams),
   });
 

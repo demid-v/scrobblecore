@@ -14,14 +14,15 @@ const Artist = () => {
   );
 
   const artistName = artistNameParam;
+  const queryParams = { artistName };
 
   const {
     data: artist,
     isFetching,
     isSuccess,
   } = useQuery({
-    queryKey: ["artists", "artist", { artistName }],
-    queryFn: () => getArtist({ artistName }),
+    queryKey: ["artist", "artists", queryParams],
+    queryFn: () => getArtist(queryParams),
   });
 
   if (isSuccess && artistNameParam !== artist.name) {

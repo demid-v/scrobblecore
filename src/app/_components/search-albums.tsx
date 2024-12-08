@@ -25,9 +25,11 @@ const SearchAlbumsInner = ({
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { albumName, limit, page };
+
   const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["albums", { albumName, limit, page }],
-    queryFn: () => getAlbums({ albumName, limit, page }),
+    queryKey: ["albums", queryParams],
+    queryFn: () => getAlbums(queryParams),
   });
 
   if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;

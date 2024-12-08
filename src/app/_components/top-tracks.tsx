@@ -24,9 +24,11 @@ const TopTracks = ({
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { artistName, limit, page };
+
   const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["artists", "artist", "topTracks", { artistName, limit, page }],
-    queryFn: () => getTopTracks({ artistName, limit, page }),
+    queryKey: ["topTracks", "tracks", queryParams],
+    queryFn: () => getTopTracks(queryParams),
   });
 
   if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;

@@ -19,9 +19,11 @@ const AlbumsPageInner = () => {
   const pageQuery = Number(searchParams.get("page") ?? undefined);
   const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
 
+  const queryParams = { albumName, limit };
+
   const query = useQuery({
-    queryKey: ["albums", { albumName, limit }],
-    queryFn: () => getAlbums({ albumName, limit }),
+    queryKey: ["albums", queryParams],
+    queryFn: () => getAlbums(queryParams),
   });
 
   if (search === "") return null;
