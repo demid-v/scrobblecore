@@ -18,42 +18,52 @@ const History = () => {
 
   return (
     <ol>
-      {scrobbles.map(({ id, artist, track: name, date, status }, index) => (
-        <li key={id}>
-          <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">
-            <div className="flex items-center justify-between gap-x-1 overflow-hidden">
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                <Link
-                  href={`/artists/${encodeURIComponent(artist)}`}
-                  className="text-xs font-semibold"
+      {scrobbles.map(
+        ({ id, track: name, artist, album, date, status }, index) => (
+          <li key={id}>
+            <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">
+              <div className="flex items-center justify-between gap-x-1.5">
+                <div className="flex min-w-0 items-center gap-x-1 text-ellipsis whitespace-nowrap">
+                  <Link
+                    href={`/artists/${encodeURIComponent(artist)}`}
+                    className="overflow-hidden text-xs font-semibold"
+                  >
+                    {artist}
+                  </Link>
+                  {album && (
+                    <Link
+                      href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(album)}`}
+                      className="overflow-hidden text-xs"
+                    >
+                      {album}
+                    </Link>
+                  )}
+                </div>
+                <time className="shrink-0 whitespace-nowrap text-xs">
+                  {new Date(date).toLocaleString()}
+                </time>
+              </div>
+              <div className="flex justify-between gap-x-1">
+                <div
+                  className="overflow-hidden text-ellipsis whitespace-nowrap"
+                  title={name}
                 >
-                  {artist}
-                </Link>
+                  {name}
+                </div>
+                <Image
+                  src={`/${status}.svg`}
+                  alt={scrobbleStateRecord[status]}
+                  width={16}
+                  height={16}
+                  title={scrobbleStateRecord[status]}
+                  className="my-auto ml-auto"
+                />
               </div>
-              <time className="shrink-0 whitespace-nowrap text-xs">
-                {new Date(date).toLocaleString()}
-              </time>
             </div>
-            <div className="flex justify-between gap-x-1">
-              <div
-                className="overflow-hidden text-ellipsis whitespace-nowrap"
-                title={name}
-              >
-                {name}
-              </div>
-              <Image
-                src={`/${status}.svg`}
-                alt={scrobbleStateRecord[status]}
-                width={16}
-                height={16}
-                title={scrobbleStateRecord[status]}
-                className="my-auto ml-auto"
-              />
-            </div>
-          </div>
-          {index !== scrobbles.length - 1 && <Separator />}
-        </li>
-      ))}
+            {index !== scrobbles.length - 1 && <Separator />}
+          </li>
+        ),
+      )}
     </ol>
   );
 };

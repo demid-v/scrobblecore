@@ -12,8 +12,8 @@ const ListSkeleton = ({
     {hasHeader && <Skeleton className="mb-6 mt-10 h-7 w-16" />}
     {new Array(count).fill(0).map((_item, index) => (
       <div key={index}>
-        <div className="flex items-center justify-between gap-2 px-2 py-1">
-          <div className="flex min-w-0 items-center gap-2">
+        <div className="flex items-center justify-between gap-x-2 px-2 py-1">
+          <div className="flex min-w-0 items-center gap-x-2">
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-6 w-48" />
           </div>

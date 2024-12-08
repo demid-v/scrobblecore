@@ -18,15 +18,15 @@ const HeaderInner = async () => {
   const user = await api.auth.user();
 
   return (
-    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-4 bg-background px-11">
-      <div className="flex grow items-center gap-9">
+    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-11">
+      <div className="flex grow items-center gap-x-9">
         <Link href="/" className="text-xl font-semibold">
           Scrobblecore
         </Link>
         {user && <Navigation />}
         <SearchBar className="max-w-lg grow" />
       </div>
-      <div className="flex items-center justify-end gap-4">
+      <div className="flex items-center justify-end gap-x-4">
         <ThemeToggle className="shrink-0" />
         {!user && (
           <Button className="mr-2" asChild>
@@ -67,7 +67,7 @@ const Header = () => (
   <Suspense
     fallback={
       <div className="fixed z-10 flex h-12 w-full items-center justify-between bg-background px-11">
-        <div className="flex items-center gap-9">
+        <div className="flex items-center gap-x-9">
           <Link href="/" className="text-xl font-semibold">
             Scrobblecore
           </Link>
@@ -79,7 +79,7 @@ const Header = () => (
             <Skeleton className="mx-4 h-5 w-12" />
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-x-4">
           <Skeleton className="h-9 w-9" />
           <Skeleton className="h-9 w-24" />
           <Skeleton className="h-[34px] w-[34px] rounded-full" />

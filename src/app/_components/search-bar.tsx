@@ -61,7 +61,7 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="relative flex items-center gap-1">
+                <div className="relative flex items-center gap-x-1">
                   <Input type="text" placeholder="Search" {...field} />
                   <Button
                     type="button"

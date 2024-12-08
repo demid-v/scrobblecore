@@ -36,7 +36,7 @@ const TracksPage = () => {
 
   return (
     <>
-      <div className="sticky top-14 z-10 mx-auto flex w-fit items-center gap-3">
+      <div className="sticky top-14 z-10 mx-auto flex w-fit items-center gap-x-3">
         <SearchPagination
           query={paginationQuery}
           limit={limit}

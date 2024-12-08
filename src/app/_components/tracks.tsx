@@ -23,7 +23,7 @@ const Tracks = ({
       <ul>
         {tracks.map((track, index) => (
           <li key={`${index}`}>
-            <div className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-popover-foreground/10">
+            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-popover-foreground/10">
               {track.type === "track" && (
                 <ImageWithFallback
                   src={track.image}
