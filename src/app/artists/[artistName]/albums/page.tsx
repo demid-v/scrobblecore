@@ -29,12 +29,12 @@ const AlbumsPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-14 z-10 mx-auto w-fit">
+      <div className="sticky top-2 z-10 mx-auto mb-8 w-fit">
         <SearchPagination
           query={query}
           limit={limit}
           page={page}
-          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
       </div>
       <TopAlbums limit={limit} />

@@ -21,7 +21,7 @@ const History = () => {
   const startScrobble = useScrobble();
 
   return (
-    <ol>
+    <ol className="pb-4">
       {scrobbles.map((scrobble, index) => (
         <li key={scrobble.id}>
           <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">

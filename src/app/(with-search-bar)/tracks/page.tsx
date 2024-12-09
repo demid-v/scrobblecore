@@ -38,16 +38,14 @@ const TracksPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-14 z-10 mx-auto flex w-fit items-center gap-x-3">
+      <div className="sticky top-2 z-10 mx-auto mb-8 flex h-10 w-fit items-center gap-x-3">
         <SearchPagination
           query={paginationQuery}
           limit={limit}
           page={page}
-          className="mb-6 rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
-        <ScrobbleAllButton query={tracksQuery} className="mb-6">
-          Scrobble all
-        </ScrobbleAllButton>
+        <ScrobbleAllButton query={tracksQuery}>Scrobble all</ScrobbleAllButton>
       </div>
       <SearchTracks limit={limit} />
     </>

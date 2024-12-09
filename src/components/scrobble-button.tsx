@@ -138,7 +138,7 @@ const ScrobbleAllButton = ({
   query: TracksResult;
 } & ButtonProps) => {
   if (query.isFetching) {
-    return <Skeleton className="mx-auto mb-6 h-9 w-[110.89px] shrink-0" />;
+    return <Skeleton className="mx-auto h-9 w-[110.89px] shrink-0" />;
   }
 
   if (!query.isSuccess) return null;

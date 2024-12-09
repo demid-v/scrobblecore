@@ -20,15 +20,15 @@ const HistoryFilter = () => {
         setScrobblesFilter(value);
       }}
     >
-      <SelectTrigger className="w-fit">
+      <SelectTrigger className="w-fit bg-background">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
+          <SelectItem value="all">All</SelectItem>
           <SelectItem value="failed">Failed</SelectItem>
           <SelectItem value="pending">Pending</SelectItem>
           <SelectItem value="successful">Successful</SelectItem>
-          <SelectItem value="all">All</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

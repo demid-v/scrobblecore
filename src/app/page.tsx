@@ -6,7 +6,7 @@ import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
 const Home = () => (
-  <div className="flex h-full items-center justify-center">
+  <div className="flex h-[calc(100vh-3rem-1rem)] items-center justify-center">
     <div className="my-auto text-center">
       <h1 className="text-5xl font-semibold">Welcome to Scrobblecore</h1>
       <Suspense>

@@ -27,7 +27,7 @@ const SearchPagination = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (query.isFetching) return <Skeleton className="mb-6 h-10 w-[480px]" />;
+  if (query.isFetching) return <Skeleton className="h-10 w-[480px]" />;
   if (!query.isSuccess || query.data.total === 0) return null;
 
   const paginationRange = paginate({
