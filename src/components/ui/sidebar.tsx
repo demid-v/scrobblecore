@@ -1,8 +1,8 @@
 "use client";
 
-import { ViewVerticalIcon } from "@radix-ui/react-icons";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
+import { ChevronRight } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "~/components/ui/button";
@@ -282,6 +282,7 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
+      title="Open sidebar"
       className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event);
@@ -289,7 +290,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <ViewVerticalIcon />
+      <ChevronRight />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
