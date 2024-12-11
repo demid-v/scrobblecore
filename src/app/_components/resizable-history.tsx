@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useRef, useState } from "react";
+import { type ImperativePanelHandle } from "react-resizable-panels";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -15,16 +16,16 @@ import HistorySidebar from "./sidebar";
 
 const ResizableHistory = ({ children }: { children: React.ReactNode }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const ref = useRef<React.ComponentRef<typeof ResizablePanel>>(null);
+  const historyPanelRef = useRef<ImperativePanelHandle>(null);
 
   const { data: user } = api.auth.user.useQuery();
 
   const toggleHistory = () => {
-    const historyElement = ref.current;
-    if (historyElement === null) return;
+    const historyPanel = historyPanelRef.current;
+    if (historyPanel === null) return;
 
-    if (historyElement.isExpanded()) historyElement.collapse();
-    else historyElement.expand();
+    if (historyPanel.isExpanded()) historyPanel.collapse();
+    else historyPanel.expand();
   };
 
   return (
@@ -57,7 +58,7 @@ const ResizableHistory = ({ children }: { children: React.ReactNode }) => {
             </Button>
           </div>
           <ResizablePanel
-            ref={ref}
+            ref={historyPanelRef}
             defaultSize={20}
             collapsible
             style={{

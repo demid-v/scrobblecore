@@ -64,7 +64,7 @@ const AlbumSkeleton = () => (
     <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
     <Skeleton className="mx-auto mb-3 h-5 w-28" />
     <Skeleton className="mx-auto mb-3 h-6 w-48" />
-    <Skeleton className="mx-auto mb-10 h-9 w-32" />
+    <Skeleton className="mx-auto mb-10 h-9 w-[135.84px]" />
     <ListSkeleton count={11} />
   </div>
 );

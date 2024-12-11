@@ -25,7 +25,7 @@ const History = dynamic(() => import("./history"), {
 
 const HistorySidebar = () => (
   <aside>
-    <div className="sticky top-0 flex items-center justify-between border-b bg-sidebar px-2 py-4">
+    <div className="sticky top-0 flex items-center justify-between border-b bg-sidebar px-2 py-2">
       <div className="font-semibold">History</div>
       <HistoryFilter />
     </div>
@@ -33,7 +33,7 @@ const HistorySidebar = () => (
   </aside>
 );
 
-const items = [
+const menuItems = [
   {
     title: "Home",
     url: "/",
@@ -76,7 +76,7 @@ const MobileSidebar = () => {
             <SidebarGroupLabel>Menu</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {items.map((item) => (
+                {menuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>

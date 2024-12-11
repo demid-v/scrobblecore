@@ -32,13 +32,18 @@ const Artists = ({
     queryFn: () => getArtists(queryParams),
   });
 
-  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
+  if (isFetching) {
+    return <GridSkeleton count={limit} hasHeader={isSection} areArtists />;
+  }
+
   if (!isSuccess) return null;
 
   const { artists } = data;
 
   if (artists.length === 0) {
-    return <div className="text-center text-xl font-medium">No artists.</div>;
+    return (
+      <div className="mb-6 text-center text-xl font-medium">No artists.</div>
+    );
   }
 
   return (
@@ -55,20 +60,24 @@ const Artists = ({
       )}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
         {artists.map(({ name, image }) => (
-          <div key={name} className="w-full">
-            <div className="mb-2">
-              <Link href={`/artists/${encodeURIComponent(name)}`}>
-                <ImageWithFallback
-                  src={image}
-                  alt="Artist's image"
-                  width={300}
-                  height={300}
-                  defaultImage={<NoArtistImage className="h-min w-full p-10" />}
-                  className="h-full w-full"
-                />
-              </Link>
+          <div key={name} className="group w-full hover:bg-secondary">
+            <div className="relative mb-2">
+              <Link
+                href={`/artists/${encodeURIComponent(name)}`}
+                className="absolute left-0 top-0 h-full w-full transition-colors group-hover:bg-secondary/10"
+              ></Link>
+              <ImageWithFallback
+                src={image}
+                alt="Artist's image"
+                width={300}
+                height={300}
+                defaultImage={<NoArtistImage className="h-full w-full p-10" />}
+                className="h-full w-full"
+              />
             </div>
-            <p>{name}</p>
+            <p className="line-clamp-2 px-1.5 pb-1" title={name}>
+              {name}
+            </p>
           </div>
         ))}
       </div>

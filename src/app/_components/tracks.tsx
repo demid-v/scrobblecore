@@ -14,7 +14,9 @@ const Tracks = ({
   children?: React.ReactNode;
 }) => {
   if (tracks.length === 0) {
-    return <div className="text-center text-xl font-medium">No tracks.</div>;
+    return (
+      <div className="mb-6 text-center text-xl font-medium">No tracks.</div>
+    );
   }
 
   return (
@@ -23,7 +25,7 @@ const Tracks = ({
       <ul>
         {tracks.map((track, index) => (
           <li key={`${index}`}>
-            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-popover-foreground/10">
+            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-accent">
               {track.type === "track" && (
                 <ImageWithFallback
                   src={track.image}

@@ -24,7 +24,7 @@ const History = () => {
     <ol className="pb-4">
       {scrobbles.map((scrobble, index) => (
         <li key={scrobble.id}>
-          <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-popover-foreground/10">
+          <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-sidebar-accent">
             <div className="flex items-center justify-between gap-x-1.5">
               <div className="flex min-w-0 items-center gap-x-1 whitespace-nowrap">
                 <Link
