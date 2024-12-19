@@ -4,7 +4,7 @@ import cookies from "js-cookie";
 import SuperJSON from "superjson";
 import { type Simplify } from "type-fest";
 
-import { type TrackToScrobble } from "./queries/track";
+import { type TrackToScrobble } from "~/server/api/routers/track";
 
 type Scrobble = Simplify<
   Pick<TrackToScrobble, "name" | "artist" | "album"> & {

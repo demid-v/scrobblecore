@@ -21,7 +21,7 @@ const userSchema = z.object({
   }),
 });
 
-export const authRouter = createTRPCRouter({
+const authRouter = createTRPCRouter({
   user: publicProcedure.query(async () => {
     const cookieStore = await cookies();
 
@@ -60,3 +60,5 @@ export const authRouter = createTRPCRouter({
     return cookies;
   }),
 });
+
+export default authRouter;

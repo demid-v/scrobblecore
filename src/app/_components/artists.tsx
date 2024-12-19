@@ -1,44 +1,28 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
-import { getArtists } from "~/lib/queries/artist";
+import { api } from "~/trpc/server";
 
 import GridSkeleton from "./grid-skeleton";
 
-const Artists = ({
+const ArtistsInner = async ({
+  search,
+  page,
   limit,
   isSection = false,
 }: {
+  search: string;
+  page: number;
   limit: number;
   isSection?: boolean;
 }) => {
-  const searchParams = useSearchParams();
-
-  const search = searchParams.get("q") ?? "";
-  const artistName = search;
-
-  const pageQuery = Number(searchParams.get("page") ?? undefined);
-  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
-
-  const queryParams = { artistName, limit, page };
-
-  const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["artists", queryParams],
-    queryFn: () => getArtists(queryParams),
+  const { artists } = await api.artist.search({
+    artistName: search,
+    limit,
+    page,
   });
-
-  if (isFetching) {
-    return <GridSkeleton count={limit} hasHeader={isSection} areArtists />;
-  }
-
-  if (!isSuccess) return null;
-
-  const { artists } = data;
 
   if (artists.length === 0) {
     return (
@@ -84,5 +68,28 @@ const Artists = ({
     </section>
   );
 };
+
+const Artists = (props: {
+  search: string;
+  page: number;
+  limit: number;
+  isSection?: boolean;
+}) => (
+  <Suspense
+    key={JSON.stringify({
+      search: props.search,
+      page: props.page,
+    })}
+    fallback={
+      <GridSkeleton
+        count={props.limit}
+        hasHeader={props.isSection}
+        areArtists
+      />
+    }
+  >
+    <ArtistsInner {...props} />
+  </Suspense>
+);
 
 export default Artists;

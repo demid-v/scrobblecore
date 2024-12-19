@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 
-import { getArtist } from "~/lib/queries/artist";
+import { api } from "~/trpc/server";
 
 export const generateMetadata = async ({
   params,
@@ -8,7 +8,7 @@ export const generateMetadata = async ({
   params: Promise<{ artistName: string }>;
 }): Promise<Metadata> => {
   const artistName = decodeURIComponent((await params).artistName);
-  const artist = await getArtist({ artistName });
+  const artist = await api.artist.info({ artistName });
 
   return {
     title: `Albums by ${artist.name} | Scrobblecore`,

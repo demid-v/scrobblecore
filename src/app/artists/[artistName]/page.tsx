@@ -1,49 +1,42 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
-import { redirect, useParams } from "next/navigation";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import TopAlbums from "~/app/_components/top-albums";
 import TopTracks from "~/app/_components/top-tracks";
 import { Skeleton } from "~/components/ui/skeleton";
-import { getArtist } from "~/lib/queries/artist";
+import { api } from "~/trpc/server";
 
-const Artist = () => {
-  const artistNameParam = decodeURIComponent(
-    useParams<{ artistName: string }>().artistName,
-  );
-
-  const artistName = artistNameParam;
-  const queryParams = { artistName };
-
-  const {
-    data: artist,
-    isFetching,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["artist", "artists", queryParams],
-    queryFn: () => getArtist(queryParams),
-  });
-
-  if (isSuccess && artistNameParam !== artist.name) {
-    redirect(`/artists/${artist.name}`);
-  }
+const ArtistPage = async ({
+  params,
+}: {
+  params: Promise<{ artistName: string }>;
+}) => {
+  const artistName = decodeURIComponent((await params).artistName);
 
   return (
     <div>
       <div className="pt-5">
-        {isFetching || !isSuccess ? (
-          <Skeleton className="mb-10 h-9 w-48" />
-        ) : (
-          <div className="text-3xl font-semibold">{artist.name}</div>
-        )}
+        <Suspense
+          key={artistName}
+          fallback={<Skeleton className="mb-10 h-9 w-48" />}
+        >
+          <Artist artistName={artistName} />
+        </Suspense>
       </div>
       <div className="mt-10">
-        <TopAlbums limit={12} isSection />
-        <TopTracks limit={10} isSection />
+        <TopAlbums artistName={artistName} page={1} limit={12} isSection />
+        <TopTracks artistName={artistName} page={1} limit={10} isSection />
       </div>
     </div>
   );
 };
 
-export default Artist;
+const Artist = async ({ artistName }: { artistName: string }) => {
+  const { name } = await api.artist.info({ artistName });
+
+  if (artistName !== name) redirect(`/artists/${name}`);
+
+  return <div className="text-3xl font-semibold">{name}</div>;
+};
+
+export default ArtistPage;

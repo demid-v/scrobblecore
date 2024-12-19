@@ -1,41 +1,23 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { getTracks } from "~/lib/queries/track";
+import { api } from "~/trpc/server";
 
 import ListSkeleton from "./list-skeleton";
 import Tracks from "./tracks";
 
-const SearchTracksInner = ({
+const SearchTracksInner = async ({
+  search,
+  page,
   limit,
   isSection = false,
 }: {
+  search: string;
+  page: number;
   limit: number;
   isSection?: boolean;
 }) => {
-  const searchParams = useSearchParams();
-
-  const search = searchParams.get("q") ?? "";
-  const trackName = search;
-
-  const pageQuery = Number(searchParams.get("page") ?? undefined);
-  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
-
-  const queryParams = { trackName, limit, page };
-
-  const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["tracks", queryParams],
-    queryFn: () => getTracks(queryParams),
-  });
-
-  if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;
-  if (!isSuccess) return null;
-
-  const { tracks } = data;
+  const { tracks } = await api.track.search({ trackName: search, limit, page });
 
   return (
     <Tracks tracks={tracks}>
@@ -53,8 +35,19 @@ const SearchTracksInner = ({
   );
 };
 
-const SearchTracks = (props: { limit: number; isSection?: boolean }) => (
-  <Suspense>
+const SearchTracks = (props: {
+  search: string;
+  page: number;
+  limit: number;
+  isSection?: boolean;
+}) => (
+  <Suspense
+    key={JSON.stringify({
+      search: props.search,
+      page: props.page,
+    })}
+    fallback={<ListSkeleton count={props.limit} hasHeader={props.isSection} />}
+  >
     <SearchTracksInner {...props} />
   </Suspense>
 );

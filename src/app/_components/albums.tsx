@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
-import { type Albums as TAlbums } from "~/lib/queries/album";
+import { type Albums as TAlbums } from "~/server/api/routers/album";
 
 const Albums = ({
   albums,

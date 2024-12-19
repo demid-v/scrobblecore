@@ -1,52 +1,50 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-
 import SearchAlbums from "~/app/_components/search-albums";
-import SearchPagination from "~/app/_components/search-pagination";
-import { getAlbums } from "~/lib/queries/album";
+import SearchPagination, {
+  SearchPaginationSuspense,
+} from "~/app/_components/search-pagination";
+import { getSearchParams } from "~/lib/utils";
+import { api } from "~/trpc/server";
 
 const limit = 60;
 
-const AlbumsPageInner = () => {
-  const searchParams = useSearchParams();
-
-  const search = searchParams.get("q") ?? "";
-  const albumName = search;
-
-  const pageQuery = Number(searchParams.get("page") ?? undefined);
-  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
-
-  const queryParams = { albumName, limit };
-
-  const query = useQuery({
-    queryKey: ["albums", queryParams],
-    queryFn: () => getAlbums(queryParams),
-  });
+const AlbumsPage = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) => {
+  const { search, page } = getSearchParams(await searchParams);
 
   if (search === "") return null;
 
   return (
     <>
       <div className="sticky top-2 z-10 mx-auto mb-8 w-fit">
-        <SearchPagination
-          query={query}
-          limit={limit}
-          page={page}
-          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
-        />
+        <SearchPaginationSuspense search={search}>
+          <AlbumsPagination albumName={search} page={page} limit={limit} />
+        </SearchPaginationSuspense>
       </div>
-      <SearchAlbums limit={limit} />
+      <SearchAlbums search={search} page={page} limit={limit} />
     </>
   );
 };
 
-const AlbumsPage = () => (
-  <Suspense>
-    <AlbumsPageInner />
-  </Suspense>
-);
+const AlbumsPagination = async ({
+  albumName,
+  ...props
+}: {
+  albumName: string;
+  page: number;
+  limit: number;
+}) => {
+  const { total } = await api.album.search({ albumName });
+
+  return (
+    <SearchPagination
+      total={total}
+      className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+      {...props}
+    />
+  );
+};
 
 export default AlbumsPage;

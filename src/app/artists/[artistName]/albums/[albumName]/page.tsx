@@ -1,36 +1,23 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Suspense } from "react";
 
 import ListSkeleton from "~/app/_components/list-skeleton";
 import Tracks from "~/app/_components/tracks";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
 import ScrobbleButton from "~/components/scrobble-button";
+import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
-import { getAlbum } from "~/lib/queries/album";
+import { api } from "~/trpc/server";
 
-const AlbumPage = () => {
-  const params = useParams<{ artistName: string; albumName: string }>();
-
-  const artistName = decodeURIComponent(params.artistName);
-  const albumName = decodeURIComponent(params.albumName);
-
-  const queryParams = { artistName, albumName };
-
-  const {
-    data: album,
-    isFetching,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["album", "albums", queryParams],
-    queryFn: () => getAlbum(queryParams),
-  });
-
-  if (isFetching) return <AlbumSkeleton />;
-  if (!isSuccess) return null;
+const AlbumPageInner = async ({
+  artistName,
+  albumName,
+}: {
+  artistName: string;
+  albumName: string;
+}) => {
+  const album = await api.album.one({ artistName, albumName });
 
   return (
     <div className="w-full text-center">
@@ -59,14 +46,31 @@ const AlbumPage = () => {
   );
 };
 
-const AlbumSkeleton = () => (
-  <div>
-    <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
-    <Skeleton className="mx-auto mb-3 h-5 w-28" />
-    <Skeleton className="mx-auto mb-3 h-6 w-48" />
-    <Skeleton className="mx-auto mb-10 h-9 w-[135.84px]" />
-    <ListSkeleton count={11} />
-  </div>
-);
+const AlbumPage = async ({
+  params,
+}: {
+  params: Promise<{ artistName: string; albumName: string }>;
+}) => {
+  const artistName = decodeURIComponent((await params).artistName);
+  const albumName = decodeURIComponent((await params).albumName);
+
+  return (
+    <Suspense
+      fallback={
+        <div>
+          <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
+          <Skeleton className="mx-auto mb-3 h-5 w-28" />
+          <Skeleton className="mx-auto mb-3 h-6 w-48" />
+          <Button className="mx-auto mb-10 block" disabled>
+            Scrobble album
+          </Button>
+          <ListSkeleton count={11} />
+        </div>
+      }
+    >
+      <AlbumPageInner artistName={artistName} albumName={albumName} />
+    </Suspense>
+  );
+};
 
 export default AlbumPage;

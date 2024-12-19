@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type TrackToScrobble } from "~/lib/queries/track";
+import { type TrackToScrobble } from "~/server/api/routers/track";
 
 const formSchema = z.object({
   track: z.string().trim().min(1, {

@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import {
   Pagination,
@@ -12,33 +13,28 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
-import { type QueryResult, paginate } from "~/lib/utils";
+import { paginate } from "~/lib/utils";
 
 const SearchPagination = ({
-  page = 1,
+  page,
   limit,
-  query,
+  total,
   ...props
 }: {
   page: number;
   limit: number;
-  query: QueryResult;
+  total: number;
 } & React.ComponentProps<"nav">) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (query.isFetching) return <Skeleton className="h-10 w-[480px]" />;
-  if (!query.isSuccess || query.data.total === 0) return null;
+  if (total === 0) return null;
 
-  const paginationRange = paginate({
-    total: query.data.total,
-    limit,
-    page,
-  });
+  const range = paginate({ total, limit, page });
 
-  if (paginationRange.length < 2) return null;
+  if (range.length < 2) return null;
 
-  const lastPage = paginationRange.at(-1);
+  const lastPage = range.at(-1);
 
   const getHref = (page: number) => ({
     pathname,
@@ -54,7 +50,7 @@ const SearchPagination = ({
             isDisabled={page === 1}
           />
         </PaginationItem>
-        {paginationRange.map((pageNumber, index) =>
+        {range.map((pageNumber, index) =>
           pageNumber === "DOTS" ? (
             <PaginationItem key={index}>
               <PaginationEllipsis />
@@ -81,4 +77,20 @@ const SearchPagination = ({
   );
 };
 
+const SearchPaginationSuspense = ({
+  children,
+  search,
+}: {
+  children: React.ReactNode;
+  search: string;
+}) => (
+  <Suspense
+    key={JSON.stringify({ search })}
+    fallback={<Skeleton className="h-10 w-[480px]" />}
+  >
+    {children}
+  </Suspense>
+);
+
 export default SearchPagination;
+export { SearchPaginationSuspense };

@@ -1,3 +1,4 @@
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -17,7 +18,9 @@ const ListSkeleton = ({
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-6 w-48" />
           </div>
-          <Skeleton className="h-8 w-[74.77px] shrink-0" />
+          <Button size="sm" className="shrink-0" disabled>
+            Scrobble
+          </Button>
         </div>
         {index !== count - 1 && <Separator />}
       </div>

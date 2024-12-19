@@ -1,48 +1,30 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { getTopAlbums } from "~/lib/queries/artist";
+import { api } from "~/trpc/server";
 
 import Albums from "./albums";
 import GridSkeleton from "./grid-skeleton";
 
-const TopAlbumsInner = ({
+const TopAlbumsInner = async ({
+  artistName,
+  page,
   limit,
   isSection = false,
 }: {
+  artistName: string;
+  page: number;
   limit: number;
   isSection?: boolean;
 }) => {
-  const artistNameParam = useParams<{ artistName: string }>().artistName;
-  const artistName = decodeURIComponent(artistNameParam);
-
-  const searchParams = useSearchParams();
-
-  const pageQuery = Number(searchParams.get("page") ?? undefined);
-  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
-
-  const queryParams = { artistName, limit, page };
-
-  const { data, isFetching, isSuccess } = useQuery({
-    queryKey: ["topAlbums", "albums", queryParams],
-    queryFn: () => getTopAlbums(queryParams),
-  });
-
-  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
-  if (!isSuccess) return null;
-
-  const { albums } = data;
+  const { albums } = await api.artist.topAlbums({ artistName, limit, page });
 
   return (
     <Albums albums={albums}>
       {isSection && (
         <p className="mb-6 text-xl">
           <Link
-            href={{ pathname: `/artists/${artistNameParam}/albums` }}
+            href={{ pathname: `/artists/${artistName}/albums` }}
             className="hover:underline hover:underline-offset-2"
           >
             Albums
@@ -53,8 +35,18 @@ const TopAlbumsInner = ({
   );
 };
 
-const TopAlbums = (props: { limit: number; isSection?: boolean }) => (
-  <Suspense>
+const TopAlbums = (props: {
+  artistName: string;
+  page: number;
+  limit: number;
+  isSection?: boolean;
+}) => (
+  <Suspense
+    key={JSON.stringify({
+      page: props.page,
+    })}
+    fallback={<GridSkeleton count={props.limit} hasHeader={props.isSection} />}
+  >
     <TopAlbumsInner {...props} />
   </Suspense>
 );
