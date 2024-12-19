@@ -1,13 +1,17 @@
 "use client";
 
 import { useSetAtom } from "jotai";
-import { type ReactNode, Suspense } from "react";
+import { type ReactNode } from "react";
 import { type SetRequired, type Simplify } from "type-fest";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
+import {
+  type TrackToScrobble,
+  type Tracks,
+  type TracksResult,
+} from "~/lib/queries/track";
 import { type Scrobble, scrobblesAtom } from "~/lib/store";
-import { type TrackToScrobble, type Tracks } from "~/server/api/routers/track";
 import { api } from "~/trpc/react";
 
 const generateTimestamps = (date: number, tracks: TrackToScrobble[]) => {
@@ -123,25 +127,30 @@ const ScrobbleButton = ({
   );
 };
 
-const ScrobbleAllButtonSuspense = ({
+const ScrobbleAllButton = ({
   children,
+  query,
   ...props
 }: {
-  children: React.ReactNode;
-  search: string;
-  page: number;
-}) => (
-  <Suspense
-    key={JSON.stringify(props)}
-    fallback={
+  children?: ReactNode;
+  query: TracksResult;
+} & ButtonProps) => {
+  if (query.isFetching) {
+    return (
       <Button className="shrink-0" disabled>
         Scrobble all
       </Button>
-    }
-  >
-    {children}
-  </Suspense>
-);
+    );
+  }
+
+  if (!query.isSuccess) return null;
+
+  return (
+    <ScrobbleButton tracks={query.data.tracks} {...props}>
+      {children}
+    </ScrobbleButton>
+  );
+};
 
 export default ScrobbleButton;
-export { useScrobble, ScrobbleAllButtonSuspense };
+export { useScrobble, ScrobbleAllButton };

@@ -3,6 +3,10 @@ import { twMerge } from "tailwind-merge";
 
 import { env } from "~/env";
 
+import { type AlbumsResult } from "./queries/album";
+import { type ArtistsResult } from "./queries/artist";
+import { type TracksResult } from "./queries/track";
+
 const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 const getBaseUrl = () => {
@@ -105,17 +109,7 @@ const paginate = ({
 const wait = (ms?: number) =>
   new Promise((resolve) => setTimeout(() => resolve(1), ms));
 
-const getSearchParams = (
-  searchParams: Record<string, string | string[] | undefined> | undefined,
-) => {
-  const { q, page: pageQuery } = searchParams ?? {};
+type QueryResult = AlbumsResult | TracksResult | ArtistsResult;
 
-  const search = (Array.isArray(q) ? q.at(0) : q) ?? "";
-
-  const pageQueryStr = Array.isArray(pageQuery) ? pageQuery.at(0) : pageQuery;
-  const page = Number.isNaN(Number(pageQueryStr)) ? 1 : Number(pageQueryStr);
-
-  return { search, page };
-};
-
-export { cn, getBaseUrl, authUrl, paginate, wait, getSearchParams };
+export { cn, getBaseUrl, authUrl, paginate, wait };
+export { type QueryResult };

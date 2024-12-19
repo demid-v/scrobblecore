@@ -4,7 +4,7 @@ import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
 import ScrobbleButton from "~/components/scrobble-button";
 import { Separator } from "~/components/ui/separator";
-import { type Tracks as TypeTracks } from "~/server/api/routers/track";
+import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
   tracks,

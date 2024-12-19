@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
-import { type Albums as TAlbums } from "~/server/api/routers/album";
+import { type Albums as TAlbums } from "~/lib/queries/album";
 
 const Albums = ({
   albums,
@@ -44,7 +44,7 @@ const Albums = ({
               <p className="mb-1.5 line-clamp-2 text-sm font-bold">
                 <Link
                   href={`/artists/${encodeURIComponent(artist)}`}
-                  className="hover:underline hover:underline-offset-2"
+                  className="underline-offset-2 hover:underline"
                 >
                   {artist}
                 </Link>

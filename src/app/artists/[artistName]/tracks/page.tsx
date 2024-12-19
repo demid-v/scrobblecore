@@ -1,73 +1,98 @@
-import SearchPagination, {
-  SearchPaginationSuspense,
-} from "~/app/_components/search-pagination";
-import TopTracks from "~/app/_components/top-tracks";
-import ScrobbleButton, {
-  ScrobbleAllButtonSuspense,
-} from "~/components/scrobble-button";
-import { getSearchParams } from "~/lib/utils";
-import { api } from "~/trpc/server";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+
+import ListSkeleton from "~/app/_components/list-skeleton";
+import SearchPagination from "~/app/_components/search-pagination";
+import Tracks from "~/app/_components/tracks";
+import { ScrobbleAllButton } from "~/components/scrobble-button";
+import { getTopTracks } from "~/lib/queries/artist";
 
 const limit = 50;
 
-const TracksPage = async ({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ artistName: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const artistName = decodeURIComponent((await params).artistName);
-  const { page } = getSearchParams(await searchParams);
+const TracksPage = () => {
+  const artistName = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
+
+  const searchParams = useSearchParams();
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const paginationParams = { artistName, limit };
+
+  const paginationQuery = useQuery({
+    queryKey: ["topTracks", "tracks", paginationParams],
+    queryFn: () => getTopTracks(paginationParams),
+  });
+
+  const itemsParams = { ...paginationParams, page };
+
+  const itemsQuery = useQuery({
+    queryKey: ["topTracks", "tracks", itemsParams],
+    queryFn: () => getTopTracks(itemsParams),
+  });
 
   return (
     <>
       <div className="sticky top-2 z-10 mx-auto mb-8 flex w-fit items-center gap-x-3">
-        <SearchPaginationSuspense search={artistName}>
-          <TracksPagination artistName={artistName} page={page} limit={limit} />
-        </SearchPaginationSuspense>
-        <ScrobbleAllButtonSuspense search={artistName} page={page}>
-          <ScrobbleAllButton artistName={artistName} page={page} limit={limit}>
-            Scrobble all
-          </ScrobbleAllButton>
-        </ScrobbleAllButtonSuspense>
+        <SearchPagination
+          query={paginationQuery}
+          limit={limit}
+          page={page}
+          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+        />
+        <ScrobbleAllButton query={itemsQuery}>Scrobble all</ScrobbleAllButton>
       </div>
-      <TopTracks artistName={artistName} page={page} limit={limit} />
+      <TopTracks limit={limit} />
     </>
   );
 };
 
-const TracksPagination = async ({
-  artistName,
-  ...props
+const TopTracks = ({
+  limit,
+  isSection = false,
 }: {
-  artistName: string;
-  page: number;
   limit: number;
+  isSection?: boolean;
 }) => {
-  const { total } = await api.artist.topTracks({ artistName });
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(artistNameParam);
+
+  const searchParams = useSearchParams();
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const queryParams = { artistName, limit, page };
+
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["topTracks", "tracks", queryParams],
+    queryFn: () => getTopTracks(queryParams),
+  });
+
+  if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { tracks } = data;
 
   return (
-    <SearchPagination
-      total={total}
-      className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
-      {...props}
-    />
+    <Tracks tracks={tracks}>
+      {isSection && (
+        <p className="mb-6 mt-10 text-xl">
+          <Link
+            href={{ pathname: `/artists/${artistNameParam}/tracks` }}
+            className="underline-offset-2 hover:underline"
+          >
+            Tracks
+          </Link>
+        </p>
+      )}
+    </Tracks>
   );
-};
-
-const ScrobbleAllButton = async ({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-  artistName: string;
-  page: number;
-  limit: number;
-}) => {
-  const { tracks } = await api.artist.topTracks(props);
-
-  return <ScrobbleButton tracks={tracks}>{children}</ScrobbleButton>;
 };
 
 export default TracksPage;

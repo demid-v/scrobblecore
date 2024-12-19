@@ -51,8 +51,11 @@ const AlbumPage = async ({
 }: {
   params: Promise<{ artistName: string; albumName: string }>;
 }) => {
-  const artistName = decodeURIComponent((await params).artistName);
-  const albumName = decodeURIComponent((await params).albumName);
+  const { artistName: artistNameParam, albumName: albumNameParam } =
+    await params;
+
+  const artistName = decodeURIComponent(artistNameParam);
+  const albumName = decodeURIComponent(albumNameParam);
 
   return (
     <Suspense

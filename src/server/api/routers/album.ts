@@ -4,28 +4,6 @@ import { env } from "~/env";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { type RouterOutputs } from "~/trpc/react";
 
-const albumsSchema = z.object({
-  results: z
-    .object({
-      albummatches: z.object({
-        album: z.array(
-          z.object({
-            name: z.string(),
-            artist: z.string(),
-            image: z.array(
-              z.object({
-                size: z.enum(["small", "medium", "large", "extralarge"]),
-                "#text": z.string().url().or(z.string().max(0)),
-              }),
-            ),
-          }),
-        ),
-      }),
-      "opensearch:totalResults": z.coerce.number(),
-    })
-    .optional(),
-});
-
 const albumTrackSchema = z.object({
   name: z.string(),
   artist: z.object({ name: z.string() }),
@@ -53,42 +31,6 @@ const albumSchema = z.object({
 });
 
 const albumRouter = createTRPCRouter({
-  search: privateProcedure
-    .input(
-      z.object({
-        albumName: z.string(),
-        limit: z.number().optional().default(50),
-        page: z.number().optional().default(1),
-      }),
-    )
-    .query(async ({ input: { albumName, limit, page } }) => {
-      const searchParams = {
-        method: "album.search",
-        format: "json",
-        album: albumName,
-        limit: limit.toString(),
-        page: page.toString(),
-        api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
-      };
-
-      const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const result = (await (await fetch(url)).json()) as unknown;
-
-      const parsedResult = albumsSchema.parse(result);
-      const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
-
-      const albums = parsedAlbums.map((album) => ({
-        ...album,
-        image: album.image.find((image) => image.size === "extralarge")?.[
-          "#text"
-        ],
-      }));
-
-      const total = parsedResult.results?.["opensearch:totalResults"] ?? 0;
-
-      return { albums, total };
-    }),
-
   one: privateProcedure
     .input(
       z.object({
@@ -149,8 +91,7 @@ const albumRouter = createTRPCRouter({
     }),
 });
 
-type Albums = RouterOutputs["album"]["search"]["albums"];
 type AlbumTracks = RouterOutputs["album"]["one"]["tracks"];
 
 export default albumRouter;
-export type { Albums, AlbumTracks };
+export type { AlbumTracks };

@@ -1,51 +1,102 @@
-import SearchPagination, {
-  SearchPaginationSuspense,
-} from "~/app/_components/search-pagination";
-import TopAlbums from "~/app/_components/top-albums";
-import { getSearchParams } from "~/lib/utils";
-import { api } from "~/trpc/server";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+import Albums from "~/app/_components/albums";
+import GridSkeleton from "~/app/_components/grid-skeleton";
+import SearchPagination from "~/app/_components/search-pagination";
+import { getTopAlbums } from "~/lib/queries/artist";
 
 const limit = 60;
 
-const AlbumsPage = async ({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ artistName: string }>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const artistName = decodeURIComponent((await params).artistName);
-  const { page } = getSearchParams(await searchParams);
+const AlbumsPageInner = () => {
+  const artistName = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
+
+  const searchParams = useSearchParams();
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const queryParams = { artistName, limit };
+
+  const query = useQuery({
+    queryKey: ["topAlbums", "albums", queryParams],
+    queryFn: () => getTopAlbums(queryParams),
+  });
 
   return (
     <>
       <div className="sticky top-2 z-10 mx-auto mb-8 w-fit">
-        <SearchPaginationSuspense search={artistName}>
-          <AlbumsPagination artistName={artistName} page={page} limit={limit} />
-        </SearchPaginationSuspense>
+        <SearchPagination
+          query={query}
+          limit={limit}
+          page={page}
+          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+        />
       </div>
-      <TopAlbums artistName={artistName} page={page} limit={limit} />
+      <TopAlbums limit={limit} />
     </>
   );
 };
 
-const AlbumsPagination = async ({
-  artistName,
-  ...props
+const AlbumsPage = () => (
+  <Suspense>
+    <AlbumsPageInner />
+  </Suspense>
+);
+
+const TopAlbumsInner = ({
+  limit,
+  isSection = false,
 }: {
-  artistName: string;
-  page: number;
   limit: number;
+  isSection?: boolean;
 }) => {
-  const { total } = await api.artist.topAlbums({ artistName });
+  const artistNameParam = useParams<{ artistName: string }>().artistName;
+  const artistName = decodeURIComponent(artistNameParam);
+
+  const searchParams = useSearchParams();
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const queryParams = { artistName, limit, page };
+
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["topAlbums", "albums", queryParams],
+    queryFn: () => getTopAlbums(queryParams),
+  });
+
+  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { albums } = data;
 
   return (
-    <SearchPagination
-      total={total}
-      className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
-      {...props}
-    />
+    <Albums albums={albums}>
+      {isSection && (
+        <p className="mb-6 text-xl">
+          <Link
+            href={{ pathname: `/artists/${artistNameParam}/albums` }}
+            className="underline-offset-2 hover:underline"
+          >
+            Albums
+          </Link>
+        </p>
+      )}
+    </Albums>
   );
 };
+
+const TopAlbums = (props: { limit: number; isSection?: boolean }) => (
+  <Suspense>
+    <TopAlbumsInner {...props} />
+  </Suspense>
+);
 
 export default AlbumsPage;

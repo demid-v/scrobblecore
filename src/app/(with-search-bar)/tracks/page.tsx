@@ -1,72 +1,61 @@
-import SearchPagination, {
-  SearchPaginationSuspense,
-} from "~/app/_components/search-pagination";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
-import ScrobbleButton, {
-  ScrobbleAllButtonSuspense,
-} from "~/components/scrobble-button";
-import { getSearchParams } from "~/lib/utils";
-import { api } from "~/trpc/server";
+import { ScrobbleAllButton } from "~/components/scrobble-button";
+import { getTracks } from "~/lib/queries/track";
 
 const limit = 50;
 
-const TracksPage = async ({
-  searchParams,
-}: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}) => {
-  const { search, page } = getSearchParams(await searchParams);
+const TracksPageInner = () => {
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+  const trackName = search;
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const paginationParams = { trackName, limit };
+
+  const paginationQuery = useQuery({
+    queryKey: ["tracks", paginationParams],
+    queryFn: () => getTracks(paginationParams),
+  });
+
+  const itemsParams = { ...paginationParams, page };
+
+  const tracksQuery = useQuery({
+    queryKey: ["tracks", itemsParams],
+    queryFn: () => getTracks(itemsParams),
+  });
 
   if (search === "") return null;
 
   return (
     <>
       <div className="sticky top-2 z-10 mx-auto mb-8 flex h-10 w-fit items-center gap-x-3">
-        <SearchPaginationSuspense search={search}>
-          <TracksPagination trackName={search} page={page} limit={limit} />
-        </SearchPaginationSuspense>
-        <ScrobbleAllButtonSuspense search={search} page={page}>
-          <ScrobbleAllButton trackName={search} page={page} limit={limit}>
-            Scrobble all
-          </ScrobbleAllButton>
-        </ScrobbleAllButtonSuspense>
+        <SearchPagination
+          query={paginationQuery}
+          limit={limit}
+          page={page}
+          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+        />
+        <ScrobbleAllButton query={tracksQuery}>Scrobble all</ScrobbleAllButton>
       </div>
-      <SearchTracks search={search} page={page} limit={limit} />
+      <SearchTracks limit={limit} />
     </>
   );
 };
 
-const TracksPagination = async ({
-  trackName,
-  ...props
-}: {
-  trackName: string;
-  page: number;
-  limit: number;
-}) => {
-  const { total } = await api.track.search({ trackName });
-
-  return (
-    <SearchPagination
-      total={total}
-      className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
-      {...props}
-    />
-  );
-};
-
-const ScrobbleAllButton = async ({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-  trackName: string;
-  page: number;
-  limit: number;
-}) => {
-  const { tracks } = await api.track.search(props);
-
-  return <ScrobbleButton tracks={tracks}>{children}</ScrobbleButton>;
-};
+const TracksPage = () => (
+  <Suspense>
+    <TracksPageInner />
+  </Suspense>
+);
 
 export default TracksPage;

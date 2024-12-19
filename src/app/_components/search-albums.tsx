@@ -1,23 +1,41 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { api } from "~/trpc/server";
+import { getAlbums } from "~/lib/queries/album";
 
 import Albums from "./albums";
 import GridSkeleton from "./grid-skeleton";
 
-const SearchAlbumsInner = async ({
-  search,
-  page,
+const SearchAlbumsInner = ({
   limit,
   isSection = false,
 }: {
-  search: string;
-  page: number;
   limit: number;
   isSection?: boolean;
 }) => {
-  const { albums } = await api.album.search({ albumName: search, limit, page });
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+  const albumName = search;
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const queryParams = { albumName, limit, page };
+
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["albums", queryParams],
+    queryFn: () => getAlbums(queryParams),
+  });
+
+  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
+  if (!isSuccess) return null;
+
+  const { albums } = data;
 
   return (
     <Albums albums={albums}>
@@ -25,7 +43,7 @@ const SearchAlbumsInner = async ({
         <p className="mb-6 text-xl">
           <Link
             href={{ pathname: "/albums", query: { q: search } }}
-            className="hover:underline hover:underline-offset-2"
+            className="underline-offset-2 hover:underline"
           >
             Albums
           </Link>
@@ -35,19 +53,8 @@ const SearchAlbumsInner = async ({
   );
 };
 
-const SearchAlbums = (props: {
-  search: string;
-  page: number;
-  limit: number;
-  isSection?: boolean;
-}) => (
-  <Suspense
-    key={JSON.stringify({
-      search: props.search,
-      page: props.page,
-    })}
-    fallback={<GridSkeleton count={props.limit} hasHeader={props.isSection} />}
-  >
+const SearchAlbums = (props: { limit: number; isSection?: boolean }) => (
+  <Suspense>
     <SearchAlbumsInner {...props} />
   </Suspense>
 );

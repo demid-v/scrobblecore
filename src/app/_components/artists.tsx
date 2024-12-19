@@ -1,28 +1,44 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
-import { api } from "~/trpc/server";
+import { getArtists } from "~/lib/queries/artist";
 
 import GridSkeleton from "./grid-skeleton";
 
-const ArtistsInner = async ({
-  search,
-  page,
+const Artists = ({
   limit,
   isSection = false,
 }: {
-  search: string;
-  page: number;
   limit: number;
   isSection?: boolean;
 }) => {
-  const { artists } = await api.artist.search({
-    artistName: search,
-    limit,
-    page,
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") ?? "";
+  const artistName = search;
+
+  const pageQuery = Number(searchParams.get("page") ?? undefined);
+  const page = Number.isNaN(pageQuery) ? 1 : pageQuery;
+
+  const queryParams = { artistName, limit, page };
+
+  const { data, isFetching, isSuccess } = useQuery({
+    queryKey: ["artists", queryParams],
+    queryFn: () => getArtists(queryParams),
   });
+
+  if (isFetching) {
+    return <GridSkeleton count={limit} hasHeader={isSection} areArtists />;
+  }
+
+  if (!isSuccess) return null;
+
+  const { artists } = data;
 
   if (artists.length === 0) {
     return (
@@ -36,7 +52,7 @@ const ArtistsInner = async ({
         <p className="mb-6 mt-10 text-xl">
           <Link
             href={{ pathname: "/artists", query: { q: search } }}
-            className="hover:underline hover:underline-offset-2"
+            className="underline-offset-2 hover:underline"
           >
             Artists
           </Link>
@@ -68,28 +84,5 @@ const ArtistsInner = async ({
     </section>
   );
 };
-
-const Artists = (props: {
-  search: string;
-  page: number;
-  limit: number;
-  isSection?: boolean;
-}) => (
-  <Suspense
-    key={JSON.stringify({
-      search: props.search,
-      page: props.page,
-    })}
-    fallback={
-      <GridSkeleton
-        count={props.limit}
-        hasHeader={props.isSection}
-        areArtists
-      />
-    }
-  >
-    <ArtistsInner {...props} />
-  </Suspense>
-);
 
 export default Artists;
