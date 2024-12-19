@@ -61,7 +61,7 @@ const TopAlbums = async ({ artistName }: { artistName: string }) => {
       <p className="mb-6 text-xl">
         <Link
           href={{ pathname: `/artists/${artistName}/albums` }}
-          className="underline-offset-2 hover:underline"
+          className="underline-offset-4 hover:underline"
         >
           Albums
         </Link>
@@ -81,7 +81,7 @@ const TopTracks = async ({ artistName }: { artistName: string }) => {
       <p className="mb-6 mt-10 text-xl">
         <Link
           href={{ pathname: `/artists/${artistName}/tracks` }}
-          className="underline-offset-2 hover:underline"
+          className="underline-offset-4 hover:underline"
         >
           Tracks
         </Link>

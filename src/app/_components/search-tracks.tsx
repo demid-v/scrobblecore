@@ -43,7 +43,7 @@ const SearchTracksInner = ({
         <p className="mb-6 mt-10 text-xl">
           <Link
             href={{ pathname: "/tracks", query: { q: search } }}
-            className="underline-offset-2 hover:underline"
+            className="underline-offset-4 hover:underline"
           >
             Tracks
           </Link>

@@ -83,7 +83,7 @@ const TopAlbumsInner = ({
         <p className="mb-6 text-xl">
           <Link
             href={{ pathname: `/artists/${artistNameParam}/albums` }}
-            className="underline-offset-2 hover:underline"
+            className="underline-offset-4 hover:underline"
           >
             Albums
           </Link>

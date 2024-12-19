@@ -52,7 +52,7 @@ const Artists = ({
         <p className="mb-6 mt-10 text-xl">
           <Link
             href={{ pathname: "/artists", query: { q: search } }}
-            className="underline-offset-2 hover:underline"
+            className="underline-offset-4 hover:underline"
           >
             Artists
           </Link>
@@ -60,7 +60,10 @@ const Artists = ({
       )}
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
         {artists.map(({ name, image }) => (
-          <div key={name} className="group w-full hover:bg-secondary">
+          <div
+            key={name}
+            className="group w-full transition-colors hover:bg-secondary"
+          >
             <div className="relative mb-2">
               <Link
                 href={`/artists/${encodeURIComponent(name)}`}

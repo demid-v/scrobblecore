@@ -43,7 +43,7 @@ const SearchAlbumsInner = ({
         <p className="mb-6 text-xl">
           <Link
             href={{ pathname: "/albums", query: { q: search } }}
-            className="underline-offset-2 hover:underline"
+            className="underline-offset-4 hover:underline"
           >
             Albums
           </Link>

@@ -65,7 +65,7 @@ const ResizableHistory = ({ children }: { children: React.ReactNode }) => {
               overflow: "auto",
               height: "auto",
             }}
-            className="hidden bg-sidebar transition-all md:block"
+            className="hidden bg-sidebar transition-[flex-grow] md:block"
             onExpand={() => {
               setIsExpanded(true);
             }}

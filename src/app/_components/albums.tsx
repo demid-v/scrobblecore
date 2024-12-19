@@ -24,7 +24,7 @@ const Albums = ({
         {albums.map(({ name, artist, image }) => (
           <div
             key={`${name}${artist}`}
-            className="group w-full hover:bg-secondary"
+            className="group w-full transition-colors hover:bg-secondary"
           >
             <div className="relative mb-2">
               <Link

@@ -27,7 +27,7 @@ const HeaderInner = async () => {
   return (
     <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-11">
       <div className="flex grow items-center gap-x-9">
-        <Link href="/" className="text-xl font-semibold">
+        <Link href="/" className="text-xl font-semibold" title="Home">
           Scrobblecore
         </Link>
         {user && <Navigation />}

@@ -26,7 +26,7 @@ const AlbumPageInner = async ({
         alt="Album's image"
         width={300}
         height={300}
-        defaultImage={<NoCover className="mx-auto h-full w-full p-10" />}
+        defaultImage={<NoCover className="mx-auto h-[300px] w-[300px] p-10" />}
         priority
         className="mx-auto mb-3"
       />
