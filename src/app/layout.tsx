@@ -9,7 +9,7 @@ import { SidebarProvider } from "~/components/ui/sidebar";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import Header from "./_components/header";
-import ResizableHistory from "./_components/resizable-history";
+import ResizableHistoryLayout from "./_components/resizable-history-layout";
 import { MobileSidebar } from "./_components/sidebar";
 import ThemeProvider from "./_components/theme-provider";
 
@@ -42,9 +42,9 @@ export default function RootLayout({
             >
               <Header />
               <MobileSidebar />
-              <ResizableHistory>
+              <ResizableHistoryLayout>
                 <main className="container mx-auto px-11 pb-4">{children}</main>
-              </ResizableHistory>
+              </ResizableHistoryLayout>
             </SidebarProvider>
           </TRPCReactProvider>
         </ThemeProvider>

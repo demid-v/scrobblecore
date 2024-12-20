@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -12,7 +11,7 @@ import { getTopAlbums } from "~/lib/queries/artist";
 
 const limit = 60;
 
-const AlbumsPageInner = () => {
+const AlbumsPage = () => {
   const artistName = decodeURIComponent(
     useParams<{ artistName: string }>().artistName,
   );
@@ -39,26 +38,17 @@ const AlbumsPageInner = () => {
           className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
       </div>
-      <TopAlbums limit={limit} />
+      <Suspense>
+        <TopAlbums limit={limit} />
+      </Suspense>
     </>
   );
 };
 
-const AlbumsPage = () => (
-  <Suspense>
-    <AlbumsPageInner />
-  </Suspense>
-);
-
-const TopAlbumsInner = ({
-  limit,
-  isSection = false,
-}: {
-  limit: number;
-  isSection?: boolean;
-}) => {
-  const artistNameParam = useParams<{ artistName: string }>().artistName;
-  const artistName = decodeURIComponent(artistNameParam);
+const TopAlbums = ({ limit }: { limit: number }) => {
+  const artistName = decodeURIComponent(
+    useParams<{ artistName: string }>().artistName,
+  );
 
   const searchParams = useSearchParams();
 
@@ -72,31 +62,12 @@ const TopAlbumsInner = ({
     queryFn: () => getTopAlbums(queryParams),
   });
 
-  if (isFetching) return <GridSkeleton count={limit} hasHeader={isSection} />;
+  if (isFetching) return <GridSkeleton count={limit} />;
   if (!isSuccess) return null;
 
   const { albums } = data;
 
-  return (
-    <Albums albums={albums}>
-      {isSection && (
-        <p className="mb-6 text-xl">
-          <Link
-            href={{ pathname: `/artists/${artistNameParam}/albums` }}
-            className="underline-offset-4 hover:underline"
-          >
-            Albums
-          </Link>
-        </p>
-      )}
-    </Albums>
-  );
+  return <Albums albums={albums} />;
 };
-
-const TopAlbums = (props: { limit: number; isSection?: boolean }) => (
-  <Suspense>
-    <TopAlbumsInner {...props} />
-  </Suspense>
-);
 
 export default AlbumsPage;

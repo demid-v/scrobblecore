@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 
 import ListSkeleton from "~/app/_components/list-skeleton";
@@ -52,13 +51,7 @@ const TracksPage = () => {
   );
 };
 
-const TopTracks = ({
-  limit,
-  isSection = false,
-}: {
-  limit: number;
-  isSection?: boolean;
-}) => {
+const TopTracks = ({ limit }: { limit: number }) => {
   const artistNameParam = useParams<{ artistName: string }>().artistName;
   const artistName = decodeURIComponent(artistNameParam);
 
@@ -74,25 +67,12 @@ const TopTracks = ({
     queryFn: () => getTopTracks(queryParams),
   });
 
-  if (isFetching) return <ListSkeleton count={limit} hasHeader={isSection} />;
+  if (isFetching) return <ListSkeleton count={limit} />;
   if (!isSuccess) return null;
 
   const { tracks } = data;
 
-  return (
-    <Tracks tracks={tracks}>
-      {isSection && (
-        <p className="mb-6 mt-10 text-xl">
-          <Link
-            href={{ pathname: `/artists/${artistNameParam}/tracks` }}
-            className="underline-offset-4 hover:underline"
-          >
-            Tracks
-          </Link>
-        </p>
-      )}
-    </Tracks>
-  );
+  return <Tracks tracks={tracks} />;
 };
 
 export default TracksPage;

@@ -5,20 +5,18 @@ import React, { useRef, useState } from "react";
 import { type ImperativePanelHandle } from "react-resizable-panels";
 
 import { Button } from "~/components/ui/button";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "~/components/ui/resizable";
-import { api } from "~/trpc/react";
+import { ResizableHandle, ResizablePanel } from "~/components/ui/resizable";
 
 import HistorySidebar from "./sidebar";
 
-const ResizableHistory = ({ children }: { children: React.ReactNode }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+const ResizableHistory = ({
+  defaultSize = 20,
+}: {
+  defaultSize: number | undefined;
+}) => {
   const historyPanelRef = useRef<ImperativePanelHandle>(null);
 
-  const { data: user } = api.auth.user.useQuery();
+  const [isExpanded, setIsExpanded] = useState(defaultSize !== 0);
 
   const toggleHistory = () => {
     const historyPanel = historyPanelRef.current;
@@ -29,55 +27,40 @@ const ResizableHistory = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className="pt-12"
-      style={{ height: "100vh" }}
-    >
+    <>
+      <div className="relative hidden md:block">
+        <ResizableHandle className="h-full" />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute -left-[3.25rem] top-0 z-50 h-7 w-7"
+          title={isExpanded ? "Close history" : "Open history"}
+          onClick={toggleHistory}
+        >
+          {isExpanded ? <ChevronRight /> : <ChevronLeft />}
+        </Button>
+      </div>
       <ResizablePanel
-        defaultSize={80}
+        ref={historyPanelRef}
+        id="history"
+        order={2}
+        defaultSize={defaultSize}
+        collapsible
         style={{
           overflow: "auto",
           height: "auto",
         }}
+        className="hidden bg-sidebar transition-[flex-grow] md:block"
+        onExpand={() => {
+          setIsExpanded(true);
+        }}
+        onCollapse={() => {
+          setIsExpanded(false);
+        }}
       >
-        {children}
+        <HistorySidebar />
       </ResizablePanel>
-      {user && (
-        <>
-          <div className="relative hidden md:block">
-            <ResizableHandle className="h-full" />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute -left-[3.25rem] top-0 z-50 h-7 w-7"
-              title={isExpanded ? "Close history" : "Open history"}
-              onClick={toggleHistory}
-            >
-              {isExpanded ? <ChevronRight /> : <ChevronLeft />}
-            </Button>
-          </div>
-          <ResizablePanel
-            ref={historyPanelRef}
-            defaultSize={20}
-            collapsible
-            style={{
-              overflow: "auto",
-              height: "auto",
-            }}
-            className="hidden bg-sidebar transition-[flex-grow] md:block"
-            onExpand={() => {
-              setIsExpanded(true);
-            }}
-            onCollapse={() => {
-              setIsExpanded(false);
-            }}
-          >
-            <HistorySidebar />
-          </ResizablePanel>
-        </>
-      )}
-    </ResizablePanelGroup>
+    </>
   );
 };
 
