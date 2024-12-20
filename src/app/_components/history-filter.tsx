@@ -1,4 +1,5 @@
 import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 
 import {
   Select,
@@ -12,6 +13,14 @@ import { type ScrobblesFilter, scrobblesFilterAtom } from "~/lib/store";
 
 const HistoryFilter = () => {
   const [scrobblesFilter, setScrobblesFilter] = useAtom(scrobblesFilterAtom);
+
+  const [isAvailable, setIsAvailable] = useState(false);
+
+  useEffect(() => {
+    setIsAvailable(true);
+  }, [scrobblesFilter]);
+
+  if (!isAvailable) return null;
 
   return (
     <Select
