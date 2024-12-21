@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { z } from "zod";
 
 import { env } from "~/env";
@@ -7,6 +6,7 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { type RouterOutputs } from "~/trpc/react";
 
 const userSchema = z.object({
   user: z.object({
@@ -22,11 +22,9 @@ const userSchema = z.object({
 });
 
 const authRouter = createTRPCRouter({
-  user: publicProcedure.query(async () => {
-    const cookieStore = await cookies();
-
-    const sessionKey = cookieStore.get("sessionKey")?.value ?? "";
-    const userName = cookieStore.get("userName")?.value ?? "";
+  user: publicProcedure.query(async ({ ctx: { cookies } }) => {
+    const sessionKey = cookies.get("sessionKey")?.value ?? "";
+    const userName = cookies.get("userName")?.value ?? "";
 
     if (sessionKey === "" || userName === "") return null;
 
@@ -53,7 +51,7 @@ const authRouter = createTRPCRouter({
     return user;
   }),
 
-  signout: privateProcedure.mutation(({ ctx: { cookies } }) => {
+  signout: privateProcedure.mutation(async ({ ctx: { cookies } }) => {
     cookies.delete("sessionKey");
     cookies.delete("userName");
 
@@ -61,4 +59,7 @@ const authRouter = createTRPCRouter({
   }),
 });
 
+type User = NonNullable<RouterOutputs["auth"]["user"]>;
+
 export default authRouter;
+export type { User };

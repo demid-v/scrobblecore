@@ -19,7 +19,7 @@ const Home = () => (
 const SignInButton = async () => {
   const user = await api.auth.user();
 
-  if (user !== null) return null;
+  if (user) return null;
 
   return (
     <Button className="mt-10" asChild>
