@@ -1,6 +1,9 @@
 import Artists from "~/app/_components/artists";
 import SearchAlbums from "~/app/_components/search-albums";
 import SearchTracks from "~/app/_components/search-tracks";
+import { generateMetadataForSearch } from "~/lib/utils";
+
+export const generateMetadata = generateMetadataForSearch("Search");
 
 const SearchResults = async ({
   searchParams,
