@@ -1,6 +1,6 @@
 import { useTheme } from "next-themes";
 
-const AudioWave = () => {
+const ScrobblecoreIcon = () => {
   const { theme } = useTheme();
 
   return (
@@ -28,6 +28,7 @@ const AudioWave = () => {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M24 14.0664L36.8834 17.1215V9.01341L24 6.00002V14.0664Z"
+        fill={theme === "dark" ? "#000000" : "#ffffff"}
         stroke={theme === "dark" ? "#e5e7eb" : "#000"}
         strokeWidth="4"
         strokeLinecap="round"
@@ -37,4 +38,4 @@ const AudioWave = () => {
   );
 };
 
-export default AudioWave;
+export default ScrobblecoreIcon;

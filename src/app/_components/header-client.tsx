@@ -23,10 +23,13 @@ import NoUserImage from "./no-user-image";
 import SearchBar from "./search-bar";
 import ThemeToggle from "./theme-toggle";
 
-const AudioWave = dynamic(() => import("~/components/audio-wave"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-8 w-8" />,
-});
+const ScrobblecoreIcon = dynamic(
+  () => import("~/components/scrobblecore-icon"),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-8 w-8" />,
+  },
+);
 
 const HeaderClient = ({ user }: { user: User | null }) => {
   const selectedLayoutSegment = useSelectedLayoutSegment();
@@ -39,7 +42,7 @@ const HeaderClient = ({ user }: { user: User | null }) => {
           href="/"
           className="flex items-center gap-x-2 text-xl font-semibold"
         >
-          <AudioWave />
+          <ScrobblecoreIcon />
           <span className="hidden sm:block">Scrobblecore</span>
         </Link>
         {user && <Navigation />}
@@ -147,7 +150,7 @@ const HeaderSkeleton = () => {
           href="/"
           className="flex items-center gap-x-2 text-xl font-semibold"
         >
-          <AudioWave />
+          <ScrobblecoreIcon />
           <span className="hidden sm:block">Scrobblecore</span>
         </Link>
         <div className="hidden md:flex">
