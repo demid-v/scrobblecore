@@ -1,9 +1,23 @@
+import { type Metadata } from "next";
+
 import Artists from "~/app/_components/artists";
 import SearchAlbums from "~/app/_components/search-albums";
 import SearchTracks from "~/app/_components/search-tracks";
-import { generateMetadataForSearch } from "~/lib/utils";
+import { env } from "~/env";
 
-export const generateMetadata = generateMetadataForSearch("Search");
+export const generateMetadata = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) => {
+  const { q } = (await searchParams) ?? {};
+  const search = Array.isArray(q) ? q.at(0) : q;
+
+  return {
+    title: search ? `\`${search}\` in Search` : "Search",
+    alternates: { canonical: `${env.NEXT_PUBLIC_PROD_BASE_URL}/search` },
+  } satisfies Metadata;
+};
 
 const SearchResults = async ({
   searchParams,

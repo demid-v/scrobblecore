@@ -1,5 +1,4 @@
 import { type ClassValue, clsx } from "clsx";
-import { type Metadata } from "next";
 import { twMerge } from "tailwind-merge";
 
 import { env } from "~/env";
@@ -112,20 +111,5 @@ const wait = (ms?: number) =>
 
 type QueryResult = AlbumsResult | TracksResult | ArtistsResult;
 
-const generateMetadataForSearch =
-  (title: string) =>
-  async ({
-    searchParams,
-  }: {
-    searchParams?: Promise<Record<string, string | string[] | undefined>>;
-  }) => {
-    const { q } = (await searchParams) ?? {};
-    const search = Array.isArray(q) ? q.at(0) : q;
-
-    return {
-      title: search ? `\`${search}\` in ${title}` : title,
-    } satisfies Metadata;
-  };
-
-export { cn, getBaseUrl, authUrl, paginate, wait, generateMetadataForSearch };
-export { type QueryResult };
+export { cn, getBaseUrl, authUrl, paginate, wait };
+export type { QueryResult };
