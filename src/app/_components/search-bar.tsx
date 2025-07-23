@@ -2,12 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -45,7 +40,9 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
       newSearchParams.delete("q");
     }
 
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    router.push(
+      `${["/search", "/albums", "/tracks", "/artists"].includes(pathname) ? pathname : "/search"}?${newSearchParams.toString()}`,
+    );
   };
 
   useEffect(() => {
@@ -84,10 +81,6 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
 };
 
 const SearchBar = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
-  const selectedLayoutSegment = useSelectedLayoutSegment();
-
-  if (selectedLayoutSegment !== "(with-search-bar)") return null;
-
   return (
     <Suspense>
       <SearchBarInner {...props} />

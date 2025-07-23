@@ -1,8 +1,5 @@
-"use client";
-
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import { Button } from "~/components/ui/button";
@@ -26,15 +23,11 @@ import ThemeToggle from "./theme-toggle";
 const ScrobblecoreIcon = dynamic(
   () => import("~/components/scrobblecore-icon"),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-8 w-8" />,
   },
 );
 
 const HeaderClient = ({ user }: { user: User | null }) => {
-  const selectedLayoutSegment = useSelectedLayoutSegment();
-  const isSegmentWithSearchBar = selectedLayoutSegment === "(with-search-bar)";
-
   return (
     <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-11">
       <div className="flex grow items-center gap-x-9">
@@ -45,15 +38,17 @@ const HeaderClient = ({ user }: { user: User | null }) => {
           <ScrobblecoreIcon />
           <span className="hidden sm:block">Scrobblecore</span>
         </Link>
-        {user && <Navigation />}
-        <SearchBar className="max-w-lg grow" />
+        {user && (
+          <>
+            <Navigation />
+            <SearchBar className="max-w-lg grow" />
+          </>
+        )}
       </div>
       <div
         className={cn(
-          "flex shrink-0 items-center justify-end gap-x-4",
+          "flex shrink-0 items-center justify-end gap-x-4 md:flex",
           user && "hidden",
-          isSegmentWithSearchBar && "md:flex",
-          !isSegmentWithSearchBar && "sm:flex",
         )}
       >
         <ThemeToggle className="shrink-0" />
@@ -84,10 +79,8 @@ const HeaderClient = ({ user }: { user: User | null }) => {
 
       <div
         className={cn(
-          "hidden shrink-0 items-center gap-x-4",
+          "hidden shrink-0 items-center gap-x-4 md:hidden",
           user && "flex",
-          isSegmentWithSearchBar && "md:hidden",
-          !isSegmentWithSearchBar && "sm:hidden",
         )}
       >
         <ThemeToggle />
@@ -140,9 +133,6 @@ const HeaderClient = ({ user }: { user: User | null }) => {
 };
 
 const HeaderSkeleton = () => {
-  const selectedLayoutSegment = useSelectedLayoutSegment();
-  const isSegmentWithSearchBar = selectedLayoutSegment === "(with-search-bar)";
-
   return (
     <div className="fixed z-10 flex h-12 w-full items-center justify-between bg-background px-11">
       <div className="flex items-center gap-x-9">
@@ -165,13 +155,7 @@ const HeaderSkeleton = () => {
       </div>
       <div className="flex items-center gap-x-4">
         <Skeleton className="h-9 w-9" />
-        <Skeleton
-          className={cn(
-            "hidden h-9 w-[86.56px]",
-            isSegmentWithSearchBar && "md:block",
-            !isSegmentWithSearchBar && "sm:block",
-          )}
-        />
+        <Skeleton className="hidden h-9 w-[86.56px] md:block" />
         <Skeleton className="h-[34px] w-[34px] rounded-full" />
       </div>
     </div>
