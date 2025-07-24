@@ -12,10 +12,7 @@ const GridSkeleton = ({
 } & React.ComponentProps<"div">) => (
   <div>
     {hasHeader && <Skeleton className="mb-6 mt-10 h-7 w-20" />}
-    <div
-      className="mx-auto grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10"
-      {...props}
-    >
+    <div className="mx-auto grid grid-cols-tiles gap-x-6 gap-y-10" {...props}>
       {new Array(count).fill(0).map((_item, index) => (
         <div key={index}>
           <Skeleton className="mb-2 aspect-square rounded-none" />

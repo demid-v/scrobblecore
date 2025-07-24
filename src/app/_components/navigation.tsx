@@ -13,6 +13,15 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
+import { cn } from "~/lib/utils";
+
+const listItems = [
+  { href: "search", name: "Search" },
+  { href: "albums", name: "Albums" },
+  { href: "tracks", name: "Tracks" },
+  { href: "artists", name: "Artists" },
+  { href: "track", name: "Track" },
+];
 
 const Navigation = () => {
   const pathname = usePathname().split("/");
@@ -25,56 +34,18 @@ const Navigation = () => {
     <>
       <NavigationMenu className="hidden xl:block">
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <Link href="/search" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isActive("search")}
-              >
-                Search
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/albums" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isActive("albums")}
-              >
-                Albums
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/tracks" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isActive("tracks")}
-              >
-                Tracks
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/artists" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isActive("artists")}
-              >
-                Artists
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/track" legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isActive("track")}
-              >
-                Track
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
+          {listItems.map((item) => (
+            <NavigationMenuItem key={item.href}>
+              <Link href={`/${item.href}`} legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  active={isActive(item.href)}
+                >
+                  {item.name}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          ))}
         </NavigationMenuList>
       </NavigationMenu>
 
@@ -84,56 +55,26 @@ const Navigation = () => {
             <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul>
-                <li>
-                  <Link href="/search" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={isActive("search")}
+                {listItems.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={`/${item.href}`}
+                      legacyBehavior
+                      passHref
+                      className=""
                     >
-                      Search
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/albums" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={isActive("albums")}
-                    >
-                      Albums
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/tracks" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={isActive("tracks")}
-                    >
-                      Tracks
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/artists" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={isActive("artists")}
-                    >
-                      Artists
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/track" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={isActive("track")}
-                    >
-                      Track
-                    </NavigationMenuLink>
-                  </Link>
-                </li>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "w-full justify-start",
+                        )}
+                        active={isActive(item.href)}
+                      >
+                        {item.name}
+                      </NavigationMenuLink>
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>

@@ -20,7 +20,7 @@ const Albums = ({
   return (
     <section>
       {children}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+      <div className="grid grid-cols-tiles gap-x-6 gap-y-10">
         {albums.map(({ name, artist, image }) => (
           <div
             key={`${name}${artist}`}

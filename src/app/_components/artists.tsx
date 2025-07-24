@@ -58,7 +58,7 @@ const Artists = ({
           </Link>
         </p>
       )}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+      <div className="grid grid-cols-tiles gap-x-6 gap-y-10">
         {artists.map(({ name, image }) => (
           <div
             key={name}

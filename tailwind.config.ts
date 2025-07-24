@@ -67,6 +67,7 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      gridTemplateColumns: { tiles: "repeat(auto-fill,minmax(200px,1fr))" },
     },
   },
   plugins: [tailwindcssAnimate],

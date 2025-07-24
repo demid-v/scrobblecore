@@ -33,7 +33,7 @@ const ResizableHistory = ({
         <Button
           variant="ghost"
           size="sm"
-          className="absolute -left-[3.25rem] top-0 z-50 h-7 w-7"
+          className="absolute -left-1 top-0 z-50 h-7 w-7 -translate-x-full"
           title={isExpanded ? "Close history" : "Open history"}
           onClick={toggleHistory}
         >

@@ -21,16 +21,14 @@ const ArtistPage = async ({
 
   return (
     <div>
-      <div className="pt-5">
-        <Suspense
-          key={artistName}
-          fallback={<Skeleton className="mb-10 h-9 w-48" />}
-        >
-          <Artist artistName={artistName} />
-        </Suspense>
-      </div>
+      <Suspense
+        key={artistName}
+        fallback={<Skeleton className="mb-10 h-9 w-48" />}
+      >
+        <Artist artistName={artistName} />
+      </Suspense>
 
-      <div className="mt-10">
+      <div className="mt-7">
         <Suspense fallback={<GridSkeleton count={albumsLimit} hasHeader />}>
           <TopAlbums artistName={artistName} />
         </Suspense>

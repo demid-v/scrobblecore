@@ -31,7 +31,7 @@ const AlbumsPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-2 z-10 mx-auto mb-8 w-fit">
+      <div className="sticky top-4 z-10 mx-auto mb-6 w-fit">
         <SearchPagination
           query={query}
           limit={limit}

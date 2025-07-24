@@ -21,29 +21,6 @@ const scrobbleStateRecord: Record<Scrobble["status"], string> = {
   failed: "Failed to scrobble",
 };
 
-const History = () => {
-  const scrobbles = useAtomValue(scrobblesAtom).toReversed();
-
-  return (
-    <div className="flex-1">
-      <AutoSizer disableWidth>
-        {({ height }) => (
-          <List
-            height={height}
-            width="100%"
-            itemCount={scrobbles.length}
-            itemSize={45}
-            itemData={scrobbles}
-            className="pb-4"
-          >
-            {Row}
-          </List>
-        )}
-      </AutoSizer>
-    </div>
-  );
-};
-
 const Row = ({
   index,
   style,
@@ -109,6 +86,29 @@ const Row = ({
         </div>
       </div>
       {index !== scrobbles.length - 1 && <Separator />}
+    </div>
+  );
+};
+
+const History = () => {
+  const scrobbles = useAtomValue(scrobblesAtom).toReversed();
+
+  return (
+    <div className="flex-1">
+      <AutoSizer disableWidth>
+        {({ height }) => (
+          <List
+            height={height}
+            width="100%"
+            itemCount={scrobbles.length}
+            itemSize={45}
+            itemData={scrobbles}
+            className="pb-4"
+          >
+            {Row}
+          </List>
+        )}
+      </AutoSizer>
     </div>
   );
 };

@@ -11,7 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "~/components/ui/navigation-menu";
 import { Skeleton } from "~/components/ui/skeleton";
-import { authUrl, cn } from "~/lib/utils";
+import { authUrl } from "~/lib/utils";
 import { signOut } from "~/server/api/actions";
 import { type User } from "~/server/api/routers/auth";
 
@@ -45,50 +45,22 @@ const HeaderClient = ({ user }: { user: User | null }) => {
           </>
         )}
       </div>
-      <div
-        className={cn(
-          "flex shrink-0 items-center justify-end gap-x-4 md:flex",
-          user && "hidden",
-        )}
-      >
-        <ThemeToggle className="shrink-0" />
-        {!user && (
+      {!user && (
+        <div className="flex shrink-0 items-center justify-end gap-x-4">
+          <ThemeToggle className="shrink-0" />
           <Button className="mr-2" asChild>
             <Link href={authUrl}>Sign in</Link>
           </Button>
-        )}
-        {user && (
-          <>
-            <form action={signOut}>
-              <Button type="submit">Sign out</Button>
-            </form>
-            <Link href={user.url} target="_blank" className="shrink-0">
-              <ImageWithFallback
-                src={user.image}
-                alt="User's image"
-                width={34}
-                height={34}
-                defaultImage={<NoUserImage />}
-                priority
-                className="rounded-full"
-              />
-            </Link>
-          </>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div
-        className={cn(
-          "hidden shrink-0 items-center gap-x-4 md:hidden",
-          user && "flex",
-        )}
-      >
-        <ThemeToggle />
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem className="flex items-center">
-              <NavigationMenuTrigger className="px-2">
-                {user && (
+      {user && (
+        <div className="flex shrink-0 items-center gap-x-4">
+          <ThemeToggle />
+          <NavigationMenu className="md:hidden">
+            <NavigationMenuList>
+              <NavigationMenuItem className="flex items-center">
+                <NavigationMenuTrigger className="px-2">
                   <Link
                     href={user.url}
                     target="_blank"
@@ -104,30 +76,37 @@ const HeaderClient = ({ user }: { user: User | null }) => {
                       className="rounded-full"
                     />
                   </Link>
-                )}
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul>
-                  {!user && (
-                    <li>
-                      <Button asChild>
-                        <Link href={authUrl}>Sign in</Link>
-                      </Button>
-                    </li>
-                  )}
-                  {user && (
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul>
                     <li>
                       <form action={signOut}>
                         <Button type="submit">Sign out</Button>
                       </form>
                     </li>
-                  )}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+          <div className="hidden shrink-0 items-center justify-end gap-x-4 md:flex">
+            <form action={signOut}>
+              <Button type="submit">Sign out</Button>
+            </form>
+            <Link href={user.url} target="_blank" className="shrink-0">
+              <ImageWithFallback
+                src={user.image}
+                alt="User's image"
+                width={34}
+                height={34}
+                defaultImage={<NoUserImage />}
+                priority
+                className="rounded-full"
+              />
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
