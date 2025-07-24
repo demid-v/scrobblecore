@@ -28,7 +28,7 @@ const ArtistPage = async ({
         <Artist artistName={artistName} />
       </Suspense>
 
-      <div className="mt-7">
+      <div className="mt-10">
         <Suspense fallback={<GridSkeleton count={albumsLimit} hasHeader />}>
           <TopAlbums artistName={artistName} />
         </Suspense>

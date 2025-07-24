@@ -6,7 +6,7 @@ import { authUrl } from "~/lib/utils";
 import { api } from "~/trpc/server";
 
 const Home = () => (
-  <div className="flex h-[calc(100vh-3rem-1rem)] items-center justify-center">
+  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
     <div className="my-auto text-center">
       <h1 className="text-5xl font-semibold">Welcome to Scrobblecore</h1>
       <Suspense>
@@ -23,7 +23,7 @@ const SignInButton = async () => {
 
   return (
     <Button className="mt-10" asChild>
-      <Link href={authUrl}>Sign in Last.fm</Link>
+      <Link href={authUrl}>Sign in</Link>
     </Button>
   );
 };
