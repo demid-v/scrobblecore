@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { type CSSProperties } from "react";
+import { Toaster } from "sonner";
 
 import { SidebarProvider } from "~/components/ui/sidebar";
 import { env } from "~/env";
@@ -49,6 +50,7 @@ export default function RootLayout({
                   {children}
                 </main>
               </ResizableHistoryLayout>
+              <Toaster position="bottom-right" closeButton visibleToasts={1} />
             </SidebarProvider>
           </TRPCReactProvider>
         </ThemeProvider>

@@ -2,6 +2,7 @@
 
 import { useSetAtom } from "jotai";
 import { type ReactNode } from "react";
+import { toast } from "sonner";
 import { type SetRequired, type Simplify } from "type-fest";
 
 import { Button } from "~/components/ui/button";
@@ -39,9 +40,18 @@ const useScrobble = () => {
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
     onSuccess(data) {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(data.result, "text/xml");
+      const code = dom.getElementsByTagName("error")[0]?.getAttribute("code");
+
+      if (code === "29") toast.error("Daily scrobble limit exceeded.");
+
       const scrobbles = data.tracks.map((track) => {
         const { timestamp: _timestamp, ...props } = track;
-        const scrobble: Scrobble = { ...props, status: "successful" };
+        const scrobble = {
+          ...props,
+          status: code !== "29" ? "successful" : "failed",
+        } satisfies Scrobble;
 
         return scrobble;
       });
@@ -51,7 +61,7 @@ const useScrobble = () => {
     onError(_error, tracks) {
       const scrobbles = tracks.map((track) => {
         const { timestamp: _timestamp, ...props } = track;
-        const scrobble: Scrobble = { ...props, status: "failed" };
+        const scrobble = { ...props, status: "failed" } satisfies Scrobble;
 
         return scrobble;
       });
