@@ -100,7 +100,7 @@ const MobileSidebar = () => {
         </SidebarContent>
       </Sidebar>
       <div className="h-svh md:hidden">
-        <SidebarTrigger className="fixed ml-2 mt-14" />
+        <SidebarTrigger className="fixed z-10 ml-2 mt-14" />
       </div>
     </>
   );

@@ -1,9 +1,10 @@
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import GitHubLink from "~/components/github-link";
 import ImageWithFallback from "~/components/image-with-fallback";
+import ScrobblecoreIcon from "~/components/scrobblecore-icon";
 import { Button } from "~/components/ui/button";
 import {
   NavigationMenu,
@@ -21,13 +22,6 @@ import NoUserImage from "./no-user-image";
 import SearchBar from "./search-bar";
 import ThemeToggle from "./theme-toggle";
 
-const ScrobblecoreIcon = dynamic(
-  () => import("~/components/scrobblecore-icon"),
-  {
-    loading: () => <Skeleton className="h-8 w-8" />,
-  },
-);
-
 const signOut = async () => {
   "use server";
 
@@ -39,7 +33,7 @@ const HeaderInner = async () => {
   const user = await api.auth.user();
 
   return (
-    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-11">
+    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-4">
       <div className="flex grow items-center gap-x-9">
         <Link
           href="/"
@@ -58,6 +52,7 @@ const HeaderInner = async () => {
       {!user && (
         <div className="flex shrink-0 items-center justify-end gap-x-4">
           <ThemeToggle className="shrink-0" />
+          <GitHubLink />
           <Button className="mr-2" asChild>
             <Link href={authUrl}>Sign in</Link>
           </Button>
@@ -90,6 +85,9 @@ const HeaderInner = async () => {
                 <NavigationMenuContent>
                   <ul>
                     <li>
+                      <GitHubLink />
+                    </li>
+                    <li>
                       <form action={signOut}>
                         <Button type="submit">Sign out</Button>
                       </form>
@@ -100,6 +98,7 @@ const HeaderInner = async () => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="hidden shrink-0 items-center justify-end gap-x-4 md:flex">
+            <GitHubLink />
             <form action={signOut}>
               <Button type="submit">Sign out</Button>
             </form>
