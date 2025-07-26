@@ -1,7 +1,7 @@
 "use client";
 
 import { useSetAtom } from "jotai";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type SetRequired, type Simplify } from "type-fest";
 
@@ -14,6 +14,10 @@ import {
 } from "~/lib/queries/track";
 import { type Scrobble, scrobblesAtom } from "~/lib/store";
 import { api } from "~/trpc/react";
+
+type TracksMappedBase = Simplify<
+  SetRequired<TrackToScrobble, "id"> & { date: number }
+>[];
 
 const generateTimestamps = (date: number, tracks: TrackToScrobble[]) => {
   let timestamp = Math.floor(date / 1000);
@@ -37,20 +41,39 @@ const scrobbleSize = 50;
 
 const useScrobble = () => {
   const setScrobbles = useSetAtom(scrobblesAtom);
+  const [isLimitExceeded, setIsLimitExceeded] = useState(false);
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
     onSuccess(data) {
       const parser = new DOMParser();
-      const dom = parser.parseFromString(data.result, "text/xml");
-      const code = dom.getElementsByTagName("error")[0]?.getAttribute("code");
 
-      if (code === "29") toast.error("Daily scrobble limit exceeded.");
+      const resultDom = parser.parseFromString(data.result, "text/xml");
+      const resultCode = resultDom
+        .getElementsByTagName("error")[0]
+        ?.getAttribute("code");
 
-      const scrobbles = data.tracks.map((track) => {
+      if (resultCode === "29") setIsLimitExceeded(true);
+
+      const isIgnoredElements =
+        resultDom.getElementsByTagName("ignoredMessage");
+
+      const scrobbles = data.tracks.map((track, i) => {
+        const isIgnoredElement = isIgnoredElements[i];
+        const scrobbleCode = isIgnoredElement?.getAttribute("code");
+        const message = isIgnoredElement?.textContent ?? "";
+
+        if (scrobbleCode === "1")
+          toast.error(`Failed to scrobble "${track.artist} - ${track.name}"`, {
+            description: message,
+          });
+
         const { timestamp: _timestamp, ...props } = track;
         const scrobble = {
           ...props,
-          status: code !== "29" ? "successful" : "failed",
+          status:
+            resultCode === "29" || scrobbleCode === "1"
+              ? "failed"
+              : "successful",
         } satisfies Scrobble;
 
         return scrobble;
@@ -70,9 +93,11 @@ const useScrobble = () => {
     },
   });
 
-  const startScrobble = (tracks: TrackToScrobble[], isRetry?: boolean) => {
-    //#region Put tracks in store
+  useEffect(() => {
+    if (isLimitExceeded) toast.error("Daily scrobble limit exceeded.");
+  }, [isLimitExceeded]);
 
+  const putTracksInStore = (tracks: TrackToScrobble[], isRetry?: boolean) => {
     const date = isRetry ? (tracks.at(0)?.date ?? Date.now()) : Date.now();
 
     const tracksMappedBase = tracks.map((track) => ({
@@ -81,7 +106,7 @@ const useScrobble = () => {
         id: crypto.randomUUID(),
       }),
       date,
-    })) as Simplify<SetRequired<TrackToScrobble, "id"> & { date: number }>[];
+    })) as TracksMappedBase;
 
     const tracksForStore = tracksMappedBase.map((track) => ({
       ...track,
@@ -90,16 +115,22 @@ const useScrobble = () => {
 
     setScrobbles(tracksForStore);
 
-    //#endregion
+    return { date, tracksMappedBase };
+  };
 
-    //#region Scrobble tracks
-
+  const scrobbleTracks = (
+    tracks: TrackToScrobble[],
+    date: number,
+    tracksMappedBase: TracksMappedBase,
+  ) => {
     const timestamps = generateTimestamps(date, tracks);
 
     const tracksToScrobble = tracksMappedBase.map((track, index) => ({
       ...track,
       timestamp: timestamps[index] ?? date / 1000,
     }));
+
+    setIsLimitExceeded(false);
 
     for (
       let index = 0;
@@ -108,8 +139,11 @@ const useScrobble = () => {
     ) {
       scrobble(tracksToScrobble.slice(index, scrobbleSize + index));
     }
+  };
 
-    //#endregion
+  const startScrobble = (tracks: TrackToScrobble[], isRetry?: boolean) => {
+    const { date, tracksMappedBase } = putTracksInStore(tracks, isRetry);
+    scrobbleTracks(tracks, date, tracksMappedBase);
   };
 
   return startScrobble;

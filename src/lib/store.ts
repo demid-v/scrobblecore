@@ -41,7 +41,7 @@ const scrobblesAtomWithStorage = atomWithStorage(
       return scrobbles;
     },
 
-    setItem(key, newScrobbles) {
+    setItem(key, scrobbles) {
       const userName = cookies.get("userName");
 
       if (typeof userName === "undefined") {
@@ -55,12 +55,7 @@ const scrobblesAtomWithStorage = atomWithStorage(
           ? SuperJSON.parse<Map<string, ScrobblesMap>>(scrobblesItem)
           : new Map<string, ScrobblesMap>();
 
-      const scrobbles =
-        usersScrobbles.get(userName) ?? new Map<string, Scrobble>();
-
-      const newScrobblesToPersist = new Map([...scrobbles, ...newScrobbles]);
-      usersScrobbles.set(userName, newScrobblesToPersist);
-
+      usersScrobbles.set(userName, scrobbles);
       localStorage.setItem(key, SuperJSON.stringify(usersScrobbles));
     },
 
@@ -118,7 +113,25 @@ const scrobblesAtom = atom(
       ...newScrobblesMap,
     ]);
 
-    set(scrobblesAtomWithStorage, scrobblesToStore);
+    try {
+      set(scrobblesAtomWithStorage, scrobblesToStore);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
+      const scrobblesToSplice = [...get(scrobblesAtomWithStorage).values()];
+      scrobblesToSplice.splice(
+        scrobblesToSplice.length - newScrobbles.length * 2,
+        newScrobbles.length * 2,
+      );
+
+      const oldScrobblesMap = convertScrobblesToMap(scrobblesToSplice);
+
+      const scrobblesToStore = new Map([
+        ...oldScrobblesMap,
+        ...newScrobblesMap,
+      ]);
+
+      set(scrobblesAtomWithStorage, scrobblesToStore);
+    }
   },
 );
 

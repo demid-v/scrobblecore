@@ -50,7 +50,7 @@ export default function RootLayout({
                   {children}
                 </main>
               </ResizableHistoryLayout>
-              <Toaster position="bottom-right" closeButton visibleToasts={1} />
+              <Toaster position="bottom-right" closeButton />
             </SidebarProvider>
           </TRPCReactProvider>
         </ThemeProvider>
