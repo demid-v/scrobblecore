@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { env } from "~/env";
 import { getTopAlbums, getTopTracks } from "~/lib/queries/artist";
+import { lastFmApiGet } from "~/lib/utils";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 const artistInfoSchema = z.object({
@@ -20,7 +21,7 @@ const artistRouter = createTRPCRouter({
   info: privateProcedure
     .input(z.object({ artistName: z.string() }))
     .query(async ({ input: { artistName } }) => {
-      const searchParams = {
+      const params = {
         method: "artist.getinfo",
         format: "json",
         autocorrect: "1",
@@ -28,11 +29,9 @@ const artistRouter = createTRPCRouter({
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
-      const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-      const result = (await (await fetch(url)).json()) as unknown;
-
-      const parsedResult = artistInfoSchema.parse(result);
-      const artist = parsedResult.artist;
+      const artist = (
+        await lastFmApiGet(params).then((json) => artistInfoSchema.parse(json))
+      ).artist;
 
       return artist;
     }),

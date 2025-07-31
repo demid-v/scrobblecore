@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { z } from "zod";
 
 import { env } from "~/env";
+import { lastFmApiPost } from "~/lib/utils";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 const trackRouter = createTRPCRouter({
@@ -70,14 +71,7 @@ const trackRouter = createTRPCRouter({
 
         params.set("api_sig", apiSig);
 
-        const urlSearchParams = new URLSearchParams([...params]);
-
-        const result = await (
-          await fetch("https://ws.audioscrobbler.com/2.0/", {
-            method: "POST",
-            body: urlSearchParams,
-          })
-        ).text();
+        const result = await lastFmApiPost([...params]);
 
         return { result, tracks };
       },

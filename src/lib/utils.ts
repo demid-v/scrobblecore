@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import wretch from "wretch";
 
 import { env } from "~/env";
 
@@ -11,10 +12,12 @@ const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
+
   if (process.env.VERCEL) {
     if (env.NODE_ENV === "production") return env.NEXT_PUBLIC_PROD_BASE_URL!;
     return `https://${process.env.VERCEL_URL}`;
   }
+
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };
 
@@ -111,5 +114,15 @@ const wait = (ms?: number) =>
 
 type QueryResult = AlbumsResult | TracksResult | ArtistsResult;
 
-export { cn, getBaseUrl, authUrl, paginate, wait };
+const baseLastFmApiUrl = wretch("https://ws.audioscrobbler.com/2.0/");
+
+const lastFmApiGet = (params: Record<string, string>) =>
+  baseLastFmApiUrl
+    .url(`?${new URLSearchParams(params).toString()}`)
+    .get()
+    .json();
+
+const lastFmApiPost = <Body>(body: Body) => baseLastFmApiUrl.post(body).text();
+
+export { cn, getBaseUrl, authUrl, paginate, wait, lastFmApiGet, lastFmApiPost };
 export type { QueryResult };

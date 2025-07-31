@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { env } from "~/env";
+import { lastFmApiGet } from "~/lib/utils";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { type RouterOutputs } from "~/trpc/react";
 
@@ -47,16 +48,15 @@ const albumRouter = createTRPCRouter({
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
-      const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(params)}`;
-      const rawAlbum = (await (await fetch(url)).json()) as unknown;
-
-      const parsedAlbum = albumSchema.parse(rawAlbum);
+      const parsedResult = await lastFmApiGet(params).then((json) =>
+        albumSchema.parse(json),
+      );
 
       const {
         image: images,
         tracks: tracksObj,
         ...albumProps
-      } = parsedAlbum.album ?? {};
+      } = parsedResult.album ?? {};
 
       const image = images?.find((image) => image.size === "extralarge")?.[
         "#text"
@@ -66,7 +66,6 @@ const albumRouter = createTRPCRouter({
         if (typeof tracksObj === "undefined") return [];
 
         const tracksProp = tracksObj.track;
-
         const tracksArray = Array.isArray(tracksProp)
           ? tracksProp
           : [tracksProp];

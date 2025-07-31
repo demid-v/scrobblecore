@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { env } from "~/env";
+import { lastFmApiGet } from "~/lib/utils";
 import {
   createTRPCRouter,
   privateProcedure,
@@ -28,18 +29,16 @@ const authRouter = createTRPCRouter({
 
     if (sessionKey === "" || userName === "") return null;
 
-    const searchParams = {
+    const params = {
       method: "user.getinfo",
       format: "json",
       user: userName,
       api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
     };
 
-    const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-    const result = (await (await fetch(url)).json()) as unknown;
-
-    const parsedResult = userSchema.parse(result);
-    const parsedUser = parsedResult.user;
+    const parsedUser = (
+      await lastFmApiGet(params).then((json) => userSchema.parse(json))
+    ).user;
 
     const user = {
       ...parsedUser,
