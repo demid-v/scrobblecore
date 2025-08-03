@@ -71,7 +71,9 @@ const trackRouter = createTRPCRouter({
 
         params.set("api_sig", apiSig);
 
-        const result = await lastFmApiPost([...params]);
+        const result = await lastFmApiPost(
+          new URLSearchParams([...params]).toString(),
+        );
 
         return { result, tracks };
       },

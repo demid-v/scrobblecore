@@ -122,7 +122,7 @@ const lastFmApiGet = (params: Record<string, string>) =>
     .get()
     .json();
 
-const lastFmApiPost = <Body>(body: Body) => baseLastFmApiUrl.post(body).text();
+const lastFmApiPost = (body: string) => baseLastFmApiUrl.post(body).text();
 
 export { cn, getBaseUrl, authUrl, paginate, wait, lastFmApiGet, lastFmApiPost };
 export type { QueryResult };
