@@ -5,6 +5,8 @@ import { z } from "zod";
 import { env } from "~/env";
 import { type AlbumTracks } from "~/server/api/routers/album";
 
+import { lastFmApiGet } from "../utils";
+
 const tracksSchema = z.object({
   results: z
     .object({
@@ -36,7 +38,7 @@ const getTracks = async ({
   limit?: number;
   page?: number;
 }) => {
-  const searchParams = {
+  const params = {
     method: "track.search",
     format: "json",
     track: trackName,
@@ -45,10 +47,10 @@ const getTracks = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    tracksSchema.parse(json),
+  );
 
-  const parsedResult = tracksSchema.parse(result);
   const parsedTracks = parsedResult.results?.trackmatches.track ?? [];
 
   const tracks = parsedTracks.map((track) => ({

@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { env } from "~/env";
 
+import { lastFmApiGet } from "../utils";
+
 const albumsSchema = z.object({
   results: z
     .object({
@@ -34,7 +36,7 @@ const getAlbums = async ({
   limit?: number;
   page?: number;
 }) => {
-  const searchParams = {
+  const params = {
     method: "album.search",
     format: "json",
     album: albumName,
@@ -43,10 +45,10 @@ const getAlbums = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    albumsSchema.parse(json),
+  );
 
-  const parsedResult = albumsSchema.parse(result);
   const parsedAlbums = parsedResult.results?.albummatches.album ?? [];
 
   const albums = parsedAlbums.map((album) => ({

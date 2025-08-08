@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { env } from "~/env";
 
+import { lastFmApiGet } from "../utils";
+
 const artistsSchema = z.object({
   results: z
     .object({
@@ -91,7 +93,7 @@ const getArtists = async ({
   limit?: number;
   page?: number;
 }) => {
-  const searchParams = {
+  const params = {
     method: "artist.search",
     format: "json",
     artist: artistName,
@@ -100,10 +102,10 @@ const getArtists = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    artistsSchema.parse(json),
+  );
 
-  const parsedResult = artistsSchema.parse(result);
   const parsedArtists = parsedResult.results?.artistmatches.artist ?? [];
 
   const artists = parsedArtists.map((artist) => ({
@@ -117,7 +119,7 @@ const getArtists = async ({
 };
 
 const getArtist = async ({ artistName }: { artistName: string }) => {
-  const searchParams = {
+  const params = {
     method: "artist.getinfo",
     format: "json",
     autocorrect: "1",
@@ -125,13 +127,11 @@ const getArtist = async ({ artistName }: { artistName: string }) => {
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    artistInfoSchema.parse(json),
+  );
 
-  const parsedResult = artistInfoSchema.parse(result);
-  const artist = parsedResult.artist;
-
-  return artist;
+  return parsedResult.artist;
 };
 
 const getTopAlbums = async ({
@@ -143,7 +143,7 @@ const getTopAlbums = async ({
   limit?: number;
   page?: number;
 }) => {
-  const searchParams = {
+  const params = {
     method: "artist.gettopalbums",
     format: "json",
     autocorrect: "1",
@@ -153,10 +153,10 @@ const getTopAlbums = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    topAlbumsSchema.parse(json),
+  );
 
-  const parsedResult = topAlbumsSchema.parse(result);
   const parsedAlbums = parsedResult.topalbums.album ?? [];
 
   const albums = parsedAlbums.map((parsedAlbum) => {
@@ -189,7 +189,7 @@ const getTopTracks = async ({
   limit?: number;
   page?: number;
 }) => {
-  const searchParams = {
+  const params = {
     method: "artist.gettoptracks",
     format: "json",
     autocorrect: "1",
@@ -199,10 +199,10 @@ const getTopTracks = async ({
     api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
   };
 
-  const url = `https://ws.audioscrobbler.com/2.0/?${new URLSearchParams(searchParams)}`;
-  const result = (await (await fetch(url)).json()) as unknown;
+  const parsedResult = await lastFmApiGet(params).then((json) =>
+    topTracksSchema.parse(json),
+  );
 
-  const parsedResult = topTracksSchema.parse(result);
   const parsedTracks = parsedResult.toptracks.track ?? [];
 
   const tracks = parsedTracks.map((parsedTrack) => ({
