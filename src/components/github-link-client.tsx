@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const GitHubLinkClient = () => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <Link
@@ -12,7 +12,7 @@ const GitHubLinkClient = () => {
       className="shrink-0"
     >
       <Image
-        src={`/github-mark${theme === "dark" ? "-white" : ""}.svg`}
+        src={`/github-mark${resolvedTheme === "dark" ? "-white" : ""}.svg`}
         alt="Gihub logo"
         width={36}
         height={36}

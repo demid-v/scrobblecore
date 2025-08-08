@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { cn } from "~/lib/utils";
 
 const NoArtistImage = (props: { className?: string }) => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <svg
@@ -19,7 +19,7 @@ const NoArtistImage = (props: { className?: string }) => {
     >
       <g
         transform="translate(0.000000,256.000000) scale(0.100000,-0.100000)"
-        fill={cn(theme === "dark" ? "#e2e8f0" : "#000000")}
+        fill={cn(resolvedTheme === "dark" ? "#e2e8f0" : "#000000")}
         stroke="none"
       >
         <path

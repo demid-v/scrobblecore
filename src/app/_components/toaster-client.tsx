@@ -1,15 +1,13 @@
 import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
+import { type Themes } from "./theme-provider";
+
 const ToasterClient = () => {
   const { theme } = useTheme();
 
   return (
-    <Toaster
-      position="bottom-right"
-      theme={theme as "dark" | "light" | "system" | undefined}
-      closeButton
-    />
+    <Toaster position="bottom-right" theme={theme as Themes} closeButton />
   );
 };
 
