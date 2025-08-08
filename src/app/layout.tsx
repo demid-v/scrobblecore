@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/next";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { type CSSProperties } from "react";
-import { Toaster } from "sonner";
 
 import { SidebarProvider } from "~/components/ui/sidebar";
 import { env } from "~/env";
@@ -14,6 +13,7 @@ import Header from "./_components/header";
 import ResizableHistoryLayout from "./_components/resizable-history-layout";
 import { MobileSidebar } from "./_components/sidebar";
 import ThemeProvider from "./_components/theme-provider";
+import Toaster from "./_components/toaster";
 
 export const metadata: Metadata = {
   title: { template: "%s | Scrobblecore", default: "Scrobblecore" },
@@ -50,7 +50,7 @@ export default function RootLayout({
                   {children}
                 </main>
               </ResizableHistoryLayout>
-              <Toaster position="bottom-right" closeButton />
+              <Toaster />
             </SidebarProvider>
           </TRPCReactProvider>
         </ThemeProvider>
