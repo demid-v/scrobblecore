@@ -27,8 +27,8 @@ const AlbumPageInner = async ({
         width={300}
         height={300}
         defaultImage={<NoCover className="mx-auto h-[300px] w-[300px] p-10" />}
-        priority
         className="mx-auto mb-3"
+        preload
       />
       <div className="mb-10 text-center">
         <p className="mb-1 font-bold">
@@ -67,7 +67,7 @@ const AlbumPage = async ({
           <Button className="mx-auto mb-10 block" disabled>
             Scrobble album
           </Button>
-          <ListSkeleton count={11} />
+          <ListSkeleton count={11} isEnimerated />
         </div>
       }
     >

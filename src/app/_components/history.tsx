@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { Redo2 } from "lucide-react";
+import { Edit, Redo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -64,6 +64,18 @@ const Row = ({
             {scrobble.name}
           </div>
           <div className="flex shrink-0 gap-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto px-1.5"
+              title="Edit and scrobble"
+            >
+              <Link
+                href={`/track/?${new URLSearchParams({ track: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
+              >
+                <Edit />
+              </Link>
+            </Button>
             <Button
               variant="ghost"
               size="sm"
