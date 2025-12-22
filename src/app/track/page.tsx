@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
 import { useScrobble } from "~/components/scrobble-button";
@@ -31,14 +34,55 @@ const formSchema = z.object({
 type formSchema = z.infer<typeof formSchema>;
 
 const TrackForm = () => {
+  const searchParams = useSearchParams();
+  const trackParam = searchParams.get("track") ?? "";
+  const artistParam = searchParams.get("artist") ?? "";
+  const albumParam = searchParams.get("album") ?? "";
+
+  const pathname = usePathname();
+  const router = useRouter();
+
   const form = useForm<formSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      track: "",
-      artist: "",
-      album: "",
+      track: trackParam,
+      artist: artistParam,
+      album: albumParam,
     },
   });
+
+  const setQueryParams = useDebouncedCallback((values: formSchema) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+
+    for (const [input, value] of Object.entries(values)) {
+      if (value !== "") {
+        newSearchParams.set(input, value.trim());
+      } else {
+        newSearchParams.delete(input);
+      }
+    }
+
+    router.push(`${pathname}?${newSearchParams.toString()}`);
+  }, 800);
+
+  useEffect(() => {
+    const callback = form.subscribe({
+      formState: {
+        values: true,
+      },
+      callback: ({ values }) => {
+        setQueryParams(values);
+      },
+    });
+
+    return () => callback();
+  }, [setQueryParams, form]);
+
+  useEffect(() => {
+    form.setValue("track", trackParam);
+    form.setValue("artist", artistParam);
+    form.setValue("album", albumParam);
+  }, [albumParam, artistParam, form, trackParam]);
 
   const startScrobble = useScrobble();
 

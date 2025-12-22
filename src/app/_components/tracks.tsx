@@ -36,7 +36,7 @@ const Tracks = ({
                   {index + 1}
                 </div>
               )}
-              <div className="flex grow items-center gap-x-2 overflow-hidden">
+              <div className="flex grow items-center gap-x-4 overflow-hidden">
                 {track.type === "track" && (
                   <ImageWithFallback
                     src={track.image}

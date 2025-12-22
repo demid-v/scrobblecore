@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import * as React from "react";
 
 import {
   NavigationMenu,
@@ -55,18 +54,16 @@ const Navigation = () => {
               <ul>
                 {listItems.map((item) => (
                   <li key={item.href}>
-                    <Link href={`/${item.href}`} className="">
-                      {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */}
-                      <NavigationMenuLink
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          "w-full justify-start",
-                        )}
-                        active={isActive(item.href)}
-                      >
-                        {item.name}
-                      </NavigationMenuLink>
-                    </Link>
+                    <NavigationMenuLink
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "w-full justify-start",
+                      )}
+                      active={isActive(item.href)}
+                      asChild
+                    >
+                      <Link href={`/${item.href}`}>{item.name}</Link>
+                    </NavigationMenuLink>
                   </li>
                 ))}
               </ul>
