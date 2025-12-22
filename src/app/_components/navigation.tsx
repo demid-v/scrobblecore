@@ -36,19 +36,17 @@ const Navigation = () => {
         <NavigationMenuList>
           {listItems.map((item) => (
             <NavigationMenuItem key={item.href}>
-              <Link href={`/${item.href}`} legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  active={isActive(item.href)}
-                >
-                  {item.name}
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                active={isActive(item.href)}
+                asChild
+              >
+                <Link href={`/${item.href}`}>{item.name}</Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           ))}
         </NavigationMenuList>
       </NavigationMenu>
-
       <NavigationMenu className="hidden md:block xl:hidden">
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -57,12 +55,8 @@ const Navigation = () => {
               <ul>
                 {listItems.map((item) => (
                   <li key={item.href}>
-                    <Link
-                      href={`/${item.href}`}
-                      legacyBehavior
-                      passHref
-                      className=""
-                    >
+                    <Link href={`/${item.href}`} className="">
+                      {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */}
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
