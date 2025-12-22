@@ -3,6 +3,7 @@ import Link from "next/link";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
 import ScrobbleButton from "~/components/scrobble-button";
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
@@ -67,13 +68,26 @@ const Tracks = ({
                     {track.name}
                   </div>
                 </div>
-                <ScrobbleButton
-                  tracks={[track] as TypeTracks}
-                  size="sm"
-                  className="ml-auto"
-                >
-                  Scrobble
-                </ScrobbleButton>
+                <div className="flex items-center gap-x-1">
+                  <Button
+                    variant="link"
+                    className="h-fit px-3 py-0"
+                    title="Edit and scrobble"
+                  >
+                    <Link
+                      href={`/track/?${new URLSearchParams({ track: track.name, artist: track.artist, ...(track.type === "album" ? { album: track.album } : {}) })}`}
+                    >
+                      Edit
+                    </Link>
+                  </Button>
+                  <ScrobbleButton
+                    tracks={[track] as TypeTracks}
+                    size="sm"
+                    className="ml-auto"
+                  >
+                    Scrobble
+                  </ScrobbleButton>
+                </div>
               </div>
             </div>
             {index !== tracks.length - 1 && <Separator />}
