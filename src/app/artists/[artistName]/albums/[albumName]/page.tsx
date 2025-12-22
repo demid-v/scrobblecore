@@ -41,7 +41,7 @@ const AlbumPageInner = async ({
         <p className="mb-3 break-all text-lg">{album.name}</p>
         <ScrobbleButton tracks={album.tracks}>Scrobble album</ScrobbleButton>
       </div>
-      <Tracks tracks={album.tracks} enumeration />
+      <Tracks tracks={album.tracks} isEnumerated />
     </div>
   );
 };

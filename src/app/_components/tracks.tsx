@@ -8,11 +8,11 @@ import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
   tracks,
-  enumeration,
+  isEnumerated,
   children,
 }: {
   tracks: TypeTracks;
-  enumeration?: boolean;
+  isEnumerated?: boolean;
   children?: React.ReactNode;
 }) => {
   if (tracks.length === 0) {
@@ -27,10 +27,10 @@ const Tracks = ({
       <ul>
         {tracks.map((track, index) => (
           <li key={`${index}`}>
-            <div className="flex items-center rounded-sm px-2 py-1 hover:bg-accent">
-              {enumeration && (
+            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-accent">
+              {isEnumerated && (
                 <div
-                  className="w-7 max-w-7 overflow-hidden text-ellipsis text-xs"
+                  className="w-7 shrink-0 overflow-hidden text-ellipsis text-center text-xs"
                   title={`${index + 1}`}
                 >
                   {index + 1}
@@ -49,13 +49,17 @@ const Tracks = ({
                     className="hidden shrink-0"
                   />
                 )}
-                <div className="flex items-center overflow-hidden">
-                  <Link
-                    href={`/artists/${encodeURIComponent(track.artist)}`}
-                    className="mr-4 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold"
-                  >
-                    {track.artist}
-                  </Link>
+                <div className="flex w-full items-center gap-x-4 overflow-hidden">
+                  <div className="max-w-[50%]">
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold">
+                      <Link
+                        href={`/artists/${encodeURIComponent(track.artist)}`}
+                        className=""
+                      >
+                        {track.artist}
+                      </Link>
+                    </div>
+                  </div>
                   <div
                     className="overflow-hidden text-ellipsis whitespace-nowrap"
                     title={track.name}

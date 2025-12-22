@@ -34,20 +34,22 @@ const Row = ({
     <div key={scrobble.id} style={style}>
       <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-sidebar-accent">
         <div className="flex items-center justify-between gap-x-1.5">
-          <div className="flex min-w-0 items-center gap-x-1 whitespace-nowrap">
-            <Link
-              href={`/artists/${encodeURIComponent(scrobble.artist)}`}
-              className="overflow-hidden text-ellipsis text-xs font-semibold"
-            >
-              {scrobble.artist}
-            </Link>
+          <div className="flex w-full min-w-0 items-center gap-x-1 whitespace-nowrap">
+            <div className="max-w-[50%]">
+              <div className="overflow-hidden text-ellipsis text-xs font-semibold">
+                <Link href={`/artists/${encodeURIComponent(scrobble.artist)}`}>
+                  {scrobble.artist}
+                </Link>
+              </div>
+            </div>
             {scrobble.album && (
-              <Link
-                href={`/artists/${encodeURIComponent(scrobble.artist)}/albums/${encodeURIComponent(scrobble.album)}`}
-                className="overflow-hidden text-ellipsis text-xs"
-              >
-                {scrobble.album}
-              </Link>
+              <div className="overflow-hidden text-ellipsis text-xs">
+                <Link
+                  href={`/artists/${encodeURIComponent(scrobble.artist)}/albums/${encodeURIComponent(scrobble.album)}`}
+                >
+                  {scrobble.album}
+                </Link>
+              </div>
             )}
           </div>
           <time className="shrink-0 whitespace-nowrap text-xs">
