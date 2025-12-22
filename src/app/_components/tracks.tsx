@@ -8,9 +8,11 @@ import { type Tracks as TypeTracks } from "~/lib/queries/track";
 
 const Tracks = ({
   tracks,
+  enumeration,
   children,
 }: {
   tracks: TypeTracks;
+  enumeration?: boolean;
   children?: React.ReactNode;
 }) => {
   if (tracks.length === 0) {
@@ -25,40 +27,50 @@ const Tracks = ({
       <ul>
         {tracks.map((track, index) => (
           <li key={`${index}`}>
-            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-accent">
-              {track.type === "track" && (
-                <ImageWithFallback
-                  src={track.image}
-                  alt="Artist's image"
-                  width={34}
-                  height={34}
-                  defaultImage={
-                    <NoArtistImage className="hidden h-full w-full shrink-0 p-10" />
-                  }
-                  className="hidden shrink-0"
-                />
-              )}
-              <div className="flex items-center overflow-hidden">
-                <Link
-                  href={`/artists/${encodeURIComponent(track.artist)}`}
-                  className="mr-4 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold"
-                >
-                  {track.artist}
-                </Link>
+            <div className="flex items-center rounded-sm px-2 py-1 hover:bg-accent">
+              {enumeration && (
                 <div
-                  className="overflow-hidden text-ellipsis whitespace-nowrap"
-                  title={track.name}
+                  className="w-7 max-w-7 overflow-hidden text-ellipsis text-xs"
+                  title={`${index + 1}`}
                 >
-                  {track.name}
+                  {index + 1}
                 </div>
+              )}
+              <div className="flex grow items-center gap-x-2 overflow-hidden">
+                {track.type === "track" && (
+                  <ImageWithFallback
+                    src={track.image}
+                    alt="Artist's image"
+                    width={34}
+                    height={34}
+                    defaultImage={
+                      <NoArtistImage className="hidden h-full w-full shrink-0 p-10" />
+                    }
+                    className="hidden shrink-0"
+                  />
+                )}
+                <div className="flex items-center overflow-hidden">
+                  <Link
+                    href={`/artists/${encodeURIComponent(track.artist)}`}
+                    className="mr-4 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold"
+                  >
+                    {track.artist}
+                  </Link>
+                  <div
+                    className="overflow-hidden text-ellipsis whitespace-nowrap"
+                    title={track.name}
+                  >
+                    {track.name}
+                  </div>
+                </div>
+                <ScrobbleButton
+                  tracks={[track] as TypeTracks}
+                  size="sm"
+                  className="ml-auto"
+                >
+                  Scrobble
+                </ScrobbleButton>
               </div>
-              <ScrobbleButton
-                tracks={[track] as TypeTracks}
-                size="sm"
-                className="ml-auto"
-              >
-                Scrobble
-              </ScrobbleButton>
             </div>
             {index !== tracks.length - 1 && <Separator />}
           </li>

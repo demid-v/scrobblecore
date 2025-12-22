@@ -20,7 +20,7 @@ const AlbumPageInner = async ({
   const album = await api.album.one({ artistName, albumName });
 
   return (
-    <div className="w-full text-center">
+    <div className="w-full">
       <ImageWithFallback
         src={album.image}
         alt="Album's image"
@@ -30,18 +30,18 @@ const AlbumPageInner = async ({
         priority
         className="mx-auto mb-3"
       />
-      <p className="mb-1 font-bold">
-        <Link
-          href={`/artists/${encodeURIComponent(album.artist ?? artistName)}`}
-        >
-          {album.artist}
-        </Link>
-      </p>
-      <p className="mb-3 break-all text-center text-lg">{album.name}</p>
-      <ScrobbleButton tracks={album.tracks} className="mb-10">
-        Scrobble album
-      </ScrobbleButton>
-      <Tracks tracks={album.tracks} />
+      <div className="mb-10 text-center">
+        <p className="mb-1 font-bold">
+          <Link
+            href={`/artists/${encodeURIComponent(album.artist ?? artistName)}`}
+          >
+            {album.artist}
+          </Link>
+        </p>
+        <p className="mb-3 break-all text-lg">{album.name}</p>
+        <ScrobbleButton tracks={album.tracks}>Scrobble album</ScrobbleButton>
+      </div>
+      <Tracks tracks={album.tracks} enumeration />
     </div>
   );
 };
