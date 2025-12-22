@@ -45,7 +45,7 @@ const AlbumsPageInner = () => {
 };
 
 const AlbumsPage = () => (
-  <Suspense>
+  <Suspense fallback={null}>
     <AlbumsPageInner />
   </Suspense>
 );
