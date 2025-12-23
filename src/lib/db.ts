@@ -30,7 +30,7 @@ const db = new Dexie("ScrobblecoreDB") as Dexie & {
 
 db.version(1).stores({
   user: "++id, name",
-  scrobbles: "++id, status",
+  scrobbles: "++id, status, user",
 });
 
 const getScrobbles = async (status?: ScrobblesFilter) => {
