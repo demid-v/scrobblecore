@@ -1,6 +1,7 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
+import { useAtom } from "jotai";
 import { Edit2, Redo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +14,8 @@ import {
 import { useScrobble } from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { type ScrobbleTable as Scrobble, getAllScrobbles } from "~/lib/db";
+import { type ScrobbleTable as Scrobble, getScrobbles } from "~/lib/db";
+import { scrobblesFilterAtom } from "~/lib/store";
 import { cn } from "~/lib/utils";
 
 const scrobbleStateRecord: Record<Scrobble["status"], string> = {
@@ -35,10 +37,8 @@ const Row = ({
     <div key={scrobble.id} style={style}>
       <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-sidebar-accent">
         <div className="flex items-center justify-between gap-x-1.5">
-          <div className="flex w-full min-w-0 items-center gap-x-1 whitespace-nowrap">
-            <div
-              className={cn("overflow-hidden", scrobble.album && "max-w-[50%]")}
-            >
+          <div className="flex w-full min-w-0 items-center gap-x-1 overflow-hidden whitespace-nowrap">
+            <div className={cn(scrobble.album && "max-w-[50%]")}>
               <div className="overflow-hidden text-ellipsis text-xs font-semibold">
                 <Link href={`/artists/${encodeURIComponent(scrobble.artist)}`}>
                   {scrobble.artist}
@@ -111,7 +111,11 @@ const Row = ({
 };
 
 const History = () => {
-  const scrobbles = useLiveQuery(getAllScrobbles)?.toReversed();
+  const [scrobblesFilter] = useAtom(scrobblesFilterAtom);
+  const scrobbles = useLiveQuery(
+    () => getScrobbles(scrobblesFilter),
+    [scrobblesFilter],
+  )?.toReversed();
 
   if (!scrobbles) return null;
 

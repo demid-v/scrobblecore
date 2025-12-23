@@ -4,6 +4,8 @@ import { type SetOptional, type Simplify } from "type-fest";
 
 import { type AlbumTracks } from "~/server/api/routers/album";
 
+import { type ScrobblesFilter } from "./store";
+
 type User = { id: number; name: string };
 
 type ScrobbleTable = Simplify<
@@ -31,7 +33,28 @@ db.version(1).stores({
   scrobbles: "++id, status",
 });
 
-const getAllScrobbles = async () => await db.scrobbles.toArray();
+const getScrobbles = async (status?: ScrobblesFilter) => {
+  const currentUser = cookies.get("userName")!;
+  const user = (await db.user.get({ name: currentUser }))?.id;
+
+  if (!user) return [];
+
+  await db.scrobbles.where("user").equals(user).toArray();
+
+  return await db.transaction("r", [db.user, db.scrobbles], async () => {
+    const currentUser = cookies.get("userName")!;
+    const user = await db.user.get({ name: currentUser });
+
+    if (!user) return [];
+
+    return await db.scrobbles
+      .where({
+        user: user?.id,
+        ...(status && status !== "all" ? { status } : {}),
+      })
+      .toArray();
+  });
+};
 
 const saveScrobbles = async (scrobbles: ScrobbleForDB[]) => {
   const currentUser = cookies.get("userName")!;
@@ -39,7 +62,6 @@ const saveScrobbles = async (scrobbles: ScrobbleForDB[]) => {
 
   const userId = await (async () => {
     if (user) return user.id;
-
     return await db.user.add({ name: currentUser });
   })();
 
@@ -60,5 +82,5 @@ const updateScrobbles = async (changes: UpdateScrobbles) =>
   await db.scrobbles.bulkUpdate(changes);
 
 export default db;
-export { getAllScrobbles, saveScrobbles, updateScrobbles };
+export { getScrobbles, saveScrobbles, updateScrobbles };
 export type { ScrobbleTable, Scrobble, ScrobbleForDB, UpdateScrobbles };
