@@ -10,8 +10,8 @@ import { env } from "~/env";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import Header from "./_components/header";
+import MobileSidebar from "./_components/mobile-sidebar";
 import ResizableHistoryLayout from "./_components/resizable-history-layout";
-import { MobileSidebar } from "./_components/sidebar";
 import ThemeProvider from "./_components/theme-provider";
 import Toaster from "./_components/toaster";
 

@@ -23,5 +23,5 @@ export const generateMetadata = async ({
 export default function ArtistLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return children;
 }

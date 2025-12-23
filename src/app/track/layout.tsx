@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 export default function TrackLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <>{children}</>;
+  return children;
 }
