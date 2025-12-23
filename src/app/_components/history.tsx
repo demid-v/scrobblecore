@@ -71,7 +71,7 @@ const Row = ({
               title="Edit and scrobble"
             >
               <Link
-                href={`/track/?${new URLSearchParams({ track: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
+                href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
               >
                 <Edit />
               </Link>

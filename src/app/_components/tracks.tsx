@@ -75,7 +75,7 @@ const Tracks = ({
                     title="Edit and scrobble"
                   >
                     <Link
-                      href={`/track/?${new URLSearchParams({ track: track.name, artist: track.artist, ...(track.type === "album" ? { album: track.album } : {}) })}`}
+                      href={`/track/?${new URLSearchParams({ name: track.name, artist: track.artist, ...(track.type === "album" ? { album: track.album } : {}) })}`}
                     >
                       Edit
                     </Link>
