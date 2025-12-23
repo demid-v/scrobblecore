@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
-import { saveScrobbles, updateScrobbles } from "~/lib/db";
+import { type UpdateScrobbles, saveScrobbles, updateScrobbles } from "~/lib/db";
 import { type Tracks, type TracksResult } from "~/lib/queries/track";
 import { type Scrobble } from "~/lib/utils";
 import { type Scrobble as QueryScrobble } from "~/server/api/routers/track";
@@ -74,22 +74,33 @@ const useScrobble = () => {
   }, [isLimitExceeded]);
 
   const putTracksInStore = async (tracks: Scrobble, isRetry?: boolean) => {
-    const getTimestamp = (index: number) => {
-      const track = tracks.at(index);
-      if (isRetry && track?.type === "db") return track.timestamp;
-
-      return Math.trunc(Date.now() / 1000);
-    };
-
-    const tracksForStore = tracks.map((track, index) => ({
+    const tracksForStore = tracks.map((track) => ({
       name: track.name,
       artist: track.artist,
       ...(track.type === "album" && { album: track.album }),
-      timestamp: getTimestamp(index),
+      timestamp:
+        isRetry && track.type === "db"
+          ? track.timestamp
+          : Math.trunc(Date.now() / 1000),
       status: "pending" as const,
     }));
 
-    const ids = await saveScrobbles(tracksForStore);
+    const ids = await (async () => {
+      if (isRetry) {
+        const tracksForStore = tracks.map((track) => ({
+          ...(track.type === "db" && { key: track.id }),
+          changes: { status: "pending" },
+        })) as unknown as UpdateScrobbles;
+
+        await updateScrobbles(tracksForStore);
+
+        const ids = tracksForStore.reduce<number[]>((previous, current) => {
+          previous.push(current.key);
+          return previous;
+        }, []);
+        return ids;
+      } else return await saveScrobbles(tracksForStore);
+    })();
 
     const tracksMappedBase = tracksForStore.map(
       ({ status: _status, ...props }, index) => ({

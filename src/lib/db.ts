@@ -51,10 +51,14 @@ const saveScrobbles = async (scrobbles: ScrobbleForDB[]) => {
   return await db.scrobbles.bulkAdd(scrobblesWithUser, { allKeys: true });
 };
 
-const updateScrobbles = async (
-  changes: { key: number; changes: { status: "successful" | "failed" } }[],
-) => await db.scrobbles.bulkUpdate(changes);
+type UpdateScrobbles = {
+  key: number;
+  changes: { status: "successful" | "failed" };
+}[];
+
+const updateScrobbles = async (changes: UpdateScrobbles) =>
+  await db.scrobbles.bulkUpdate(changes);
 
 export default db;
 export { getAllScrobbles, saveScrobbles, updateScrobbles };
-export type { ScrobbleTable, Scrobble, ScrobbleForDB };
+export type { ScrobbleTable, Scrobble, ScrobbleForDB, UpdateScrobbles };

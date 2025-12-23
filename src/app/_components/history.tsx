@@ -1,7 +1,7 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { Edit, Redo2 } from "lucide-react";
+import { Edit2, Redo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -14,6 +14,7 @@ import { useScrobble } from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { type ScrobbleTable as Scrobble, getAllScrobbles } from "~/lib/db";
+import { cn } from "~/lib/utils";
 
 const scrobbleStateRecord: Record<Scrobble["status"], string> = {
   pending: "Pending",
@@ -35,7 +36,9 @@ const Row = ({
       <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-sidebar-accent">
         <div className="flex items-center justify-between gap-x-1.5">
           <div className="flex w-full min-w-0 items-center gap-x-1 whitespace-nowrap">
-            <div className="max-w-[50%]">
+            <div
+              className={cn("overflow-hidden", scrobble.album && "max-w-[50%]")}
+            >
               <div className="overflow-hidden text-ellipsis text-xs font-semibold">
                 <Link href={`/artists/${encodeURIComponent(scrobble.artist)}`}>
                   {scrobble.artist}
@@ -64,32 +67,32 @@ const Row = ({
             {scrobble.name}
           </div>
           <div className="flex shrink-0 gap-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-1.5"
-              title="Edit and scrobble"
-            >
-              <Link
-                href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
-              >
-                <Edit />
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-auto px-1.5"
-              title={scrobble.status === "failed" ? "Retry" : "Scrobble again"}
-              onClick={() => {
-                void startScrobble(
-                  [{ ...scrobble, type: "db" }],
-                  scrobble.status === "failed",
-                );
-              }}
-            >
-              <Redo2 />
-            </Button>
+            {scrobble.status !== "pending" && (
+              <div className="flex shrink-0 items-center gap-x-1">
+                <Link
+                  href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
+                  className="flex h-4 w-4 items-center justify-center"
+                >
+                  <Edit2 size={12} />
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 px-0"
+                  title={
+                    scrobble.status === "failed" ? "Retry" : "Scrobble again"
+                  }
+                  onClick={() => {
+                    void startScrobble(
+                      [{ ...scrobble, type: "db" }],
+                      scrobble.status === "failed",
+                    );
+                  }}
+                >
+                  <Redo2 className="!h-3.5 !w-3.5" />
+                </Button>
+              </div>
+            )}
             <Image
               src={`/${scrobble.status}.svg`}
               alt={scrobbleStateRecord[scrobble.status]}
