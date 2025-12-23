@@ -1,12 +1,15 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { type Simplify } from "type-fest";
 import wretch from "wretch";
 
+import { type Track as TrackForm } from "~/app/track/page";
 import { env } from "~/env";
 
+import { type Scrobble as ScrobbleDB } from "./db";
 import { type AlbumsResult } from "./queries/album";
 import { type ArtistsResult } from "./queries/artist";
-import { type TracksResult } from "./queries/track";
+import { type Tracks, type TracksResult } from "./queries/track";
 
 const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -124,5 +127,7 @@ const lastFmApiGet = (params: Record<string, string>) =>
 
 const lastFmApiPost = (body: string) => baseLastFmApiUrl.post(body).text();
 
+type Scrobble = Simplify<Tracks | TrackForm[] | ScrobbleDB[]>;
+
 export { cn, getBaseUrl, authUrl, paginate, wait, lastFmApiGet, lastFmApiPost };
-export type { QueryResult };
+export type { QueryResult, Scrobble };

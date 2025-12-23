@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { type ImperativePanelHandle } from "react-resizable-panels";
 
 import { Button } from "~/components/ui/button";

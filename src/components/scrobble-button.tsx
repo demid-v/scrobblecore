@@ -1,46 +1,19 @@
 "use client";
 
-import { useSetAtom } from "jotai";
 import { type ReactNode, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { type SetRequired, type Simplify } from "type-fest";
 
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
-import {
-  type TrackToScrobble,
-  type Tracks,
-  type TracksResult,
-} from "~/lib/queries/track";
-import { type Scrobble, scrobblesAtom } from "~/lib/store";
+import { saveScrobbles, updateScrobbles } from "~/lib/db";
+import { type Tracks, type TracksResult } from "~/lib/queries/track";
+import { type Scrobble } from "~/lib/utils";
+import { type Scrobble as QueryScrobble } from "~/server/api/routers/track";
 import { api } from "~/trpc/react";
-
-type TracksMappedBase = Simplify<
-  SetRequired<TrackToScrobble, "id"> & { date: number }
->[];
-
-const generateTimestamps = (date: number, tracks: TrackToScrobble[]) => {
-  let timestamp = Math.floor(date / 1000);
-
-  if (tracks.length < 2) return [timestamp];
-
-  const lastTimestamp = timestamp;
-  const defaultDuration = 3 * 60;
-
-  const shiftedTimestamps = tracks
-    .toReversed()
-    .map((track) => (timestamp -= track.duration ?? defaultDuration))
-    .toReversed();
-
-  const timestamps = [...shiftedTimestamps.slice(1), lastTimestamp];
-
-  return timestamps;
-};
 
 const scrobbleSize = 50;
 
 const useScrobble = () => {
-  const setScrobbles = useSetAtom(scrobblesAtom);
   const [isLimitExceeded, setIsLimitExceeded] = useState(false);
 
   const { mutate: scrobble } = api.track.scrobble.useMutation({
@@ -67,29 +40,32 @@ const useScrobble = () => {
             description: message,
           });
 
-        const { timestamp: _timestamp, ...props } = track;
         const scrobble = {
-          ...props,
-          status:
-            resultCode === "29" || scrobbleCode === "1"
-              ? "failed"
-              : "successful",
-        } satisfies Scrobble;
+          key: track.id,
+          changes: {
+            status:
+              resultCode === "29" || scrobbleCode === "1"
+                ? ("failed" as const)
+                : ("successful" as const),
+          },
+        };
 
         return scrobble;
       });
 
-      void setScrobbles(scrobbles);
+      void updateScrobbles(scrobbles);
     },
     onError(_error, tracks) {
       const scrobbles = tracks.map((track) => {
-        const { timestamp: _timestamp, ...props } = track;
-        const scrobble = { ...props, status: "failed" } satisfies Scrobble;
+        const scrobble = {
+          key: track.id,
+          changes: { status: "failed" as const },
+        };
 
         return scrobble;
       });
 
-      void setScrobbles(scrobbles);
+      void updateScrobbles(scrobbles);
     },
   });
 
@@ -97,53 +73,49 @@ const useScrobble = () => {
     if (isLimitExceeded) toast.error("Daily scrobble limit exceeded.");
   }, [isLimitExceeded]);
 
-  const putTracksInStore = (tracks: TrackToScrobble[], isRetry?: boolean) => {
-    const date = isRetry ? (tracks.at(0)?.date ?? Date.now()) : Date.now();
+  const putTracksInStore = async (tracks: Scrobble, isRetry?: boolean) => {
+    const getTimestamp = (index: number) => {
+      const track = tracks.at(index);
+      if (isRetry && track?.type === "db") return track.timestamp;
 
-    const tracksMappedBase = tracks.map((track) => ({
-      ...track,
-      ...(!isRetry && {
-        id: crypto.randomUUID(),
-      }),
-      date,
-    })) as TracksMappedBase;
+      return Math.trunc(Date.now() / 1000);
+    };
 
-    const tracksForStore = tracksMappedBase.map((track) => ({
-      ...track,
+    const tracksForStore = tracks.map((track, index) => ({
+      name: track.name,
+      artist: track.artist,
+      ...(track.type === "album" && { album: track.album }),
+      timestamp: getTimestamp(index),
       status: "pending" as const,
     }));
 
-    setScrobbles(tracksForStore);
+    const ids = await saveScrobbles(tracksForStore);
 
-    return { date, tracksMappedBase };
+    const tracksMappedBase = tracksForStore.map(
+      ({ status: _status, ...props }, index) => ({
+        ...props,
+        id: ids[index]!,
+      }),
+    );
+
+    return tracksMappedBase;
   };
 
-  const scrobbleTracks = (
-    tracks: TrackToScrobble[],
-    date: number,
-    tracksMappedBase: TracksMappedBase,
-  ) => {
-    const timestamps = generateTimestamps(date, tracks);
-
-    const tracksToScrobble = tracksMappedBase.map((track, index) => ({
-      ...track,
-      timestamp: timestamps[index] ?? date / 1000,
-    }));
-
+  const scrobbleTracks = (tracksMappedBase: QueryScrobble) => {
     setIsLimitExceeded(false);
 
     for (
       let index = 0;
-      index < tracksToScrobble.length;
+      index < tracksMappedBase.length;
       index += scrobbleSize
     ) {
-      scrobble(tracksToScrobble.slice(index, scrobbleSize + index));
+      scrobble(tracksMappedBase.slice(index, scrobbleSize + index));
     }
   };
 
-  const startScrobble = (tracks: TrackToScrobble[], isRetry?: boolean) => {
-    const { date, tracksMappedBase } = putTracksInStore(tracks, isRetry);
-    scrobbleTracks(tracks, date, tracksMappedBase);
+  const startScrobble = async (tracks: Scrobble, isRetry?: boolean) => {
+    const tracksMappedBase = await putTracksInStore(tracks, isRetry);
+    scrobbleTracks(tracksMappedBase);
   };
 
   return startScrobble;
@@ -162,7 +134,7 @@ const ScrobbleButton = ({
   return (
     <Button
       onClick={() => {
-        startScrobble(tracks);
+        void startScrobble(tracks);
       }}
       {...props}
     >

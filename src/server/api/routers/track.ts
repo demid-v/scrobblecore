@@ -4,17 +4,17 @@ import { z } from "zod";
 import { env } from "~/env";
 import { lastFmApiPost } from "~/lib/utils";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { type RouterInputs } from "~/trpc/react";
 
 const trackRouter = createTRPCRouter({
   scrobble: privateProcedure
     .input(
       z.array(
         z.object({
-          id: z.string(),
+          id: z.number(),
           artist: z.string(),
           name: z.string(),
           album: z.string().optional(),
-          date: z.number(),
           timestamp: z.number(),
         }),
       ),
@@ -80,4 +80,7 @@ const trackRouter = createTRPCRouter({
     ),
 });
 
+type Scrobble = RouterInputs["track"]["scrobble"];
+
 export default trackRouter;
+export type { Scrobble };

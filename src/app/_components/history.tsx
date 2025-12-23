@@ -1,6 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
+import { useLiveQuery } from "dexie-react-hooks";
 import { Edit, Redo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import {
 import { useScrobble } from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { type Scrobble, scrobblesAtom } from "~/lib/store";
+import { type ScrobbleTable as Scrobble, getAllScrobbles } from "~/lib/db";
 
 const scrobbleStateRecord: Record<Scrobble["status"], string> = {
   pending: "Pending",
@@ -53,7 +53,7 @@ const Row = ({
             )}
           </div>
           <time className="shrink-0 whitespace-nowrap text-xs">
-            {new Date(scrobble.date).toLocaleString()}
+            {new Date(scrobble.timestamp * 1000).toLocaleString()}
           </time>
         </div>
         <div className="flex justify-between gap-x-1">
@@ -82,7 +82,10 @@ const Row = ({
               className="h-auto px-1.5"
               title={scrobble.status === "failed" ? "Retry" : "Scrobble again"}
               onClick={() => {
-                startScrobble([scrobble], scrobble.status === "failed");
+                void startScrobble(
+                  [{ ...scrobble, type: "db" }],
+                  scrobble.status === "failed",
+                );
               }}
             >
               <Redo2 />
@@ -105,7 +108,9 @@ const Row = ({
 };
 
 const History = () => {
-  const scrobbles = useAtomValue(scrobblesAtom).toReversed();
+  const scrobbles = useLiveQuery(getAllScrobbles)?.toReversed();
+
+  if (!scrobbles) return null;
 
   return (
     <div className="flex-1">

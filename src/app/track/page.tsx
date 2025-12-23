@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { type Simplify } from "type-fest";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -19,10 +20,9 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type TrackToScrobble } from "~/lib/queries/track";
 
 const formSchema = z.object({
-  track: z.string().trim().min(1, {
+  name: z.string().trim().min(1, {
     message: "Track's title is required.",
   }),
   artist: z.string().trim().min(1, {
@@ -32,10 +32,11 @@ const formSchema = z.object({
 });
 
 type formSchema = z.infer<typeof formSchema>;
+type Track = Simplify<formSchema & { type: "form" }>;
 
 const TrackForm = () => {
   const searchParams = useSearchParams();
-  const trackParam = searchParams.get("track") ?? "";
+  const nameParam = searchParams.get("name") ?? "";
   const artistParam = searchParams.get("artist") ?? "";
   const albumParam = searchParams.get("album") ?? "";
 
@@ -45,7 +46,7 @@ const TrackForm = () => {
   const form = useForm<formSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      track: trackParam,
+      name: nameParam,
       artist: artistParam,
       album: albumParam,
     },
@@ -79,21 +80,22 @@ const TrackForm = () => {
   }, [setQueryParams, form]);
 
   useEffect(() => {
-    form.setValue("track", trackParam);
+    form.setValue("name", nameParam);
     form.setValue("artist", artistParam);
     form.setValue("album", albumParam);
-  }, [albumParam, artistParam, form, trackParam]);
+  }, [albumParam, artistParam, form, nameParam]);
 
   const startScrobble = useScrobble();
 
   const onSubmit = (data: formSchema) => {
-    const track: TrackToScrobble = {
-      name: data.track,
+    const track = {
+      type: "form" as const,
+      name: data.name,
       artist: data.artist,
       album: data.album,
     };
 
-    startScrobble([track]);
+    void startScrobble([track]);
   };
 
   return (
@@ -101,7 +103,7 @@ const TrackForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
-          name="track"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Track&apos;s title</FormLabel>
@@ -155,3 +157,4 @@ const TrackPage = () => (
 );
 
 export default TrackPage;
+export { type Track };
