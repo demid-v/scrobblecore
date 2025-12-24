@@ -77,7 +77,7 @@ const HeaderInner = async () => {
                       width={34}
                       height={34}
                       defaultImage={<NoUserImage />}
-                      priority
+                      preload
                       className="rounded-full"
                     />
                   </Link>
@@ -109,7 +109,7 @@ const HeaderInner = async () => {
                 width={34}
                 height={34}
                 defaultImage={<NoUserImage />}
-                priority
+                preload
                 className="rounded-full"
               />
             </Link>

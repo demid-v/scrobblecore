@@ -9,7 +9,7 @@ import Tracks from "~/app/_components/tracks";
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "~/trpc/server";
 
-const albumsLimit = 12;
+const albumsLimit = 10;
 const tracksLimit = 10;
 
 const ArtistPage = async ({

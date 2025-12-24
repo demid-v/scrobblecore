@@ -129,7 +129,6 @@ const History = () => {
             itemCount={scrobbles.length}
             itemSize={45}
             itemData={scrobbles}
-            className="pb-4"
           >
             {Row}
           </List>

@@ -7,11 +7,15 @@ import { Suspense } from "react";
 import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
 import ScrobbleButton from "~/components/scrobble-button";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { getTracks } from "~/lib/queries/track";
+import { cn } from "~/lib/utils";
 
 const limit = 50;
 
 const TracksPageInner = () => {
+  const isMobile = useIsMobile();
+
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
@@ -38,7 +42,12 @@ const TracksPageInner = () => {
 
   return (
     <>
-      <div className="sticky top-4 z-10 mx-auto mb-6 flex h-10 w-fit items-center gap-x-3">
+      <div
+        className={cn(
+          "sticky top-4 z-10 mx-auto mb-6 flex w-fit items-center gap-x-3",
+          isMobile && "flex-col gap-y-2",
+        )}
+      >
         <SearchPagination
           query={paginationQuery}
           limit={limit}

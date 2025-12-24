@@ -33,8 +33,8 @@ const SearchResults = async ({
 
   return (
     <div className="mt-10">
-      <SearchAlbums limit={12} isSection />
-      <Artists limit={12} isSection />
+      <SearchAlbums limit={10} isSection />
+      <Artists limit={10} isSection />
       <SearchTracks limit={10} isSection />
     </div>
   );

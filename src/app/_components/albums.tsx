@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { type Albums as TAlbums } from "~/lib/queries/album";
+import { cn } from "~/lib/utils";
 
 const Albums = ({
   albums,
@@ -11,6 +15,8 @@ const Albums = ({
   albums: TAlbums;
   children?: React.ReactNode;
 }) => {
+  const isMobile = useIsMobile();
+
   if (albums.length === 0) {
     return (
       <div className="mb-6 text-center text-xl font-medium">No albums.</div>
@@ -20,7 +26,12 @@ const Albums = ({
   return (
     <section>
       {children}
-      <div className="grid grid-cols-tiles gap-x-6 gap-y-10">
+      <div
+        className={cn(
+          "grid grid-cols-tiles gap-x-4 gap-y-6",
+          isMobile && "grid-cols-mobile",
+        )}
+      >
         {albums.map(({ name, artist, image }) => (
           <div
             key={`${name}${artist}`}

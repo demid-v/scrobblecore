@@ -7,11 +7,15 @@ import ListSkeleton from "~/app/_components/list-skeleton";
 import SearchPagination from "~/app/_components/search-pagination";
 import Tracks from "~/app/_components/tracks";
 import ScrobbleButton from "~/components/scrobble-button";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { getTopTracks } from "~/lib/queries/artist";
+import { cn } from "~/lib/utils";
 
 const limit = 50;
 
 const TracksPage = () => {
+  const isMobile = useIsMobile();
+
   const artistName = decodeURIComponent(
     useParams<{ artistName: string }>().artistName,
   );
@@ -37,14 +41,19 @@ const TracksPage = () => {
 
   return (
     <>
-      <div className="sticky top-4 z-10 mx-auto mb-6 flex w-fit items-center gap-x-3">
+      <div
+        className={cn(
+          "sticky top-4 z-10 mx-auto mb-6 flex w-fit items-center gap-x-3",
+          isMobile && "flex-col gap-y-2",
+        )}
+      >
         <SearchPagination
           query={paginationQuery}
           limit={limit}
           page={page}
           className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
-        <ScrobbleButton tracks={tracksQuery.data?.tracks}>
+        <ScrobbleButton tracks={tracksQuery.data?.tracks} className="w-fit">
           Scrobble all
         </ScrobbleButton>
       </div>

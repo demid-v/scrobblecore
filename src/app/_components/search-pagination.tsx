@@ -12,6 +12,7 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { type QueryResult, paginate } from "~/lib/utils";
 
 const SearchPagination = ({
@@ -27,13 +28,16 @@ const SearchPagination = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  if (query.isFetching) return <Skeleton className="h-10 w-[480px]" />;
+  const isMobile = useIsMobile();
+
+  if (query.isFetching) return <Skeleton className="h-10 w-72" />;
   if (!query.isSuccess || query.data.total === 0) return null;
 
   const paginationRange = paginate({
     total: query.data.total,
     limit,
     page,
+    siblingCount: isMobile ? 0 : 1,
   });
 
   if (paginationRange.length < 2) return null;
@@ -50,6 +54,7 @@ const SearchPagination = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
+            className="w-11 p-0"
             href={getHref(page - 1)}
             isDisabled={page === 1}
           />
@@ -72,6 +77,7 @@ const SearchPagination = ({
         )}
         <PaginationItem>
           <PaginationNext
+            className="w-11 p-0"
             href={getHref(page + 1)}
             isDisabled={page === lastPage}
           />

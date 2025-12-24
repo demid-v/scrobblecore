@@ -6,7 +6,9 @@ import { useSearchParams } from "next/navigation";
 
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { getArtists } from "~/lib/queries/artist";
+import { cn } from "~/lib/utils";
 
 import GridSkeleton from "./grid-skeleton";
 
@@ -17,6 +19,8 @@ const Artists = ({
   limit: number;
   isSection?: boolean;
 }) => {
+  const isMobile = useIsMobile();
+
   const searchParams = useSearchParams();
 
   const search = searchParams.get("q") ?? "";
@@ -58,7 +62,12 @@ const Artists = ({
           </Link>
         </p>
       )}
-      <div className="grid grid-cols-tiles gap-x-6 gap-y-10">
+      <div
+        className={cn(
+          "grid grid-cols-tiles gap-x-4 gap-y-6",
+          isMobile && "grid-cols-mobile",
+        )}
+      >
         {artists.map(({ name, image }) => (
           <div
             key={name}
