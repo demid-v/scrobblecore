@@ -94,7 +94,9 @@ const useScrobble = () => {
     const tracksForStore = tracks.map((track, index) => ({
       name: track.name,
       artist: track.artist,
-      ...(track.type === "album" && { album: track.album }),
+      ...((track.type === "album" || track.type === "form") && {
+        album: track.album,
+      }),
       timestamp: getTimestamps[index]!,
       status: "pending" as const,
     }));
