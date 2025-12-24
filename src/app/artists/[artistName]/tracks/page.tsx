@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import ListSkeleton from "~/app/_components/list-skeleton";
 import SearchPagination from "~/app/_components/search-pagination";
 import Tracks from "~/app/_components/tracks";
-import { ScrobbleAllButton } from "~/components/scrobble-button";
+import ScrobbleButton from "~/components/scrobble-button";
 import { getTopTracks } from "~/lib/queries/artist";
 
 const limit = 50;
@@ -30,7 +30,7 @@ const TracksPage = () => {
 
   const itemsParams = { ...paginationParams, page };
 
-  const itemsQuery = useQuery({
+  const tracksQuery = useQuery({
     queryKey: ["topTracks", "tracks", itemsParams],
     queryFn: () => getTopTracks(itemsParams),
   });
@@ -44,7 +44,9 @@ const TracksPage = () => {
           page={page}
           className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
-        <ScrobbleAllButton query={itemsQuery}>Scrobble all</ScrobbleAllButton>
+        <ScrobbleButton tracks={tracksQuery.data?.tracks}>
+          Scrobble all
+        </ScrobbleButton>
       </div>
       <TopTracks limit={limit} />
     </>

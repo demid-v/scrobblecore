@@ -6,7 +6,7 @@ import { Suspense } from "react";
 
 import SearchPagination from "~/app/_components/search-pagination";
 import SearchTracks from "~/app/_components/search-tracks";
-import { ScrobbleAllButton } from "~/components/scrobble-button";
+import ScrobbleButton from "~/components/scrobble-button";
 import { getTracks } from "~/lib/queries/track";
 
 const limit = 50;
@@ -45,7 +45,9 @@ const TracksPageInner = () => {
           page={page}
           className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
         />
-        <ScrobbleAllButton query={tracksQuery}>Scrobble all</ScrobbleAllButton>
+        <ScrobbleButton tracks={tracksQuery.data?.tracks}>
+          Scrobble all
+        </ScrobbleButton>
       </div>
       <SearchTracks limit={limit} />
     </>

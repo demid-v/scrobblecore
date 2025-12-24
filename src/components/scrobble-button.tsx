@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { type ButtonProps } from "~/components/ui/button";
 import { type UpdateScrobbles, saveScrobbles, updateScrobbles } from "~/lib/db";
-import { type Tracks, type TracksResult } from "~/lib/queries/track";
+import { type Tracks } from "~/lib/queries/track";
 import { type Scrobble } from "~/lib/utils";
 import { type Scrobble as QueryScrobble } from "~/server/api/routers/track";
 import { api } from "~/trpc/react";
@@ -150,11 +150,11 @@ const useScrobble = () => {
 
 const ScrobbleButton = ({
   children,
-  tracks,
+  tracks = [],
   ...props
 }: {
   children?: ReactNode;
-  tracks: Tracks;
+  tracks?: Tracks;
 } & ButtonProps) => {
   const startScrobble = useScrobble();
 
@@ -163,6 +163,7 @@ const ScrobbleButton = ({
       onClick={() => {
         void startScrobble(tracks);
       }}
+      disabled={tracks.length === 0}
       {...props}
     >
       {children}
@@ -170,30 +171,5 @@ const ScrobbleButton = ({
   );
 };
 
-const ScrobbleAllButton = ({
-  children,
-  query,
-  ...props
-}: {
-  children?: ReactNode;
-  query: TracksResult;
-} & ButtonProps) => {
-  if (query.isFetching) {
-    return (
-      <Button className="shrink-0" disabled>
-        Scrobble all
-      </Button>
-    );
-  }
-
-  if (!query.isSuccess) return null;
-
-  return (
-    <ScrobbleButton tracks={query.data.tracks} {...props}>
-      {children}
-    </ScrobbleButton>
-  );
-};
-
 export default ScrobbleButton;
-export { useScrobble, ScrobbleAllButton };
+export { useScrobble };
