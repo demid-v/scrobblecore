@@ -120,7 +120,9 @@ const TrackForm = () => {
 
 const TrackPage = () => (
   <div className="mx-auto w-2/3">
-    <h1 className="mb-8 text-4xl font-bold">Scrobble tracks</h1>
+    <h1 className="mb-8 mt-5 text-center text-4xl font-semibold">
+      Scrobble tracks
+    </h1>
     <TrackForm />
   </div>
 );

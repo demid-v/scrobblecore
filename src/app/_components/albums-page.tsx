@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { getAlbums } from "~/lib/queries/album";
 
+import DefaultSearchPage from "./default-search-page";
 import SearchAlbums from "./search-albums";
 import SearchPagination from "./search-pagination";
 
@@ -27,7 +28,7 @@ const AlbumsPageInner = () => {
     queryFn: () => getAlbums(queryParams),
   });
 
-  if (search === "") return null;
+  if (search === "") return <DefaultSearchPage title="Search albums" />;
 
   return (
     <>

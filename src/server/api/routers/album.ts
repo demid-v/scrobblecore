@@ -63,7 +63,7 @@ const albumRouter = createTRPCRouter({
       ];
 
       const tracks = (() => {
-        if (typeof tracksObj === "undefined") return [];
+        if (tracksObj === undefined) return [];
 
         const tracksProp = tracksObj.track;
         const tracksArray = Array.isArray(tracksProp)

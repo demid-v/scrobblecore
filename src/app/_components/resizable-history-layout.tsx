@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { cookies } from "next/headers";
 import React from "react";
 import SuperJSON from "superjson";
@@ -5,7 +6,13 @@ import SuperJSON from "superjson";
 import { api } from "~/trpc/server";
 
 import ResizableHistory from "./resizable-history";
-import ResizableHistoryGroup from "./resizable-history-group";
+
+const ResizableHistoryGroup = dynamic(
+  () => import("./resizable-history-group"),
+  {
+    loading: () => null,
+  },
+);
 
 const ResizableHistoryLayout = async ({
   children,

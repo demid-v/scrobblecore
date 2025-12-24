@@ -6,7 +6,7 @@ import { type AlbumTracks } from "~/server/api/routers/album";
 
 import { type ScrobblesFilter } from "./store";
 
-type User = { id: number; name: string };
+type UserTable = { id: number; name: string };
 
 type ScrobbleTable = Simplify<
   SetOptional<
@@ -20,36 +20,59 @@ type ScrobbleTable = Simplify<
   }
 >;
 
-type Scrobble = Simplify<ScrobbleTable & { type: "db" }>;
+type ViewedAlbum = {
+  name: string;
+  artist: string;
+  image: string | undefined;
+  user: number;
+  date: number;
+};
+
 type ScrobbleForDB = Omit<ScrobbleTable, "id" | "user">;
+type UpdateScrobbles = {
+  key: number;
+  changes: { status: "successful" | "failed" };
+}[];
+type AlbumForDB = Simplify<Omit<ViewedAlbum, "id" | "user">>;
+
+type Scrobble = Simplify<ScrobbleTable & { type: "db" }>;
 
 const db = new Dexie("ScrobblecoreDB") as Dexie & {
-  user: EntityTable<User, "id">;
+  users: EntityTable<UserTable, "id">;
   scrobbles: EntityTable<ScrobbleTable, "id">;
+  viewedAlbums: EntityTable<ViewedAlbum, "name" | "artist" | "user">;
 };
 
 db.version(1).stores({
-  user: "++id, name",
+  users: "++id, &name",
   scrobbles: "++id, status, user",
+  viewedAlbums: "[name+artist+user], name, artist, user",
 });
 
+const getUser = async () => {
+  const currentUser = cookies.get("userName");
+  if (!currentUser) return;
+
+  return await db.transaction("rw", db.users, async () => {
+    const user = (await db.users.get({ name: currentUser }))?.id;
+    const userId = user ? user : await db.users.add({ name: currentUser });
+
+    return userId;
+  });
+};
+
 const getScrobbles = async (status?: ScrobblesFilter) => {
-  const currentUser = cookies.get("userName")!;
-  const user = (await db.user.get({ name: currentUser }))?.id;
+  const currentUser = cookies.get("userName");
+  if (!currentUser) return;
 
-  if (!user) return [];
+  return await db.transaction("r", [db.users, db.scrobbles], async () => {
+    const user = (await db.users.get({ name: currentUser }))?.id;
 
-  await db.scrobbles.where("user").equals(user).toArray();
-
-  return await db.transaction("r", [db.user, db.scrobbles], async () => {
-    const currentUser = cookies.get("userName")!;
-    const user = await db.user.get({ name: currentUser });
-
-    if (!user) return [];
+    if (user === undefined) return [];
 
     return await db.scrobbles
       .where({
-        user: user?.id,
+        user,
         ...(status && status !== "all" ? { status } : {}),
       })
       .toArray();
@@ -57,30 +80,82 @@ const getScrobbles = async (status?: ScrobblesFilter) => {
 };
 
 const saveScrobbles = async (scrobbles: ScrobbleForDB[]) => {
-  const currentUser = cookies.get("userName")!;
-  const user = await db.user.get({ name: currentUser });
-
-  const userId = await (async () => {
-    if (user) return user.id;
-    return await db.user.add({ name: currentUser });
-  })();
+  const user = await getUser();
+  if (!user) return [];
 
   const scrobblesWithUser = scrobbles.map((scrobble) => ({
     ...scrobble,
-    user: userId,
+    user,
   }));
 
   return await db.scrobbles.bulkAdd(scrobblesWithUser, { allKeys: true });
 };
 
-type UpdateScrobbles = {
-  key: number;
-  changes: { status: "successful" | "failed" };
-}[];
-
 const updateScrobbles = async (changes: UpdateScrobbles) =>
   await db.scrobbles.bulkUpdate(changes);
 
+const saveViewedAlbum = async (album: AlbumForDB) => {
+  const user = await getUser();
+  if (!user) return;
+
+  return await db.transaction("rw", db.viewedAlbums, async () => {
+    if ((await db.viewedAlbums.where({ user }).count()) > 10) {
+      const lastViewedAlbum = (
+        await db.viewedAlbums.where({ user }).sortBy("date")
+      )[0]!;
+
+      await db.viewedAlbums
+        .where({
+          name: lastViewedAlbum.name,
+          artist: lastViewedAlbum.artist,
+          user,
+        })
+        .delete();
+    }
+
+    try {
+      await db.viewedAlbums.add({ ...album, user });
+    } catch (error) {
+      if (!(error instanceof Dexie.ConstraintError)) {
+        throw error;
+      }
+
+      await db.viewedAlbums
+        .where({ name: album.name, artist: album.artist, user })
+        .delete();
+
+      await db.viewedAlbums.add({ ...album, user });
+    }
+  });
+};
+
+const getViewedAlbums = async () => {
+  const currentUser = cookies.get("userName");
+  if (!currentUser) return [];
+
+  const user = (await db.users.get({ name: currentUser }))?.id;
+  if (user === undefined) return [];
+
+  return await db.viewedAlbums
+    .where({
+      user,
+    })
+    .reverse()
+    .sortBy("date");
+};
+
 export default db;
-export { getScrobbles, saveScrobbles, updateScrobbles };
-export type { ScrobbleTable, Scrobble, ScrobbleForDB, UpdateScrobbles };
+export {
+  getScrobbles,
+  saveScrobbles,
+  updateScrobbles,
+  saveViewedAlbum,
+  getViewedAlbums,
+};
+export type {
+  ScrobbleTable,
+  Scrobble,
+  ScrobbleForDB,
+  UpdateScrobbles,
+  AlbumForDB,
+};

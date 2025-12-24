@@ -65,6 +65,7 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
+                      form.setValue("search", "");
                       router.push(pathname);
                     }}
                   >

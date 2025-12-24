@@ -2,7 +2,12 @@
 
 import { useTheme } from "next-themes";
 
-const ScrobblecoreIconClient = () => {
+import { cn } from "~/lib/utils";
+
+const ScrobblecoreIconClient = ({
+  className,
+  ...props
+}: React.SVGAttributes<SVGElement>) => {
   const { resolvedTheme } = useTheme();
 
   return (
@@ -10,7 +15,8 @@ const ScrobblecoreIconClient = () => {
       viewBox="0 0 48 48"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="h-8"
+      className={cn("h-8", className)}
+      {...props}
     >
       <path
         d="M24 6V35"

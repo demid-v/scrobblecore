@@ -5,6 +5,8 @@ import SearchAlbums from "~/app/_components/search-albums";
 import SearchTracks from "~/app/_components/search-tracks";
 import { env } from "~/env";
 
+import DefaultSearchPage from "../_components/default-search-page";
+
 export const generateMetadata = async ({
   searchParams,
 }: {
@@ -27,9 +29,11 @@ const SearchResults = async ({
   const { q } = (await searchParams) ?? {};
 
   const search = Array.isArray(q) ? q.at(0) : q;
-  const isSearchEmpty = typeof search === "undefined" || search === "";
+  const isSearchEmpty = search === undefined || search === "";
 
-  if (isSearchEmpty) return null;
+  if (isSearchEmpty) {
+    return <DefaultSearchPage title="Search albums, artists and tracks" />;
+  }
 
   return (
     <div className="mt-10">

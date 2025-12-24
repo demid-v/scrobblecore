@@ -8,6 +8,8 @@ import Artists from "~/app/_components/artists";
 import SearchPagination from "~/app/_components/search-pagination";
 import { getArtists } from "~/lib/queries/artist";
 
+import DefaultSearchPage from "./default-search-page";
+
 const limit = 60;
 
 const ArtistsPageInner = () => {
@@ -26,7 +28,7 @@ const ArtistsPageInner = () => {
     queryFn: () => getArtists(queryParams),
   });
 
-  if (search === "") return null;
+  if (search === "") return <DefaultSearchPage title="Search artists" />;
 
   return (
     <>

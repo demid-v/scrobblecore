@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import ListSkeleton from "~/app/_components/list-skeleton";
 import Tracks from "~/app/_components/tracks";
+import { ViewedAlbum } from "~/app/_components/viewed-album";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
 import ScrobbleButton from "~/components/scrobble-button";
@@ -42,6 +43,14 @@ const AlbumPageInner = async ({
         <ScrobbleButton tracks={album.tracks}>Scrobble album</ScrobbleButton>
       </div>
       <Tracks tracks={album.tracks} isEnumerated />
+      <ViewedAlbum
+        album={{
+          name: album.name,
+          artist: album.artist,
+          image: album.image,
+          date: Date.now(),
+        }}
+      />
     </div>
   );
 };

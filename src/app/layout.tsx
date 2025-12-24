@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import dynamic from "next/dynamic";
 import { type CSSProperties } from "react";
 
 import { SidebarProvider } from "~/components/ui/sidebar";
@@ -11,9 +12,15 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import Header from "./_components/header";
 import MobileSidebar from "./_components/mobile-sidebar";
-import ResizableHistoryLayout from "./_components/resizable-history-layout";
 import ThemeProvider from "./_components/theme-provider";
 import Toaster from "./_components/toaster";
+
+const ResizableHistoryLayout = dynamic(
+  () => import("./_components/resizable-history-layout"),
+  {
+    loading: () => null,
+  },
+);
 
 export const metadata: Metadata = {
   title: { template: "%s | Scrobblecore", default: "Scrobblecore" },

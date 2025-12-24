@@ -11,6 +11,8 @@ import { useIsMobile } from "~/hooks/use-mobile";
 import { getTracks } from "~/lib/queries/track";
 import { cn } from "~/lib/utils";
 
+import DefaultSearchPage from "./default-search-page";
+
 const limit = 50;
 
 const TracksPageInner = () => {
@@ -38,7 +40,7 @@ const TracksPageInner = () => {
     queryFn: () => getTracks(itemsParams),
   });
 
-  if (search === "") return null;
+  if (search === "") return <DefaultSearchPage title="Search tracks" />;
 
   return (
     <>
