@@ -55,8 +55,16 @@ const Row = ({
               </div>
             )}
           </div>
-          <time className="shrink-0 whitespace-nowrap text-xs">
-            {new Date(scrobble.timestamp * 1000).toLocaleString()}
+          <time
+            className="shrink-0 whitespace-nowrap text-xs"
+            title={new Date(scrobble.timestamp * 1000).toLocaleString()}
+          >
+            {new Date(scrobble.timestamp * 1000).toLocaleString(undefined, {
+              month: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
           </time>
         </div>
         <div className="flex justify-between gap-x-1">
