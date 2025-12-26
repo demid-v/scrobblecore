@@ -78,7 +78,7 @@ const Row = ({
             {scrobble.status !== "pending" && (
               <div className="flex shrink-0 items-center gap-x-1">
                 <Link
-                  href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}) })}`}
+                  href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}), time: scrobble.timestamp.toString() })}`}
                   className="flex h-4 w-4 items-center justify-center"
                 >
                   <Edit2 size={12} />

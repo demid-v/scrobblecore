@@ -76,8 +76,11 @@ const useScrobble = () => {
   const putTracksInStore = async (tracks: Scrobble, isRetry?: boolean) => {
     const getTimestamps = (() =>
       tracks.toReversed().reduce<number[]>((acc, track, index, tracks) => {
-        if (isRetry && track.type === "db") acc.push(track.timestamp);
-        else if (index === 0) acc.push(Math.trunc(Date.now() / 1000));
+        const defaultTimestamp = Math.trunc(Date.now() / 1000);
+
+        if ((isRetry && track.type === "db") || track.type === "form") {
+          acc.push(track.timestamp ?? defaultTimestamp);
+        } else if (index === 0) acc.push(defaultTimestamp);
         else if (track.type === "album" && track.duration !== null) {
           const prevTrack = tracks.at(index - 1)!;
           const sub =
