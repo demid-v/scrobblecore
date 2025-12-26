@@ -99,20 +99,6 @@ const saveViewedAlbum = async (album: AlbumForDB) => {
   if (!user) return;
 
   return await db.transaction("rw", db.viewedAlbums, async () => {
-    if ((await db.viewedAlbums.where({ user }).count()) > 10) {
-      const lastViewedAlbum = (
-        await db.viewedAlbums.where({ user }).sortBy("date")
-      )[0]!;
-
-      await db.viewedAlbums
-        .where({
-          name: lastViewedAlbum.name,
-          artist: lastViewedAlbum.artist,
-          user,
-        })
-        .delete();
-    }
-
     try {
       await db.viewedAlbums.add({ ...album, user });
     } catch (error) {
@@ -125,6 +111,20 @@ const saveViewedAlbum = async (album: AlbumForDB) => {
         .delete();
 
       await db.viewedAlbums.add({ ...album, user });
+    }
+
+    if ((await db.viewedAlbums.where({ user }).count()) > 10) {
+      const lastViewedAlbum = (
+        await db.viewedAlbums.where({ user }).sortBy("date")
+      )[0]!;
+
+      await db.viewedAlbums
+        .where({
+          name: lastViewedAlbum.name,
+          artist: lastViewedAlbum.artist,
+          user,
+        })
+        .delete();
     }
   });
 };
