@@ -12,7 +12,10 @@ const DefaultSearchPage = ({
   children,
 }: { title: string } & Readonly<{ children?: React.ReactNode }>) => {
   const albums = useLiveQuery(getViewedAlbums);
-  const hasViewedAlbums = albums?.length ?? 0 > 0;
+
+  if (albums === undefined) return null;
+
+  const hasViewedAlbums = albums.length ?? 0 > 0;
 
   return (
     <div
