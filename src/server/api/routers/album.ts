@@ -48,9 +48,11 @@ const albumRouter = createTRPCRouter({
         api_key: env.NEXT_PUBLIC_LASTFM_API_KEY,
       };
 
-      const parsedResult = await lastFmApiGet(params).then((json) =>
-        albumSchema.parse(json),
-      );
+      const parsedResult = await lastFmApiGet(params)
+        .then((json) => albumSchema.parse(json))
+        .catch(() => null);
+
+      if (!parsedResult?.album) return null;
 
       const {
         image: images,
@@ -90,7 +92,7 @@ const albumRouter = createTRPCRouter({
     }),
 });
 
-type AlbumTracks = RouterOutputs["album"]["one"]["tracks"];
+type AlbumTracks = NonNullable<RouterOutputs["album"]["one"]>["tracks"];
 
 export default albumRouter;
 export type { AlbumTracks };

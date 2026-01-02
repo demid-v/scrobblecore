@@ -6,15 +6,17 @@ import { lastFmApiGet } from "~/lib/utils";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 const artistInfoSchema = z.object({
-  artist: z.object({
-    name: z.string(),
-    image: z.array(
-      z.object({
-        size: z.enum(["small", "medium", "large", "extralarge", "mega", ""]),
-        "#text": z.string().url().or(z.string().max(0)),
-      }),
-    ),
-  }),
+  artist: z
+    .object({
+      name: z.string(),
+      image: z.array(
+        z.object({
+          size: z.enum(["small", "medium", "large", "extralarge", "mega", ""]),
+          "#text": z.string().url().or(z.string().max(0)),
+        }),
+      ),
+    })
+    .optional(),
 });
 
 const artistRouter = createTRPCRouter({

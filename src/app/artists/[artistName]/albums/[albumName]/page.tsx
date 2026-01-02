@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import DefaultSearchPage from "~/app/_components/default-search-page";
 import ListSkeleton from "~/app/_components/list-skeleton";
 import Tracks from "~/app/_components/tracks";
 import { ViewedAlbum } from "~/app/_components/viewed-album";
@@ -19,6 +20,8 @@ const AlbumPageInner = async ({
   albumName: string;
 }) => {
   const album = await api.album.one({ artistName, albumName });
+
+  if (!album) return <DefaultSearchPage title="Album not found" />;
 
   return (
     <div className="w-full">

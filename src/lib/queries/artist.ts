@@ -45,43 +45,47 @@ const artistInfoSchema = z.object({
 });
 
 const topAlbumsSchema = z.object({
-  topalbums: z.object({
-    album: z.array(
-      z.object({
-        name: z.string(),
-        artist: z.object({ name: z.string() }),
-        image: z.array(
-          z.object({
-            size: z.enum(["small", "medium", "large", "extralarge"]),
-            "#text": z.string().url().or(z.string().max(0)),
-          }),
-        ),
+  topalbums: z
+    .object({
+      album: z.array(
+        z.object({
+          name: z.string(),
+          artist: z.object({ name: z.string() }),
+          image: z.array(
+            z.object({
+              size: z.enum(["small", "medium", "large", "extralarge"]),
+              "#text": z.string().url().or(z.string().max(0)),
+            }),
+          ),
+        }),
+      ),
+      "@attr": z.object({
+        total: z.coerce.number(),
       }),
-    ),
-    "@attr": z.object({
-      total: z.coerce.number(),
-    }),
-  }),
+    })
+    .optional(),
 });
 
 const topTracksSchema = z.object({
-  toptracks: z.object({
-    track: z.array(
-      z.object({
-        name: z.string(),
-        artist: z.object({ name: z.string() }),
-        image: z.array(
-          z.object({
-            size: z.enum(["small", "medium", "large", "extralarge"]),
-            "#text": z.string().url().or(z.string().max(0)),
-          }),
-        ),
+  toptracks: z
+    .object({
+      track: z.array(
+        z.object({
+          name: z.string(),
+          artist: z.object({ name: z.string() }),
+          image: z.array(
+            z.object({
+              size: z.enum(["small", "medium", "large", "extralarge"]),
+              "#text": z.string().url().or(z.string().max(0)),
+            }),
+          ),
+        }),
+      ),
+      "@attr": z.object({
+        total: z.coerce.number(),
       }),
-    ),
-    "@attr": z.object({
-      total: z.coerce.number(),
-    }),
-  }),
+    })
+    .optional(),
 });
 
 const getArtists = async ({
@@ -157,7 +161,7 @@ const getTopAlbums = async ({
     topAlbumsSchema.parse(json),
   );
 
-  const parsedAlbums = parsedResult.topalbums.album ?? [];
+  const parsedAlbums = parsedResult.topalbums?.album ?? [];
 
   const albums = parsedAlbums.map((parsedAlbum) => {
     const { image: images, ...albumProps } = parsedAlbum;
@@ -175,7 +179,7 @@ const getTopAlbums = async ({
     return album;
   });
 
-  const total = parsedResult.topalbums["@attr"].total;
+  const total = parsedResult.topalbums?.["@attr"].total ?? 0;
 
   return { albums, total };
 };
@@ -203,7 +207,7 @@ const getTopTracks = async ({
     topTracksSchema.parse(json),
   );
 
-  const parsedTracks = parsedResult.toptracks.track ?? [];
+  const parsedTracks = parsedResult.toptracks?.track ?? [];
 
   const tracks = parsedTracks.map((parsedTrack) => ({
     ...parsedTrack,
@@ -212,7 +216,7 @@ const getTopTracks = async ({
     artist: parsedTrack.artist.name,
   }));
 
-  const total = parsedResult.toptracks["@attr"].total;
+  const total = parsedResult.toptracks?.["@attr"].total ?? 0;
 
   return { tracks, total };
 };

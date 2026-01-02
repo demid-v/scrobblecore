@@ -27,7 +27,6 @@ const ArtistPage = async ({
       >
         <Artist artistName={artistName} />
       </Suspense>
-
       <div className="mt-10">
         <Suspense fallback={<GridSkeleton count={albumsLimit} hasHeader />}>
           <TopAlbums artistName={artistName} />
@@ -41,7 +40,10 @@ const ArtistPage = async ({
 };
 
 const Artist = async ({ artistName }: { artistName: string }) => {
-  const { name } = await api.artist.info({ artistName });
+  const artist = await api.artist.info({ artistName });
+  if (!artist) throw new Error("Artist not found");
+
+  const { name } = artist;
 
   if (artistName !== name) redirect(`/artists/${name}`);
 
