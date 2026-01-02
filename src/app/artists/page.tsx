@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 
 import ArtistsPage from "~/app/_components/artists-page";
-import { env } from "~/env";
+import { getBaseUrl } from "~/lib/utils";
 
 export const generateMetadata = async ({
   searchParams,
@@ -12,8 +12,8 @@ export const generateMetadata = async ({
   const search = Array.isArray(q) ? q.at(0) : q;
 
   return {
-    title: search ? `\`${search}\` in Artists` : "Artists",
-    alternates: { canonical: `${env.NEXT_PUBLIC_PROD_BASE_URL}/artists` },
+    title: search ? `"${search}" in Artists` : "Artists",
+    alternates: { canonical: `${getBaseUrl()}/artists` },
   } satisfies Metadata;
 };
 

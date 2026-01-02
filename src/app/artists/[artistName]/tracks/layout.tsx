@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 
-import { env } from "~/env";
+import { getBaseUrl } from "~/lib/utils";
 
 export const generateMetadata = async ({
   params,
@@ -15,7 +15,7 @@ export const generateMetadata = async ({
   return {
     title: `Tracks by ${artistName} | Scrobblecore`,
     alternates: {
-      canonical: `${env.NEXT_PUBLIC_PROD_BASE_URL}/artists/${artistNameParam}/tracks`,
+      canonical: `${getBaseUrl()}/artists/${artistNameParam}/tracks`,
     },
   };
 };

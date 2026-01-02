@@ -1,10 +1,10 @@
 import { type Metadata } from "next";
 
-import { env } from "~/env";
+import { getBaseUrl } from "~/lib/utils";
 
 export const metadata: Metadata = {
   title: "Track",
-  alternates: { canonical: `${env.NEXT_PUBLIC_PROD_BASE_URL}/track` },
+  alternates: { canonical: `${getBaseUrl()}/track` },
 };
 
 export default function TrackLayout({

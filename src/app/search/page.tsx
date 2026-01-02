@@ -3,7 +3,7 @@ import { type Metadata } from "next";
 import Artists from "~/app/_components/artists";
 import SearchAlbums from "~/app/_components/search-albums";
 import SearchTracks from "~/app/_components/search-tracks";
-import { env } from "~/env";
+import { getBaseUrl } from "~/lib/utils";
 
 import DefaultSearchPage from "../_components/default-search-page";
 
@@ -16,8 +16,8 @@ export const generateMetadata = async ({
   const search = Array.isArray(q) ? q.at(0) : q;
 
   return {
-    title: search ? `\`${search}\` in Search` : "Search",
-    alternates: { canonical: `${env.NEXT_PUBLIC_PROD_BASE_URL}/search` },
+    title: search ? `"${search}" in Search` : "Search",
+    alternates: { canonical: `${getBaseUrl()}/search` },
   } satisfies Metadata;
 };
 

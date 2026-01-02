@@ -32,6 +32,7 @@ const AlbumPageInner = async ({
         height={300}
         defaultImage={<NoCover className="mx-auto h-[300px] w-[300px] p-10" />}
         className="mx-auto mb-3"
+        fetchPriority="high"
         preload
       />
       <div className="mb-10 text-center">
