@@ -31,6 +31,16 @@ const params = {
 
 const authUrl = `https://www.last.fm/api/auth/?${new URLSearchParams(params)}`;
 
+const baseLastFmApiUrl = wretch("https://ws.audioscrobbler.com/2.0/");
+
+const lastFmApiGet = (params: Record<string, string>) =>
+  baseLastFmApiUrl
+    .url(`?${new URLSearchParams(params).toString()}`)
+    .get()
+    .json();
+
+const lastFmApiPost = (body: string) => baseLastFmApiUrl.post(body).text();
+
 const range = (start: number, end: number) =>
   Array.from({ length: end - start + 1 }, (_, index) => index + start);
 
@@ -116,18 +126,7 @@ const wait = (ms?: number) =>
   new Promise((resolve) => setTimeout(() => resolve(1), ms));
 
 type QueryResult = AlbumsResult | TracksResult | ArtistsResult;
-
-const baseLastFmApiUrl = wretch("https://ws.audioscrobbler.com/2.0/");
-
-const lastFmApiGet = (params: Record<string, string>) =>
-  baseLastFmApiUrl
-    .url(`?${new URLSearchParams(params).toString()}`)
-    .get()
-    .json();
-
-const lastFmApiPost = (body: string) => baseLastFmApiUrl.post(body).text();
-
 type Scrobble = Simplify<Tracks | TrackForm[] | ScrobbleDB[]>;
 
-export { cn, getBaseUrl, authUrl, paginate, wait, lastFmApiGet, lastFmApiPost };
+export { cn, getBaseUrl, authUrl, lastFmApiGet, lastFmApiPost, paginate, wait };
 export type { QueryResult, Scrobble };
