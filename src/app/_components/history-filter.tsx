@@ -29,7 +29,7 @@ const HistoryFilter = () => {
         setScrobblesFilter(value);
       }}
     >
-      <SelectTrigger className="w-fit bg-background">
+      <SelectTrigger className="h-6 w-fit bg-background" aria-label="Filter">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

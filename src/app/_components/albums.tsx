@@ -41,7 +41,8 @@ const Albums = ({
               <Link
                 href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
                 className="absolute left-0 top-0 h-full w-full transition-colors group-hover:bg-secondary/10"
-              ></Link>
+                aria-label="Go to the album's page"
+              />
               <ImageWithFallback
                 src={image}
                 alt="Album's cover"

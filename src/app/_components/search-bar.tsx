@@ -64,6 +64,7 @@ const SearchBarInner = (props: React.FormHTMLAttributes<HTMLFormElement>) => {
                     type="button"
                     variant="ghost"
                     size="sm"
+                    title="Clear"
                     onClick={() => {
                       form.setValue("search", "");
                       router.push(pathname);

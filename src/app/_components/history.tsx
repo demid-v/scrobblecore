@@ -80,6 +80,7 @@ const Row = ({
                 <Link
                   href={`/track/?${new URLSearchParams({ name: scrobble.name, artist: scrobble.artist, ...(scrobble.album !== undefined ? { album: scrobble.album } : {}), time: scrobble.timestamp.toString() })}`}
                   className="flex h-4 w-4 items-center justify-center"
+                  title="Edit scrobble"
                 >
                   <Edit2 size={12} />
                 </Link>

@@ -13,7 +13,7 @@ const ViewAlbums = () => {
 
   return (
     <section>
-      <h3 className="mb-6 text-xl">Recently viewed albums</h3>
+      <h2 className="mb-6 text-xl">Recently viewed albums</h2>
       <Albums albums={albums} />
     </section>
   );
