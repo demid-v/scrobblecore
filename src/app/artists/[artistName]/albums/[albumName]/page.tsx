@@ -43,18 +43,11 @@ const AlbumPageInner = async ({
             {album.artist}
           </Link>
         </p>
-        <p className="mb-3 break-all text-lg">{album.name}</p>
+        <p className="mb-3 text-lg break-all">{album.name}</p>
         <ScrobbleButton tracks={album.tracks}>Scrobble album</ScrobbleButton>
       </div>
       <Tracks tracks={album.tracks} isEnumerated />
-      <ViewedAlbum
-        album={{
-          name: album.name,
-          artist: album.artist,
-          image: album.image,
-          date: Date.now(),
-        }}
-      />
+      <ViewedAlbum album={album} />
     </div>
   );
 };

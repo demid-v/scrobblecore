@@ -35,7 +35,7 @@ const AlbumsPage = () => {
           query={query}
           limit={limit}
           page={page}
-          className="rounded-sm bg-background px-2 py-0.5 shadow-lg dark:shadow-white"
+          className="bg-background rounded-sm px-2 py-0.5 shadow-lg dark:shadow-white"
         />
       </div>
       <Suspense>

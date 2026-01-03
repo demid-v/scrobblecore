@@ -1,37 +1,36 @@
 "use client";
 
+import { Layout } from "react-resizable-panels";
 import SuperJSON from "superjson";
 
 import { ResizablePanel, ResizablePanelGroup } from "~/components/ui/resizable";
 
 const ResizableHistoryGroupClient = ({
-  mainDefaultSize,
   main,
+  defaultSize = 80,
   children,
 }: {
-  mainDefaultSize: number;
   main: React.ReactNode;
+  defaultSize: number;
   children: React.ReactNode;
 }) => {
-  const onLayout = (sizes: number[]) => {
-    document.cookie = `react-resizable-panels:layout=${SuperJSON.stringify(sizes)}`;
+  const onLayout = (layout: Layout) => {
+    document.cookie = `react-resizable-panels:layout=${SuperJSON.stringify(layout)}`;
   };
 
   return (
     <ResizablePanelGroup
-      direction="horizontal"
-      autoSaveId="history"
+      id="body"
+      orientation="horizontal"
       className="pt-12"
       style={{ height: "100vh" }}
-      onLayout={onLayout}
+      onLayoutChange={onLayout}
     >
       <ResizablePanel
         id="main"
-        order={1}
-        defaultSize={mainDefaultSize}
+        defaultSize={defaultSize === 100 ? defaultSize + "%" : defaultSize}
         style={{
           overflow: "auto",
-          height: "auto",
         }}
       >
         {main}

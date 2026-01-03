@@ -16,7 +16,7 @@ const History = dynamic(() => import("./history"), {
 
 const HistorySidebar = () => (
   <aside className="flex h-full flex-col">
-    <div className="flex h-12 items-center justify-between overflow-hidden border-b bg-sidebar px-2">
+    <div className="bg-sidebar flex h-12 items-center justify-between overflow-hidden border-b px-2">
       <div className="font-semibold">History</div>
       <HistoryFilter />
     </div>
@@ -25,12 +25,12 @@ const HistorySidebar = () => (
 );
 
 const MobileSidebarHistory = () => (
-  <SidebarGroup className="flex-1">
-    <SidebarGroupLabel className="mb-2 flex justify-between">
+  <SidebarGroup className="h-[calc(100%-260px)] pb-0">
+    <SidebarGroupLabel className="flex h-auto justify-between py-2">
       <div>History</div>
       <HistoryFilter />
     </SidebarGroupLabel>
-    <SidebarGroupContent className="flex h-full">
+    <SidebarGroupContent className="overflow-auto">
       <History />
     </SidebarGroupContent>
   </SidebarGroup>

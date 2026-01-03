@@ -16,7 +16,7 @@ const albumsSchema = z.object({
             image: z.array(
               z.object({
                 size: z.enum(["small", "medium", "large", "extralarge"]),
-                "#text": z.string().url().or(z.string().max(0)),
+                "#text": z.url().or(z.string().max(0)),
               }),
             ),
           }),

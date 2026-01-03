@@ -20,12 +20,12 @@ const ResizableHistoryLayout = async ({
 
   const defaultLayout =
     typeof layout?.value !== "undefined"
-      ? SuperJSON.parse<[number, number]>(layout.value)
-      : ([80, 20] as const);
+      ? SuperJSON.parse<{ main: number; history: number }>(layout.value)
+      : ({ main: 80, history: 20 } as const);
 
   return (
-    <ResizableHistoryGroup mainDefaultSize={defaultLayout[0]} main={children}>
-      <ResizableHistory defaultSize={defaultLayout[1]} />
+    <ResizableHistoryGroup main={children} defaultSize={defaultLayout.main}>
+      <ResizableHistory defaultSize={defaultLayout.history} />
     </ResizableHistoryGroup>
   );
 };

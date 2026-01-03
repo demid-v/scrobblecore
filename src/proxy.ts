@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-export const middleware = (request: NextRequest) => {
+export const proxy = (request: NextRequest) => {
   const requestUrl = new URL(request.url);
 
   if (requestUrl.pathname === "/" || requestUrl.pathname === "/api/auth") {

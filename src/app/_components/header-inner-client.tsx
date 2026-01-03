@@ -25,7 +25,7 @@ const HeaderInnerClient = ({
   children,
 }: { user: User | null } & Readonly<{ children: React.ReactNode }>) => {
   return (
-    <header className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-4">
+    <header className="bg-background fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 px-4">
       <div className="flex grow items-center gap-x-9">
         <Link
           href="/"
@@ -107,7 +107,7 @@ const HeaderInnerClient = ({
 };
 
 const HeaderSkeleton = () => (
-  <div className="fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 bg-background px-4">
+  <div className="bg-background fixed z-10 flex h-12 w-full items-center justify-between gap-x-4 px-4">
     <div className="flex grow items-center gap-x-9">
       <Link
         href="/"

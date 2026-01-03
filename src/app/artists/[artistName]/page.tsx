@@ -78,7 +78,7 @@ const TopTracks = async ({ artistName }: { artistName: string }) => {
 
   return (
     <Tracks tracks={tracks}>
-      <p className="mb-6 mt-10 text-xl">
+      <p className="mt-10 mb-6 text-xl">
         <Link
           href={{ pathname: `/artists/${artistName}/tracks` }}
           className="underline-offset-4 hover:underline"

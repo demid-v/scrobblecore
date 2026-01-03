@@ -92,7 +92,8 @@ const albumRouter = createTRPCRouter({
     }),
 });
 
-type AlbumTracks = NonNullable<RouterOutputs["album"]["one"]>["tracks"];
+type Album = NonNullable<RouterOutputs["album"]["one"]>;
+type AlbumTracks = Album["tracks"];
 
 export default albumRouter;
-export type { AlbumTracks };
+export type { Album, AlbumTracks };

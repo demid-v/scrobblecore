@@ -40,7 +40,7 @@ const SearchTracksInner = ({
   return (
     <Tracks tracks={tracks}>
       {isSection && (
-        <p className="mb-6 mt-10 text-xl">
+        <p className="mt-10 mb-6 text-xl">
           <Link
             href={{ pathname: "/tracks", query: { q: search } }}
             className="underline-offset-4 hover:underline"

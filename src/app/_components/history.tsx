@@ -5,11 +5,7 @@ import { useAtom } from "jotai";
 import { Edit2, Redo2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import AutoSizer from "react-virtualized-auto-sizer";
-import {
-  FixedSizeList as List,
-  type ListChildComponentProps,
-} from "react-window";
+import { List, type RowComponentProps } from "react-window";
 
 import { useScrobble } from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
@@ -24,29 +20,29 @@ const scrobbleStateRecord: Record<Scrobble["status"], string> = {
   failed: "Failed to scrobble",
 };
 
-const Row = ({
+function Row({
   index,
   style,
-  data: scrobbles,
-}: ListChildComponentProps<Scrobble[]>) => {
+  scrobbles,
+}: RowComponentProps<{ scrobbles: Scrobble[] }>) {
   const scrobble = scrobbles.at(index)!;
 
   const startScrobble = useScrobble();
 
   return (
     <div key={scrobble.id} style={style}>
-      <div className="gap-x-2 rounded-sm px-2 py-0.5 hover:bg-sidebar-accent">
+      <div className="hover:bg-sidebar-accent gap-x-2 rounded-sm px-2 py-0.5">
         <div className="flex items-center justify-between gap-x-1.5">
           <div className="flex w-full min-w-0 items-center gap-x-1 overflow-hidden whitespace-nowrap">
             <div className={cn(scrobble.album && "max-w-[50%]")}>
-              <div className="overflow-hidden text-ellipsis text-xs font-semibold">
+              <div className="overflow-hidden text-xs font-semibold text-ellipsis">
                 <Link href={`/artists/${encodeURIComponent(scrobble.artist)}`}>
                   {scrobble.artist}
                 </Link>
               </div>
             </div>
             {scrobble.album && (
-              <div className="overflow-hidden text-ellipsis text-xs">
+              <div className="overflow-hidden text-xs text-ellipsis">
                 <Link
                   href={`/artists/${encodeURIComponent(scrobble.artist)}/albums/${encodeURIComponent(scrobble.album)}`}
                 >
@@ -56,7 +52,7 @@ const Row = ({
             )}
           </div>
           <time
-            className="shrink-0 whitespace-nowrap text-xs"
+            className="shrink-0 text-xs whitespace-nowrap"
             title={new Date(scrobble.timestamp * 1000).toLocaleString()}
           >
             {new Date(scrobble.timestamp * 1000).toLocaleString(undefined, {
@@ -98,7 +94,7 @@ const Row = ({
                     );
                   }}
                 >
-                  <Redo2 className="!h-3.5 !w-3.5" />
+                  <Redo2 className="h-3.5! w-3.5!" />
                 </Button>
               </div>
             )}
@@ -117,7 +113,7 @@ const Row = ({
       {index !== scrobbles.length - 1 && <Separator />}
     </div>
   );
-};
+}
 
 const History = () => {
   const [scrobblesFilter] = useAtom(scrobblesFilterAtom);
@@ -129,20 +125,13 @@ const History = () => {
   if (!scrobbles) return null;
 
   return (
-    <div className="flex-1">
-      <AutoSizer disableWidth>
-        {({ height }) => (
-          <List
-            height={height}
-            width="100%"
-            itemCount={scrobbles.length}
-            itemSize={45}
-            itemData={scrobbles}
-          >
-            {Row}
-          </List>
-        )}
-      </AutoSizer>
+    <div className="h-full flex-1 overflow-auto">
+      <List
+        rowComponent={Row}
+        rowCount={scrobbles.length}
+        rowHeight={45}
+        rowProps={{ scrobbles }}
+      />
     </div>
   );
 };

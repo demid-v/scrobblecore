@@ -53,7 +53,7 @@ const Artists = ({
   return (
     <section>
       {isSection && (
-        <p className="mb-6 mt-10 text-xl">
+        <p className="mt-10 mb-6 text-xl">
           <Link
             href={{ pathname: "/artists", query: { q: search } }}
             className="underline-offset-4 hover:underline"
@@ -64,19 +64,19 @@ const Artists = ({
       )}
       <div
         className={cn(
-          "grid grid-cols-tiles gap-x-4 gap-y-6",
+          "grid-cols-tiles grid gap-x-4 gap-y-6",
           isMobile && "grid-cols-mobile",
         )}
       >
         {artists.map(({ name, image }) => (
           <div
             key={name}
-            className="group w-full transition-colors hover:bg-secondary"
+            className="group hover:bg-secondary w-full transition-colors"
           >
             <div className="relative mb-2">
               <Link
                 href={`/artists/${encodeURIComponent(name)}`}
-                className="absolute left-0 top-0 h-full w-full transition-colors group-hover:bg-secondary/10"
+                className="group-hover:bg-secondary/10 absolute top-0 left-0 h-full w-full transition-colors"
               ></Link>
               <ImageWithFallback
                 src={image}

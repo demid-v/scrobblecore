@@ -18,10 +18,10 @@ const GridSkeleton = ({
 
   return (
     <div>
-      {hasHeader && <Skeleton className="mb-6 mt-10 h-7 w-20" />}
+      {hasHeader && <Skeleton className="mt-10 mb-6 h-7 w-20" />}
       <div
         className={cn(
-          "mx-auto grid grid-cols-tiles gap-x-4 gap-y-6",
+          "grid-cols-tiles mx-auto grid gap-x-4 gap-y-6",
           isMobile && "grid-cols-mobile",
         )}
         {...props}

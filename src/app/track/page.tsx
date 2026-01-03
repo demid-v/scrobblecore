@@ -205,7 +205,7 @@ const TrackForm = () => {
                   <Input
                     type="time"
                     step="1"
-                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                    className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                     {...field}
                   />
                 </FormControl>
@@ -240,7 +240,7 @@ const TrackForm = () => {
 
 const TrackPage = () => (
   <div className="mx-auto w-2/3">
-    <h1 className="mb-8 mt-5 text-center text-4xl font-semibold">
+    <h1 className="mt-5 mb-8 text-center text-4xl font-semibold">
       Scrobble track
     </h1>
     <TrackForm />

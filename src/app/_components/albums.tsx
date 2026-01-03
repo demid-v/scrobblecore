@@ -28,19 +28,19 @@ const Albums = ({
       {children}
       <div
         className={cn(
-          "grid grid-cols-tiles gap-x-4 gap-y-6",
+          "grid-cols-tiles grid gap-x-4 gap-y-6",
           isMobile && "grid-cols-mobile",
         )}
       >
         {albums.map(({ name, artist, image }) => (
           <div
             key={`${name}${artist}`}
-            className="group w-full transition-colors hover:bg-secondary"
+            className="group hover:bg-secondary w-full transition-colors"
           >
             <div className="relative mb-2">
               <Link
                 href={`/artists/${encodeURIComponent(artist)}/albums/${encodeURIComponent(name)}`}
-                className="absolute left-0 top-0 h-full w-full transition-colors group-hover:bg-secondary/10"
+                className="group-hover:bg-secondary/10 absolute top-0 left-0 h-full w-full transition-colors"
                 aria-label="Go to the album's page"
               />
               <ImageWithFallback

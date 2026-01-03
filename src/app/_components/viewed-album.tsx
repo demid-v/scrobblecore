@@ -1,19 +1,22 @@
 "use client";
 
 import { useEffect } from "react";
-import { type SetOptional } from "type-fest";
 
-import { type AlbumForDB, saveViewedAlbum } from "~/lib/db";
+import { saveViewedAlbum } from "~/lib/db";
+import { Album } from "~/server/api/routers/album";
 
-export const ViewedAlbum = ({
-  album,
-}: {
-  album: SetOptional<AlbumForDB, "name" | "artist">;
-}) => {
+export const ViewedAlbum = ({ album }: { album: Album }) => {
   useEffect(() => {
     if (album.name == null || album.artist == null) return;
 
-    void saveViewedAlbum(album as AlbumForDB);
+    const viewedAlbum = {
+      name: album.name,
+      artist: album.artist,
+      image: album.image,
+      date: Date.now(),
+    };
+
+    void saveViewedAlbum(viewedAlbum);
   }, [album]);
 
   return null;

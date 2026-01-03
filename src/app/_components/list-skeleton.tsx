@@ -12,7 +12,7 @@ const ListSkeleton = ({
   isEnimerated?: boolean;
 }) => (
   <div>
-    {hasHeader && <Skeleton className="mb-6 mt-10 h-7 w-16" />}
+    {hasHeader && <Skeleton className="mt-10 mb-6 h-7 w-16" />}
     {new Array(count).fill(0).map((_item, index) => (
       <div key={index}>
         <div className="flex items-center justify-between gap-x-2 px-2 py-1">

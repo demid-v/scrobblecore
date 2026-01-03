@@ -28,10 +28,10 @@ const Tracks = ({
       <ul>
         {tracks.map((track, index) => (
           <li key={`${index}`}>
-            <div className="flex items-center gap-x-2 rounded-sm px-2 py-1 hover:bg-accent">
+            <div className="hover:bg-accent flex items-center gap-x-2 rounded-sm px-2 py-1">
               {isEnumerated && (
                 <div
-                  className="w-7 shrink-0 overflow-hidden text-ellipsis text-center text-xs"
+                  className="w-7 shrink-0 overflow-hidden text-center text-xs text-ellipsis"
                   title={`${index + 1}`}
                 >
                   {index + 1}
@@ -52,7 +52,7 @@ const Tracks = ({
                 )}
                 <div className="flex w-full items-center gap-x-4 overflow-hidden">
                   <div className="max-w-[50%]">
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold">
+                    <div className="overflow-hidden text-sm font-bold text-ellipsis whitespace-nowrap">
                       <Link
                         href={`/artists/${encodeURIComponent(track.artist)}`}
                         className=""
