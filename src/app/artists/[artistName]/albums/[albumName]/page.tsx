@@ -30,7 +30,7 @@ const AlbumPageInner = async ({
         alt="Album's image"
         width={300}
         height={300}
-        defaultImage={<NoCover className="mx-auto h-[300px] w-[300px] p-10" />}
+        defaultImage={<NoCover className="mx-auto h-75 w-75 p-10" />}
         className="mx-auto mb-3"
         fetchPriority="high"
         preload
@@ -67,7 +67,7 @@ const AlbumPage = async ({
     <Suspense
       fallback={
         <div>
-          <Skeleton className="mx-auto mb-3 h-[300px] w-[300px]" />
+          <Skeleton className="mx-auto mb-3 h-75 w-75" />
           <Skeleton className="mx-auto mb-3 h-5 w-28" />
           <Skeleton className="mx-auto mb-3 h-6 w-48" />
           <Button className="mx-auto mb-10 block" disabled>

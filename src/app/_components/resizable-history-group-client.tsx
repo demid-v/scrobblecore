@@ -29,11 +29,12 @@ const ResizableHistoryGroupClient = ({
       <ResizablePanel
         id="main"
         defaultSize={defaultSize === 100 ? defaultSize + "%" : defaultSize}
+        className="relative"
         style={{
           overflow: "auto",
         }}
       >
-        {main}
+        <div className="h-fit w-full">{main}</div>
       </ResizablePanel>
       {children}
     </ResizablePanelGroup>

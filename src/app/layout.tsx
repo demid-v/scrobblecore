@@ -48,9 +48,7 @@ export default function RootLayout({
               <Header />
               <MobileSidebar />
               <ResizableHistoryLayout>
-                <main className="relative container mx-auto min-h-full px-4 py-4">
-                  {children}
-                </main>
+                <main className="container mx-auto px-4 py-4">{children}</main>
               </ResizableHistoryLayout>
               <Toaster />
             </SidebarProvider>

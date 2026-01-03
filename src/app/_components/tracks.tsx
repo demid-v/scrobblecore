@@ -55,7 +55,6 @@ const Tracks = ({
                     <div className="overflow-hidden text-sm font-bold text-ellipsis whitespace-nowrap">
                       <Link
                         href={`/artists/${encodeURIComponent(track.artist)}`}
-                        className=""
                       >
                         {track.artist}
                       </Link>

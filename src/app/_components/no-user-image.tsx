@@ -6,7 +6,7 @@ const NoUserImage = () => {
   const { resolvedTheme } = useTheme();
 
   return (
-    <div className="h-[34px] w-[34px]">
+    <div className="h-8.5 w-8.5">
       <svg
         width="24px"
         height="24px"
