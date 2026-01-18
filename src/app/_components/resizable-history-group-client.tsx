@@ -1,22 +1,39 @@
 "use client";
 
-import { Layout } from "react-resizable-panels";
-import SuperJSON from "superjson";
+import { useDefaultLayout } from "react-resizable-panels";
+import { type LayoutStorage } from "react-resizable-panels";
 
 import { ResizablePanel, ResizablePanelGroup } from "~/components/ui/resizable";
 
+const layoutId = "sidebar-layout";
+
+const cookieStorage: LayoutStorage = {
+  getItem(key) {
+    const cookies = document.cookie.split(";");
+
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split("=");
+      if (name === key) return value!;
+    }
+
+    return null;
+  },
+  setItem(key, value) {
+    document.cookie = `${key}=${value}`;
+  },
+};
+
 const ResizableHistoryGroupClient = ({
   main,
-  defaultSize = 80,
   children,
 }: {
   main: React.ReactNode;
-  defaultSize: number;
   children: React.ReactNode;
 }) => {
-  const onLayout = (layout: Layout) => {
-    document.cookie = `react-resizable-panels:layout=${SuperJSON.stringify(layout)}`;
-  };
+  const { defaultLayout, onLayoutChange } = useDefaultLayout({
+    id: layoutId,
+    storage: cookieStorage,
+  });
 
   return (
     <ResizablePanelGroup
@@ -24,12 +41,13 @@ const ResizableHistoryGroupClient = ({
       orientation="horizontal"
       className="pt-12"
       style={{ height: "100vh" }}
-      onLayoutChange={onLayout}
+      defaultLayout={defaultLayout}
+      onLayoutChange={onLayoutChange}
     >
       <ResizablePanel
         id="main"
-        defaultSize={defaultSize === 100 ? defaultSize + "%" : defaultSize}
         className="relative"
+        defaultSize={80}
         style={{
           overflow: "auto",
         }}
@@ -42,3 +60,4 @@ const ResizableHistoryGroupClient = ({
 };
 
 export default ResizableHistoryGroupClient;
+export { layoutId, cookieStorage };

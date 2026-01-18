@@ -1,6 +1,4 @@
-import { cookies } from "next/headers";
 import React from "react";
-import SuperJSON from "superjson";
 
 import { api } from "~/trpc/server";
 
@@ -16,16 +14,9 @@ const ResizableHistoryLayout = async ({
 
   if (!user) return children;
 
-  const layout = (await cookies()).get("react-resizable-panels:layout");
-
-  const defaultLayout =
-    typeof layout?.value !== "undefined"
-      ? SuperJSON.parse<{ main: number; history: number }>(layout.value)
-      : ({ main: 80, history: 20 } as const);
-
   return (
-    <ResizableHistoryGroup main={children} defaultSize={defaultLayout.main}>
-      <ResizableHistory defaultSize={defaultLayout.history} />
+    <ResizableHistoryGroup main={children}>
+      <ResizableHistory />
     </ResizableHistoryGroup>
   );
 };

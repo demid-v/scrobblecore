@@ -131,7 +131,7 @@ const HeaderSkeleton = () => (
       <Skeleton className="h-9 w-9" />
       <Skeleton className="hidden h-9 w-9 rounded-full md:block" />
       <Skeleton className="hidden h-9 w-[86.56px] md:block" />
-      <Skeleton className="h-[34px] w-[34px] rounded-full" />
+      <Skeleton className="h-8.5 w-8.5 rounded-full" />
     </div>
   </div>
 );

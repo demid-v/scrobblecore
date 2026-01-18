@@ -2,20 +2,24 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { usePanelRef } from "react-resizable-panels";
+import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 
 import { Button } from "~/components/ui/button";
 import { ResizableHandle, ResizablePanel } from "~/components/ui/resizable";
 import { useIsMobile } from "~/hooks/use-mobile";
 
+import { cookieStorage, layoutId } from "./resizable-history-group-client";
 import HistorySidebar from "./sidebar";
 
-const ResizableHistory = ({
-  defaultSize = 20,
-}: {
-  defaultSize: number | undefined;
-}) => {
+const ResizableHistory = () => {
   const historyPanelRef = usePanelRef();
+
+  const { defaultLayout } = useDefaultLayout({
+    id: layoutId,
+    storage: cookieStorage,
+  });
+
+  const defaultSize = defaultLayout?.sidebar;
 
   const [isExpanded, setIsExpanded] = useState(defaultSize !== 0);
 
@@ -53,11 +57,11 @@ const ResizableHistory = ({
       </div>
       <ResizablePanel
         panelRef={historyPanelRef}
-        id="history"
-        defaultSize={defaultSize === 0 ? defaultSize + "%" : defaultSize}
+        id="sidebar"
         collapsible
+        defaultSize={20}
         minSize="250px"
-        maxSize="45%"
+        maxSize="40%"
         collapsedSize={0}
         onResize={onResize}
         className="bg-sidebar block transition-[flex-grow]"
