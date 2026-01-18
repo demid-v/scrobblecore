@@ -2,9 +2,9 @@ import { type UseQueryResult } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { env } from "~/env";
-import { type AlbumTracks } from "~/server/api/routers/album";
 
 import { lastFmApiGet } from "../utils";
+import { AlbumTracks } from "./album";
 
 const tracksSchema = z.object({
   results: z

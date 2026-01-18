@@ -39,6 +39,7 @@ const formSchema = z.object({
 });
 
 type formSchema = z.infer<typeof formSchema>;
+
 type Track = Simplify<
   Omit<formSchema, "date" | "time"> & { type: "form"; timestamp?: number }
 >;
@@ -68,8 +69,10 @@ const TrackForm = () => {
     if (nameParam) form.setValue("name", nameParam);
     if (artistParam) form.setValue("artist", artistParam);
     if (albumParam) form.setValue("album", albumParam);
+
     if (timeParam) {
       const timeStamp = timeParam * 1000;
+
       if (Number.isNaN(timeStamp) || timeStamp === 0) {
         form.setValue("date", 0);
         form.setValue("time", "");

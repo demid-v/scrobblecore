@@ -5,14 +5,14 @@ import NoArtistImage from "~/components/no-artist-image";
 import ScrobbleButton from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { type Tracks as TypeTracks } from "~/lib/queries/track";
+import { type Tracks as TracksT } from "~/lib/queries/track";
 
 const Tracks = ({
   tracks,
   isEnumerated,
   children,
 }: {
-  tracks: TypeTracks;
+  tracks: TracksT;
   isEnumerated?: boolean;
   children?: React.ReactNode;
 }) => {
@@ -51,7 +51,7 @@ const Tracks = ({
                   />
                 )}
                 <div className="flex w-full items-center gap-x-4 overflow-hidden">
-                  <div className="max-w-[50%]">
+                  <div className="max-w-1/2">
                     <div className="overflow-hidden text-sm font-bold text-ellipsis whitespace-nowrap">
                       <Link
                         href={`/artists/${encodeURIComponent(track.artist)}`}
@@ -80,7 +80,7 @@ const Tracks = ({
                     </Link>
                   </Button>
                   <ScrobbleButton
-                    tracks={[track] as TypeTracks}
+                    tracks={[track] as TracksT}
                     size="sm"
                     className="ml-auto"
                   >

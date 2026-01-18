@@ -49,7 +49,7 @@ const ResizableHistory = () => {
           variant="ghost"
           size="sm"
           className="absolute top-0 -left-1 z-50 h-7 w-7 -translate-x-full"
-          title={isExpanded ? "Close history" : "Open history"}
+          title={isExpanded ? "Close history" : "Open sidebar"}
           onClick={toggleHistory}
         >
           {isExpanded ? <ChevronRight /> : <ChevronLeft />}

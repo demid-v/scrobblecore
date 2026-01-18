@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 import { saveViewedAlbum } from "~/lib/db";
-import { Album } from "~/server/api/routers/album";
+import { Album } from "~/lib/queries/album";
 
 export const ViewedAlbum = ({ album }: { album: Album }) => {
   useEffect(() => {

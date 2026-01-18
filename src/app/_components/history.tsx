@@ -34,7 +34,7 @@ function Row({
       <div className="hover:bg-sidebar-accent gap-x-2 rounded-sm px-2 py-0.5">
         <div className="flex items-center justify-between gap-x-1.5">
           <div className="flex w-full min-w-0 items-center gap-x-1 overflow-hidden whitespace-nowrap">
-            <div className={cn(scrobble.album && "max-w-[50%]")}>
+            <div className={cn(scrobble.album && "max-w-1/2")}>
               <div className="overflow-hidden text-xs font-semibold text-ellipsis">
                 <Link href={`/artists/${encodeURIComponent(scrobble.artist)}`}>
                   {scrobble.artist}

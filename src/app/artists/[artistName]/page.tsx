@@ -41,6 +41,7 @@ const ArtistPage = async ({
 
 const Artist = async ({ artistName }: { artistName: string }) => {
   const artist = await api.artist.info({ artistName });
+
   if (!artist) throw new Error("Artist not found");
 
   const { name } = artist;

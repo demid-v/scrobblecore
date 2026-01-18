@@ -2,8 +2,7 @@ import { Dexie, type EntityTable } from "dexie";
 import cookies from "js-cookie";
 import { type SetOptional, type Simplify } from "type-fest";
 
-import { type AlbumTracks } from "~/server/api/routers/album";
-
+import { AlbumTracks } from "./queries/album";
 import { type ScrobblesFilter } from "./store";
 
 type UserTable = { id: number; name: string };
