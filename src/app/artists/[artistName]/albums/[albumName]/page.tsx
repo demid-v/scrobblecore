@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Check, Edit2, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -40,6 +40,7 @@ const formSchema = z.object({
 type formSchema = z.infer<typeof formSchema>;
 
 type EditedTracks = (AlbumTracks[number] & {
+  isInlineEdited?: boolean;
   isAlbumTrack?: boolean;
 })[];
 
@@ -78,25 +79,20 @@ const AlbumPage = () => {
 
   const [editedTracks, setEditedTracks] = useState<EditedTracks>([]);
 
-  const [firstNonEmptyDataLoad, setFirstNotEmptyLoad] = useState(!!album);
+  useEffect(() => {
+    if (!album) return;
 
-  if (isError) return <DefaultSearchPage title="Album not found" />;
-  if (isLoading || !album) return <AlbumSkeleton />;
-
-  if (
-    !firstNonEmptyDataLoad &&
-    editedTracks !== album.tracks &&
-    album?.tracks
-  ) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEditedTracks(
       album.tracks.map((track) => ({
         ...track,
         ...(track.artist === artistName ? { isAlbumTrack: true } : {}),
       })),
     );
+  }, [album, artistName]);
 
-    setFirstNotEmptyLoad(true);
-  }
+  if (isError) return <DefaultSearchPage title="Album not found" />;
+  if (isLoading || !album) return <AlbumSkeleton />;
 
   const applyChangesFromForm = (data: formSchema) => {
     if (!editedTracks) return;
@@ -105,10 +101,15 @@ const AlbumPage = () => {
   };
 
   const applyChanges = (artist: string, album: string) => {
+    const getArtist = (track: EditedTracks[number]) => {
+      if (track.isInlineEdited) return { artist: track.artist };
+      return track.isAlbumTrack ? { artist } : {};
+    };
+
     setEditedTracks(
       editedTracks.map((track) => ({
         ...track,
-        ...(track.isAlbumTrack ? { artist } : {}),
+        ...getArtist(track),
         album,
       })),
     );
@@ -123,6 +124,25 @@ const AlbumPage = () => {
 
     form.setValue("artist", album.artist);
     form.setValue("album", album.name);
+  };
+
+  const applyInlineChanges = (
+    trackId: number,
+    artist: string,
+    name: string,
+  ) => {
+    const editedTrackId = editedTracks.findIndex((_track, i) => i === trackId);
+
+    const editedTrack = {
+      ...editedTracks[editedTrackId]!,
+      artist,
+      name,
+      isInlineEdited: artist !== artistName,
+    };
+
+    const newEditedTracks = editedTracks.with(editedTrackId, editedTrack);
+
+    setEditedTracks(newEditedTracks);
   };
 
   return (
@@ -194,40 +214,42 @@ const AlbumPage = () => {
                   )}
                 </div>
                 <div>
-                  {isEditing ? (
-                    <Button
-                      type="submit"
-                      variant="ghost"
-                      size="sm"
-                      className="flex h-5 w-6 p-0"
-                      title="Apply changes"
-                    >
-                      <Check style={{ height: "12px", width: "12px" }} />
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="flex h-5 w-6 p-0"
-                      title="Edit album info"
-                      onClick={(e) => {
-                        setIsEditing(true);
-                        e.preventDefault();
-                      }}
-                    >
-                      <Edit2 style={{ height: "12px", width: "12px" }} />
-                    </Button>
-                  )}
+                  <div className="mb-1">
+                    {isEditing ? (
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        size="sm"
+                        className="h-fit w-fit px-2 py-1"
+                        title="Apply changes"
+                      >
+                        <Check style={{ height: "14px", width: "14px" }} />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-fit w-fit px-2 py-1"
+                        title="Edit album info"
+                        onClick={(e) => {
+                          setIsEditing(true);
+                          e.preventDefault();
+                        }}
+                      >
+                        <Edit2 style={{ height: "14px", width: "14px" }} />
+                      </Button>
+                    )}
+                  </div>
                   <Button
                     type="reset"
                     variant="ghost"
                     size="sm"
-                    className="flex h-5 w-6 p-0"
+                    className="h-fit w-fit px-2 py-1"
                     title="Reset album info"
                     onClick={resetAlbumInfo}
                   >
-                    <Undo2 style={{ height: "12px", width: "12px" }} />
+                    <Undo2 style={{ height: "14px", width: "14px" }} />
                   </Button>
                 </div>
               </form>
@@ -240,7 +262,11 @@ const AlbumPage = () => {
           </div>
         </div>
       </div>
-      <Tracks tracks={editedTracks} isEnumerated />
+      <Tracks
+        tracks={editedTracks}
+        formHandler={applyInlineChanges}
+        isEnumerated
+      />
       <ViewedAlbum album={album} />
     </div>
   );
