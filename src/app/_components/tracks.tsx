@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { EditedAlbumTracks } from "~/app/artists/[artistName]/albums/[albumName]/page";
 import ImageWithFallback from "~/components/image-with-fallback";
 import NoArtistImage from "~/components/no-artist-image";
 import ScrobbleButton from "~/components/scrobble-button";
@@ -20,7 +21,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
-import { type Tracks as TracksT } from "~/lib/queries/track";
+import { SearchTracks, type Tracks as TracksT } from "~/lib/queries/track";
 
 const formSchema = z.object({
   artist: z.string().trim().min(1, {
@@ -32,6 +33,8 @@ const formSchema = z.object({
 });
 
 type formSchema = z.infer<typeof formSchema>;
+
+type EditedTracks = SearchTracks | EditedAlbumTracks;
 
 const Track = ({
   index,
@@ -66,7 +69,6 @@ const Track = ({
 
   const applyChangesFromForm = (data: formSchema) => {
     formHandler?.(index, data.artist, data.name);
-
     setIsEditing(false);
   };
 
@@ -104,7 +106,7 @@ const Track = ({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(applyChangesFromForm)}
-              className="flex w-full"
+              className="flex w-full overflow-hidden"
             >
               <div className="flex w-full items-center gap-x-4 overflow-hidden">
                 <div className="max-w-1/2">
@@ -208,15 +210,59 @@ const Track = ({
 
 const Tracks = ({
   tracks,
-  formHandler,
+  artistName,
+  callback,
   isEnumerated,
   children,
 }: {
-  tracks: TracksT;
-  formHandler?: (trackId: number, artist: string, name: string) => void;
+  tracks: EditedTracks;
+  artistName?: string;
+  callback?: (tracks: EditedAlbumTracks) => void;
   isEnumerated?: boolean;
   children?: React.ReactNode;
 }) => {
+  const [editedTracks, setEditedTracks] = useState<EditedTracks>(tracks);
+
+  useEffect(() => {
+    setEditedTracks(
+      tracks.map((track, i) => ({
+        ...track,
+        ...(track.type === "album" && track.isInlineEdited
+          ? { artist: editedTracks.at(i)!.artist }
+          : {}),
+      })) as EditedTracks,
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tracks]);
+
+  const applyInlineChanges = (
+    trackId: number,
+    artist: string,
+    name: string,
+  ) => {
+    const editedTrackId = editedTracks.findIndex((_track, i) => i === trackId);
+    const editedTrack = editedTracks[editedTrackId]!;
+
+    const newEditedTrack = {
+      ...editedTrack,
+      artist,
+      name,
+      ...(editedTrack.type === "album"
+        ? { isInlineEdited: artist !== artistName }
+        : {}),
+    };
+
+    const newEditedTracks = editedTracks.with(
+      editedTrackId,
+      newEditedTrack as never,
+    );
+
+    setEditedTracks(newEditedTracks);
+
+    callback?.(newEditedTracks as EditedAlbumTracks);
+  };
+
   if (tracks.length === 0) {
     return (
       <div className="mb-6 text-center text-xl font-medium">No tracks.</div>
@@ -227,13 +273,13 @@ const Tracks = ({
     <section>
       {children}
       <ul>
-        {tracks.map((track, i) => (
+        {editedTracks.map((track, i) => (
           <Track
             key={i}
             index={i}
-            tracks={tracks}
+            tracks={editedTracks}
             track={track}
-            formHandler={formHandler}
+            formHandler={applyInlineChanges}
             isEnumerated={isEnumerated}
           />
         ))}

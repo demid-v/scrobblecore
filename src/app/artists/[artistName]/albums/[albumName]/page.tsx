@@ -39,7 +39,7 @@ const formSchema = z.object({
 
 type formSchema = z.infer<typeof formSchema>;
 
-type EditedTracks = (AlbumTracks[number] & {
+type EditedAlbumTracks = (AlbumTracks[number] & {
   isInlineEdited?: boolean;
   isAlbumTrack?: boolean;
 })[];
@@ -77,7 +77,7 @@ const AlbumPage = () => {
   const watchedArtist = useWatch({ control: form.control, name: "artist" });
   const watchedAlbum = useWatch({ control: form.control, name: "album" });
 
-  const [editedTracks, setEditedTracks] = useState<EditedTracks>([]);
+  const [editedTracks, setEditedTracks] = useState<EditedAlbumTracks>([]);
 
   useEffect(() => {
     if (!album) return;
@@ -101,7 +101,7 @@ const AlbumPage = () => {
   };
 
   const applyChanges = (artist: string, album: string) => {
-    const getArtist = (track: EditedTracks[number]) => {
+    const getArtist = (track: EditedAlbumTracks[number]) => {
       if (track.isInlineEdited) return { artist: track.artist };
       return track.isAlbumTrack ? { artist } : {};
     };
@@ -124,25 +124,6 @@ const AlbumPage = () => {
 
     form.setValue("artist", album.artist);
     form.setValue("album", album.name);
-  };
-
-  const applyInlineChanges = (
-    trackId: number,
-    artist: string,
-    name: string,
-  ) => {
-    const editedTrackId = editedTracks.findIndex((_track, i) => i === trackId);
-
-    const editedTrack = {
-      ...editedTracks[editedTrackId]!,
-      artist,
-      name,
-      isInlineEdited: artist !== artistName,
-    };
-
-    const newEditedTracks = editedTracks.with(editedTrackId, editedTrack);
-
-    setEditedTracks(newEditedTracks);
   };
 
   return (
@@ -264,7 +245,8 @@ const AlbumPage = () => {
       </div>
       <Tracks
         tracks={editedTracks}
-        formHandler={applyInlineChanges}
+        artistName={artistName}
+        callback={setEditedTracks}
         isEnumerated
       />
       <ViewedAlbum album={album} />
@@ -301,3 +283,4 @@ const AlbumSkeleton = () => (
 );
 
 export default AlbumPage;
+export type { EditedAlbumTracks };
