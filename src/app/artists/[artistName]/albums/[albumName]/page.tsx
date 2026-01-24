@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Check, Edit2, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -79,25 +79,24 @@ const AlbumPage = () => {
 
   const [editedTracks, setEditedTracks] = useState<EditedAlbumTracks>([]);
 
-  useEffect(() => {
-    if (!album) return;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  const setDefaultEditedTracks = useEffectEvent(() => {
     setEditedTracks(
-      album.tracks.map((track) => ({
+      album?.tracks.map((track) => ({
         ...track,
         ...(track.artist === artistName ? { isAlbumTrack: true } : {}),
-      })),
+      })) ?? [],
     );
-  }, [album, artistName]);
+  });
+
+  useEffect(() => {
+    setDefaultEditedTracks();
+  }, [album]);
 
   if (isError) return <DefaultSearchPage title="Album not found" />;
   if (isLoading || !album) return <AlbumSkeleton />;
 
-  const applyChangesFromForm = (data: formSchema) => {
-    if (!editedTracks) return;
-
-    applyChanges(data.artist, data.album);
+  const setChange = (tracks: EditedAlbumTracks) => {
+    setEditedTracks(tracks);
   };
 
   const applyChanges = (artist: string, album: string) => {
@@ -115,6 +114,12 @@ const AlbumPage = () => {
     );
 
     setIsEditing(false);
+  };
+
+  const applyChangesFromForm = (data: formSchema) => {
+    if (!editedTracks) return;
+
+    applyChanges(data.artist, data.album);
   };
 
   const resetAlbumInfo = () => {
@@ -246,7 +251,7 @@ const AlbumPage = () => {
       <Tracks
         tracks={editedTracks}
         artistName={artistName}
-        callback={setEditedTracks}
+        changeHandler={setChange}
         isEnumerated
       />
       <ViewedAlbum album={album} />

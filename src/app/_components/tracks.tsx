@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Edit2, Undo2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -211,19 +211,19 @@ const Track = ({
 const Tracks = ({
   tracks,
   artistName,
-  callback,
+  changeHandler,
   isEnumerated,
   children,
 }: {
   tracks: EditedTracks;
   artistName?: string;
-  callback?: (tracks: EditedAlbumTracks) => void;
+  changeHandler?: (tracks: EditedAlbumTracks) => void;
   isEnumerated?: boolean;
   children?: React.ReactNode;
 }) => {
-  const [editedTracks, setEditedTracks] = useState<EditedTracks>(tracks);
+  const [editedTracks, setEditedTracks] = useState<EditedTracks>([]);
 
-  useEffect(() => {
+  const setDefaultEditedTracks = useEffectEvent(() => {
     setEditedTracks(
       tracks.map((track, i) => ({
         ...track,
@@ -232,8 +232,10 @@ const Tracks = ({
           : {}),
       })) as EditedTracks,
     );
+  });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    setDefaultEditedTracks();
   }, [tracks]);
 
   const applyInlineChanges = (
@@ -259,8 +261,7 @@ const Tracks = ({
     );
 
     setEditedTracks(newEditedTracks);
-
-    callback?.(newEditedTracks as EditedAlbumTracks);
+    changeHandler?.(newEditedTracks as EditedAlbumTracks);
   };
 
   if (tracks.length === 0) {
