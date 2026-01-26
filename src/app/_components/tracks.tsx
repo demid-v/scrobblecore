@@ -162,7 +162,7 @@ const Track = ({
                     variant="ghost"
                     size="sm"
                     className="h-fit w-fit px-2 py-1 hover:bg-gray-200"
-                    title="Apply changes"
+                    title="Finish editing"
                   >
                     <Check style={{ height: "14px", width: "14px" }} />
                   </Button>
@@ -172,7 +172,7 @@ const Track = ({
                     variant="ghost"
                     size="sm"
                     className="h-fit w-fit px-1.5 py-1 hover:bg-gray-200"
-                    title="Edit and scrobble"
+                    title="Edit track"
                     onClick={(e) => {
                       setIsEditing(true);
                       e.preventDefault();
@@ -186,7 +186,7 @@ const Track = ({
                   variant="ghost"
                   size="sm"
                   className="h-fit w-fit px-1.5 py-1 hover:bg-gray-200"
-                  title="Reset track info"
+                  title="Reset track"
                   onClick={resetAlbumInfo}
                 >
                   <Undo2 style={{ height: "14px", width: "14px" }} />
@@ -223,7 +223,7 @@ const Tracks = ({
 }) => {
   const [editedTracks, setEditedTracks] = useState<EditedTracks>([]);
 
-  const setDefaultEditedTracks = useEffectEvent(() => {
+  const setDefaultEditedTracks = useEffectEvent((tracks: EditedTracks) => {
     setEditedTracks(
       tracks.map((track, i) => ({
         ...track,
@@ -235,7 +235,7 @@ const Tracks = ({
   });
 
   useEffect(() => {
-    setDefaultEditedTracks();
+    setDefaultEditedTracks(tracks);
   }, [tracks]);
 
   const applyInlineChanges = (

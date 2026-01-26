@@ -26,7 +26,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Skeleton } from "~/components/ui/skeleton";
-import { AlbumTracks, getAlbum } from "~/lib/queries/album";
+import { Album, AlbumTracks, getAlbum } from "~/lib/queries/album";
 
 const formSchema = z.object({
   artist: z.string().trim().min(1, {
@@ -79,17 +79,21 @@ const AlbumPage = () => {
 
   const [editedTracks, setEditedTracks] = useState<EditedAlbumTracks>([]);
 
-  const setDefaultEditedTracks = useEffectEvent(() => {
+  const setDefaultEditedTracks = (album: Album) =>
     setEditedTracks(
       album?.tracks.map((track) => ({
         ...track,
         ...(track.artist === artistName ? { isAlbumTrack: true } : {}),
       })) ?? [],
     );
+
+  const setDefaultEditedTracksEvent = useEffectEvent((album: Album) => {
+    setDefaultEditedTracks(album);
   });
 
   useEffect(() => {
-    setDefaultEditedTracks();
+    if (!album) return;
+    setDefaultEditedTracksEvent(album);
   }, [album]);
 
   if (isError) return <DefaultSearchPage title="Album not found" />;
@@ -99,19 +103,27 @@ const AlbumPage = () => {
     setEditedTracks(tracks);
   };
 
-  const applyChanges = (artist: string, album: string) => {
+  const applyChanges = (
+    artist: string,
+    albumTitle: string,
+    isReset?: boolean,
+  ) => {
     const getArtist = (track: EditedAlbumTracks[number]) => {
       if (track.isInlineEdited) return { artist: track.artist };
       return track.isAlbumTrack ? { artist } : {};
     };
 
-    setEditedTracks(
-      editedTracks.map((track) => ({
-        ...track,
-        ...getArtist(track),
-        album,
-      })),
-    );
+    if (isReset) {
+      setDefaultEditedTracks(album);
+    } else {
+      setEditedTracks(
+        editedTracks.map((track) => ({
+          ...track,
+          ...getArtist(track),
+          album: albumTitle,
+        })),
+      );
+    }
 
     setIsEditing(false);
   };
@@ -122,10 +134,10 @@ const AlbumPage = () => {
     applyChanges(data.artist, data.album);
   };
 
-  const resetAlbumInfo = () => {
+  const resetAlbumInfo = (isReset?: boolean) => {
     if (!album) return;
 
-    applyChanges(album.artist, album.name);
+    applyChanges(album.artist, album.name, isReset);
 
     form.setValue("artist", album.artist);
     form.setValue("album", album.name);
@@ -206,8 +218,7 @@ const AlbumPage = () => {
                         type="submit"
                         variant="ghost"
                         size="sm"
-                        className="h-fit w-fit px-2 py-1"
-                        title="Apply changes"
+                        title="Finish editing"
                       >
                         <Check style={{ height: "14px", width: "14px" }} />
                       </Button>
@@ -216,7 +227,6 @@ const AlbumPage = () => {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-fit w-fit px-2 py-1"
                         title="Edit album info"
                         onClick={(e) => {
                           setIsEditing(true);
@@ -231,9 +241,8 @@ const AlbumPage = () => {
                     type="reset"
                     variant="ghost"
                     size="sm"
-                    className="h-fit w-fit px-2 py-1"
                     title="Reset album info"
-                    onClick={resetAlbumInfo}
+                    onClick={() => resetAlbumInfo()}
                   >
                     <Undo2 style={{ height: "14px", width: "14px" }} />
                   </Button>
@@ -241,10 +250,18 @@ const AlbumPage = () => {
               </form>
             </Form>
           </div>
-          <div>
+          <div className="flex justify-between">
             <ScrobbleButton tracks={editedTracks}>
               Scrobble album
             </ScrobbleButton>
+            <Button
+              variant="ghost"
+              size="sm"
+              title="Reset album"
+              onClick={() => resetAlbumInfo(true)}
+            >
+              <Undo2 style={{ height: "14px", width: "14px" }} />
+            </Button>
           </div>
         </div>
       </div>
