@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Edit2, Undo2 } from "lucide-react";
+import { Check, ChevronDownIcon, Edit2, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useEffectEvent, useState } from "react";
@@ -17,6 +17,7 @@ import ImageWithFallback from "~/components/image-with-fallback";
 import NoCover from "~/components/no-cover";
 import ScrobbleButton from "~/components/scrobble-button";
 import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -25,6 +26,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Album, AlbumTracks, getAlbum } from "~/lib/queries/album";
 
@@ -35,6 +41,8 @@ const formSchema = z.object({
   album: z.string().trim().min(1, {
     message: "Album title is required.",
   }),
+  date: z.number().optional(),
+  time: z.string().optional(),
 });
 
 type formSchema = z.infer<typeof formSchema>;
@@ -71,11 +79,15 @@ const AlbumPage = () => {
     defaultValues: {
       artist: artistName,
       album: albumName,
+      date: 0,
+      time: "",
     },
   });
 
   const watchedArtist = useWatch({ control: form.control, name: "artist" });
   const watchedAlbum = useWatch({ control: form.control, name: "album" });
+  const watchedDate = useWatch({ control: form.control, name: "date" });
+  const watchedTime = useWatch({ control: form.control, name: "time" });
 
   const [editedTracks, setEditedTracks] = useState<EditedAlbumTracks>([]);
 
@@ -95,6 +107,8 @@ const AlbumPage = () => {
     if (!album) return;
     setDefaultEditedTracksEvent(album);
   }, [album]);
+
+  const [open, setOpen] = useState(false);
 
   if (isError) return <DefaultSearchPage title="Album not found" />;
   if (isLoading || !album) return <AlbumSkeleton />;
@@ -141,7 +155,22 @@ const AlbumPage = () => {
 
     form.setValue("artist", album.artist);
     form.setValue("album", album.name);
+    form.setValue("date", 0);
+    form.setValue("time", "");
   };
+
+  const timestamp = (() => {
+    if (!watchedDate || !watchedTime) return;
+
+    const date = new Date(watchedDate);
+    const timeArray = watchedTime.split(":").map(Number);
+
+    date.setHours(timeArray[0] ?? 0);
+    date.setMinutes(timeArray[1] ?? 0);
+    date.setSeconds(timeArray[2] ?? 0);
+
+    return date.getTime();
+  })();
 
   return (
     <div className="w-full">
@@ -160,98 +189,158 @@ const AlbumPage = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(applyChangesFromForm)}
-                className="flex w-full gap-x-2"
+                className="flex w-full flex-col gap-y-1"
               >
-                <div className="w-full">
-                  {isEditing ? (
-                    <div className="w-full space-y-1">
-                      <FormField
-                        control={form.control}
-                        name="artist"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input {...field} className="font-bold" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="album"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      <div className="mb-1 font-bold">
-                        <Link
-                          href={`/artists/${watchedArtist}`}
-                          className="line-clamp-2 text-ellipsis"
-                        >
-                          {watchedArtist}
-                        </Link>
-                      </div>
-                      <div className="text-lg">
-                        <div
-                          className="line-clamp-2 text-ellipsis"
-                          title={watchedAlbum}
-                        >
-                          {watchedAlbum}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div>
-                  <div className="mb-1">
+                <div className="flex w-full gap-x-2">
+                  <div className="w-full">
                     {isEditing ? (
-                      <Button
-                        type="submit"
-                        variant="ghost"
-                        size="sm"
-                        title="Finish editing"
-                      >
-                        <Check style={{ height: "14px", width: "14px" }} />
-                      </Button>
+                      <div className="w-full space-y-1">
+                        <FormField
+                          control={form.control}
+                          name="artist"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} className="font-bold" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="album"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     ) : (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        title="Edit album info"
-                        onClick={(e) => {
-                          setIsEditing(true);
-                          e.preventDefault();
-                        }}
-                      >
-                        <Edit2 style={{ height: "14px", width: "14px" }} />
-                      </Button>
+                      <>
+                        <div className="mb-1 font-bold">
+                          <Link
+                            href={`/artists/${watchedArtist}`}
+                            className="line-clamp-2 text-ellipsis"
+                          >
+                            {watchedArtist}
+                          </Link>
+                        </div>
+                        <div className="text-lg">
+                          <div
+                            className="line-clamp-2 text-ellipsis"
+                            title={watchedAlbum}
+                          >
+                            {watchedAlbum}
+                          </div>
+                        </div>
+                      </>
                     )}
                   </div>
-                  <Button
-                    type="reset"
-                    variant="ghost"
-                    size="sm"
-                    title="Reset album info"
-                    onClick={() => resetAlbumInfo()}
-                  >
-                    <Undo2 style={{ height: "14px", width: "14px" }} />
-                  </Button>
+                  <div>
+                    <div className="mb-1">
+                      {isEditing ? (
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          title="Finish editing"
+                        >
+                          <Check style={{ height: "14px", width: "14px" }} />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          title="Edit album info"
+                          onClick={(e) => {
+                            setIsEditing(true);
+                            e.preventDefault();
+                          }}
+                        >
+                          <Edit2 style={{ height: "14px", width: "14px" }} />
+                        </Button>
+                      )}
+                    </div>
+                    <Button
+                      type="reset"
+                      variant="ghost"
+                      size="sm"
+                      title="Reset album info"
+                      onClick={() => resetAlbumInfo()}
+                    >
+                      <Undo2 style={{ height: "14px", width: "14px" }} />
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex gap-x-2">
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                id="date-picker"
+                                className="w-32 justify-between font-normal"
+                              >
+                                {field.value
+                                  ? new Date(field.value).toLocaleDateString()
+                                  : "Select date"}
+                                <ChevronDownIcon />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto overflow-hidden p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={new Date(field.value ?? 0)}
+                                captionLayout="dropdown"
+                                onSelect={(date) =>
+                                  field.onChange(date?.getTime())
+                                }
+                                {...field}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="time"
+                            step="1"
+                            className="bg-background w-fit appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </form>
             </Form>
           </div>
           <div className="flex justify-between">
-            <ScrobbleButton tracks={editedTracks}>
+            <ScrobbleButton tracks={editedTracks} timestamp={timestamp}>
               Scrobble album
             </ScrobbleButton>
             <Button
@@ -287,10 +376,10 @@ const AlbumSkeleton = () => (
             <Skeleton className="h-6 max-w-56" />
           </div>
           <div className="flex flex-col">
-            <Button variant="ghost" disabled className="flex h-5 w-6 p-0">
+            <Button variant="ghost" className="flex h-5 w-6 p-0" disabled>
               <Edit2 style={{ height: "12px", width: "12px" }} />
             </Button>
-            <Button variant="ghost" disabled className="flex h-5 w-6 p-0">
+            <Button variant="ghost" className="flex h-5 w-6 p-0" disabled>
               <Undo2 style={{ height: "12px", width: "12px" }} />
             </Button>
           </div>
@@ -300,7 +389,7 @@ const AlbumSkeleton = () => (
         </div>
       </div>
     </div>
-    <ListSkeleton count={11} isEnimerated />
+    <ListSkeleton count={11} isEnumerated />
   </div>
 );
 

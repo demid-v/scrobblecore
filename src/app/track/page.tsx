@@ -1,11 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@radix-ui/react-popover";
 import { ChevronDownIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,13 +20,18 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, {
-    message: "Track's title is required.",
+    message: "Track title is required.",
   }),
   artist: z.string().trim().min(1, {
-    message: "Artist's name is required.",
+    message: "Artist name is required.",
   }),
   album: z.string().trim().optional(),
   date: z.number().optional(),
@@ -78,7 +78,11 @@ const TrackForm = () => {
         form.setValue("time", "");
       } else {
         const date = new Date(timeStamp);
-        const time = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}:${date.getSeconds().toString().padStart(2, "0")}`;
+        const time = `
+        ${date.getHours().toString().padStart(2, "0")}:
+        ${date.getMinutes().toString().padStart(2, "0")}:
+        ${date.getSeconds().toString().padStart(2, "0")}
+        `;
 
         form.setValue("date", timeStamp);
         form.setValue("time", time);
@@ -101,6 +105,7 @@ const TrackForm = () => {
 
       const date = new Date(dateStr);
       const timeArray = time.split(":").map(Number);
+
       date.setHours(timeArray[0] ?? 0);
       date.setMinutes(timeArray[1] ?? 0);
       date.setSeconds(timeArray[2] ?? 0);
@@ -108,7 +113,7 @@ const TrackForm = () => {
       return date.getTime() / 1000;
     })();
 
-    const track: Track = {
+    const track = {
       type: "form" as const,
       name: data.name,
       artist: data.artist,
@@ -129,7 +134,7 @@ const TrackForm = () => {
             <FormItem>
               <FormLabel>Title *</FormLabel>
               <FormControl>
-                <Input placeholder="Heaven or Las Vegas" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,7 +147,7 @@ const TrackForm = () => {
             <FormItem>
               <FormLabel>Artist *</FormLabel>
               <FormControl>
-                <Input placeholder="Cocteau Twins" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -155,7 +160,7 @@ const TrackForm = () => {
             <FormItem>
               <FormLabel>Album</FormLabel>
               <FormControl>
-                <Input placeholder="Heaven or Las Vegas" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -73,10 +73,14 @@ const useScrobble = () => {
     if (isLimitExceeded) toast.error("Daily scrobble limit exceeded.");
   }, [isLimitExceeded]);
 
-  const putTracksInStore = async (tracks: Scrobble, isRetry?: boolean) => {
+  const putTracksInStore = async (
+    tracks: Scrobble,
+    isRetry?: boolean,
+    timestamp?: number,
+  ) => {
     const getTimestamps = (() =>
       tracks.toReversed().reduce<number[]>((acc, track, index, tracks) => {
-        const defaultTimestamp = Math.trunc(Date.now() / 1000);
+        const defaultTimestamp = Math.trunc((timestamp ?? Date.now()) / 1000);
 
         if ((isRetry && track.type === "db") || track.type === "form") {
           acc.push(track.timestamp ?? defaultTimestamp);
@@ -145,8 +149,12 @@ const useScrobble = () => {
     }
   };
 
-  const startScrobble = async (tracks: Scrobble, isRetry?: boolean) => {
-    const tracksMappedBase = await putTracksInStore(tracks, isRetry);
+  const startScrobble = async (
+    tracks: Scrobble,
+    isRetry?: boolean,
+    timestamp?: number,
+  ) => {
+    const tracksMappedBase = await putTracksInStore(tracks, isRetry, timestamp);
     scrobbleTracks(tracksMappedBase);
   };
 
@@ -156,17 +164,19 @@ const useScrobble = () => {
 const ScrobbleButton = ({
   children,
   tracks = [],
+  timestamp,
   ...props
 }: {
   children?: ReactNode;
   tracks?: Tracks;
+  timestamp?: number;
 } & ButtonProps) => {
   const startScrobble = useScrobble();
 
   return (
     <Button
       onClick={() => {
-        void startScrobble(tracks);
+        void startScrobble(tracks, false, timestamp);
       }}
       disabled={tracks.length === 0}
       {...props}
